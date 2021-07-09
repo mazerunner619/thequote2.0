@@ -15,10 +15,10 @@ function App() {
     <Router />
     </AuthContextProvider>
 
-    <footer className="bg-dark text-center text-white">
+ <footer className="text-center text-white" style ={{padding :"1%", backgroundColor : "lightcoral",  border : "2px solid grey"}} >
  
   <div className="footer">
-    © 2021 @Copyright{'  '}<a href="https://www.instagram.com/happiest_depressed_1/" style={{color : 'white', fontSize : "20px"}}>{' '}{' '}<SiInstagram /> </a>
+    © Copyright | mazerunner619{'  '}<a href="https://www.instagram.com/happiest_depressed_1/" style={{color : 'white', fontSize : "20px"}}>{' '}{' '}<SiInstagram /> </a>
   </div>
 </footer>
     </>    

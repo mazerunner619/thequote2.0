@@ -171,8 +171,8 @@ return (
 
 <Accordion  >
   <Card className = "accor-card" style = {{marginTop : "2%", borderRadius : "20px"}}>
-  <Card.Header style = {{ padding : "0",margin : "0", backgroundColor : "red", width : "100%", borderRadius : "20px"}}>
-      <Accordion.Toggle as={Button} variant="danger" eventKey="0" className="Accor" onClick = {check} style={{margin : "0", padding : "2%",  width : "100%", borderRadius : "20px"}}>
+  <Card.Header style = {{ padding : "0",margin : "0",width : "100%", borderRadius : "20px"}}>
+      <Accordion.Toggle as={Button} eventKey="0" className="Accor" onClick = {check} style={{margin : "0", padding : "2%", backgroundColor : "lightcoral",  width : "100%", borderRadius : "20px"}}>
         have a thought ? <BsFillChatSquareQuoteFill />  
       </Accordion.Toggle>
     </Card.Header>
