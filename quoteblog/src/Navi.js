@@ -3,7 +3,7 @@ import {Navbar, Nav, Spinner} from 'react-bootstrap'
 import { useContext } from 'react';
 import AuthContext from './context/authContext';
 import { FaUserCircle , FaQuoteRight, FaQuoteLeft } from 'react-icons/fa';
-
+import {LinkContainer} from 'react-router-bootstrap';
 import {BsChatQuoteFill} from 'react-icons/bs';
 
 
@@ -53,19 +53,24 @@ export default function Navi() {
   {logged === false && 
   <>
 
-    <Nav.Link eventKey={2} href="/login">Login
-    </Nav.Link>
-  
-    <Nav.Link eventKey={2} href="/signup">Signup
-    </Nav.Link>
+  <LinkContainer to ="/login">
+      <Nav.Link>Login
+      </Nav.Link>
+  </LinkContainer>
+
+    <LinkContainer to ="/signup">
+        <Nav.Link>Signup
+        </Nav.Link>
+    </LinkContainer>
+
     </>
   }
 
-
-
     {logged === true && 
-    <Nav.Link eventKey={2} href="/logout" onClick = {logout}>Logout
-    </Nav.Link>
+    <LinkContainer to = "/logout">
+        <Nav.Link onClick = {logout}>Logout
+        </Nav.Link>
+    </LinkContainer>
 }
     
     </Nav>
