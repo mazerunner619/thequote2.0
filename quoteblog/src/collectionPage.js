@@ -1,6 +1,6 @@
 import React,{useContext, useEffect, useState} from 'react';
 import axios from 'axios';
-import {Button,Accordion,Carousel, Form, Card} from 'react-bootstrap';
+import {Button,Accordion,Carousel, Form, Card, Spinner} from 'react-bootstrap';
 import AuthContext from './context/authContext';
 import { useHistory } from 'react-router';
 import {BsFillChatSquareQuoteFill} from 'react-icons/bs'
@@ -141,18 +141,18 @@ return (
   }
      
      {
-     !loading &&
+      !loading &&
      <>
        <img alt="background" className="body-img" src="https://images.unsplash.com/photo-1619484537774-7e7b877ae4b5?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max"/>
 
 <Carousel fade className="carousel-main" nextLabel="" prevLabel="" nextIcon="" prevIcon="">
 
   {quotes.slice(0).reverse().map((quot => 
-<Carousel.Item interval={3500}>
+<Carousel.Item interval={4000}>
   
 <div>
         <Card className="carousel-card">
-        <Card.Img className="carousel-img" src="https://source.unsplash.com/random/cute" alt="quote-image" width="100%" height="100%" />
+        <Card.Img className="carousel-img" src="https://source.unsplash.com/random/flatlay" alt="quote-image" width="100%" height="100%" />
         <Card.ImgOverlay>
         <Card.Body className="card-body" >
 
