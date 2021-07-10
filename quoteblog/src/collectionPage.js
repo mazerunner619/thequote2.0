@@ -1,13 +1,10 @@
 import React,{useContext, useEffect, useState} from 'react';
 import axios from 'axios';
 import {Button,Accordion,Carousel, Form, Card} from 'react-bootstrap';
-import { SiInstagram } from "react-icons/si";
 import AuthContext from './context/authContext';
 import { useHistory } from 'react-router';
 import {BsFillChatSquareQuoteFill} from 'react-icons/bs'
 import {IoIosArrowUp} from 'react-icons/io'
-
-
 
 import { RiDeleteBinLine, RiEdit2Fill} from 'react-icons/ri'
 import {Link} from 'react-router-dom'
@@ -26,11 +23,14 @@ function Quote(){
 
 
   const [ quote, setQuote ] = useState("");
+  const [loading, setLoading] = useState(1);
 
   useEffect( () => {
+    setLoading(1);
     const fetchData = async () => {
         const {data} = await axios.get('/disp');
         setQuotes(data);
+        setLoading(0);
     }
     fetchData();
   });
@@ -63,7 +63,6 @@ pos = pos+"\"";
 }
 
 if(quote){
-// https://mernquoteappserver.herokuapp.com/post
 
   e.preventDefault(); //prevent refresh / reload of page
   axios.post('/post', {quote : pos, author : loggedUser.username }); //quote.author
@@ -130,10 +129,21 @@ const quotesArray = quotes.slice(0).reverse().map((quot =>
 
 return (
 
-
    < div>
+
+   {
+     loading && 
+  
+          <Spinner animation="border" role="status" style={{position : "fixed", left : "50%", right : "50%", top : "40%"}}>
+          <span className="sr-only"></span>
+          </Spinner>
+      
+  }
      
-     <img alt="background" className="body-img" src="https://images.unsplash.com/photo-1619484537774-7e7b877ae4b5?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max"/>
+     {
+     !loading &&
+     <>
+       <img alt="background" className="body-img" src="https://images.unsplash.com/photo-1619484537774-7e7b877ae4b5?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max"/>
 
 <Carousel fade className="carousel-main" nextLabel="" prevLabel="" nextIcon="" prevIcon="">
 
@@ -205,7 +215,9 @@ return (
 
 <a href="#top" style={{ textDecoration: "none", color : 'black', marginLeft : "45%", fontSize : "20px"}}><IoIosArrowUp /></a>
 
-   </div>
+</>
+  }
+  </div>
       );
 }
 
