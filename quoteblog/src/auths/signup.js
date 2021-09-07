@@ -62,7 +62,7 @@ import {connect} from 'react-redux'
     Signup
   </Button>
   <hr/>
-  <center style={{background : "white"}}><p>already have an account ? <a href="/login">login</a></p></center>
+   <p>already registered ? login <a href="/login">here</a></p>
 </Form>
 </div>
 
