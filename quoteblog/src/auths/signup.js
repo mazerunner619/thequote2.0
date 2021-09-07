@@ -6,6 +6,7 @@ import {Button} from '@material-ui/core'
 import { withRouter } from 'react-router-dom'
 import {Signup as signupAction} from '../ReduxStore/actions/userActions'
 import {connect} from 'react-redux'
+import { LinkContainer } from 'react-router-bootstrap';
 
 
  function Signup({
@@ -62,7 +63,7 @@ import {connect} from 'react-redux'
     Signup
   </Button>
   <hr/>
-  <center style={{background : "white"}}><p>already have an account ? <a href="/login">login</a></p></center>
+  <center style={{background : "white"}}><p>already have an account ? <LinkContainer to="/login">login</LinkContainer></p></center>
 </Form>
 </div>
 

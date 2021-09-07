@@ -4,7 +4,6 @@ import { FaUserCircle , FaQuoteRight, FaQuoteLeft } from 'react-icons/fa';
 import {LinkContainer} from 'react-router-bootstrap';
 import {BsChatQuoteFill} from 'react-icons/bs';
 import {MdNotificationsActive} from 'react-icons/md'
-import {Link} from 'react-router-dom'
 import { withRouter } from 'react-router-dom';
 
 
@@ -12,8 +11,7 @@ import { withRouter } from 'react-router-dom';
 import  {connect} from 'react-redux'
 import {getLoggedUser, Logout} from './ReduxStore/actions/userActions'
 
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import {useHistory} from 'react-router'
 
 function Navi({
