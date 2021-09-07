@@ -53,7 +53,7 @@ function Login({LoginAction, loginE}) {
     Login
   </Button>
 <hr/>
-<center style={{background : "white"}}><p>don't have an account ? <a href="/signup">Signup</a></p></center>
+<p>not registered ? signup <a href="/signup">here</a></p>
 </Form>
 </div>
 
