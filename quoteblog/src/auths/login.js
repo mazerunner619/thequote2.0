@@ -8,7 +8,7 @@ import {connect} from 'react-redux'
 import {getAllPosts} from '../ReduxStore/actions/postActions'
 import {Login as LoginAction, getLoggedUser} from '../ReduxStore/actions/userActions'
 import {withRouter} from 'react-router-dom'
-import {Link} from 'react-router-dom'
+import {LinkContainer} from 'react-router-bootstrap';
 
 function Login({LoginAction, loginE}) {
 
@@ -54,7 +54,7 @@ function Login({LoginAction, loginE}) {
     Login
   </Button>
 <hr/>
-<p>not registered ? signup <Link to="/signup">here</Link></p>
+<p>not registered ? signup <LinkContainer to="/signup">here</LinkContainer></p>
 </Form>
 </div>
 
