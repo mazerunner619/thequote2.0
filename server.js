@@ -25,9 +25,8 @@ app.use(function(err, req, res, next){
     });
 });
 
-app.get('/', (req, res)=>{
-    res.send('running');
-});
+
+
 app.use('/', Route);
 app.use('/user', userRoute);
   
