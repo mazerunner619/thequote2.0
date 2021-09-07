@@ -1,208 +1,130 @@
-import React,{useContext, useEffect, useState} from 'react';
+import React,{useEffect, useState} from 'react';
 import axios from 'axios';
-import {Button,Accordion,Carousel, Form, Card, Spinner} from 'react-bootstrap';
-import AuthContext from './context/authContext';
+import {Button ,Accordion , Form , Alert,Spinner,Modal,  Row, Col} from 'react-bootstrap';
 import { useHistory } from 'react-router';
-import {BsFillChatSquareQuoteFill} from 'react-icons/bs'
 import {IoIosArrowUp} from 'react-icons/io'
+import {FiSend} from 'react-icons/fi'
+import {FaUserCircle} from 'react-icons/fa'
+import {BsFillPlusCircleFill} from 'react-icons/bs'
 
-import { RiDeleteBinLine, RiEdit2Fill} from 'react-icons/ri'
-import {Link} from 'react-router-dom'
+import NewPostModal from './components/newPostModal'
 
-function Quote(){
+import  {connect} from 'react-redux'
+import Post from './components/Post'
+import {getAllPosts} from './ReduxStore/actions/postActions'
+import {getLoggedUser} from './ReduxStore/actions/userActions'
+import {likePost} from './ReduxStore/actions/authActions';
+function Quote({
+  deleting,
+  deleted,
+  deleteError,
+  allPosts,
+  loading,
+  ERR_loading,
+  getAllPosts,
+  getLoggedUser,
+  logged,
+  loggedUser,
+  likePost
+}){
 
-  const {logged, loggedUser} = useContext(AuthContext);
-
-  const hist = useHistory();
-
-  const [quotes, setQuotes] = useState([{
-    quote : "",
-    author : "",
-    bg : ""
-  }]);
+const hist = useHistory();
 
 
-  const [ quote, setQuote ] = useState("");
+const [newPostPage, setNewPostPage] = useState(false);
+
+  const [quotes, setQuotes] = useState([]);
 
   useEffect( () => {
-    const fetchData = async () => {
-        const {data} = await axios.get('/disp');
-        setQuotes(data);
-    }
-    fetchData();
-  });
+    getAllPosts();
+    getLoggedUser();
+    setQuotes(allPosts);
+    console.log(quotes);
+  }, [allPosts.length]);
 
-  function handleChange(e){
-    setQuote(e.target.value);
+
+  const newPostHandler = () => {
+    if(logged)
+    setNewPostPage(true);
+    else 
+    hist.push('/login');
   }
 
-  
-  async function deletePost(id){
-    await axios.get('/delete/'+id);
-    alert('your post was deleted successfully !')
+  const postLiker = (postid)=>{
+    likePost(postid, loggedUser._id);
   }
 
-  function check(){
-    if(logged === false){
-      hist.push('/login');
-    }
-  }
-
-function handleClick(e){
-
-  var pos = quote;
-
-  if(pos[0] !== "\""){
-pos = "\""+pos;
-}
-if(pos[pos.length] !== "\""){
-pos = pos+"\"";
-}
-
-if(quote){
-
-  e.preventDefault(); //prevent refresh / reload of page
-  axios.post('/post', {quote : pos, author : loggedUser.username }); //quote.author
-  
-  setQuote({
-    quote : "",
-    author : "",
-  });
-}
-else{
-  alert('you can\'t post an empty content !');
-}
-}
-
-const quotesArray = quotes.slice(0).reverse().map((quot => 
-<div className = "grid">
-
-<Card className="grid1" >
-  <Card.Header>
-
-        <i>@_{quot.author}</i>
-
-     
-    </Card.Header>
-
-        <Card.Img className="card-img" src="https://fsb.zobj.net/crop.php?r=D4sr-PS5vNxOUQ9J63U4miy8wsc1D9TivO7azZGAyABpmHn1g-qZyBjOhJ_oz7WrHqo0bpDXflxQkHZpkEoHQjbSycHy5mNqqCLNb8QnTy49VllypyZLrriIS7DDpbr-auU50QY2xng7Zfqn" alt="quote-image" width="100%" height="100%"  />
-        
-        <Card.ImgOverlay>
-    <Card.Body className="card-body" >
-    <blockquote className="blockquote mb-0">
-      <p>
-      {quot.quote}
-      </p> 
-      <footer className="blockquote-footer" >
-      <cite title="Source Title" style = {{color : "yellow"}}>{quot.author}</cite>
-    </footer>
-    </blockquote>
-    </Card.Body> 
-    </Card.ImgOverlay>
-    </Card>
-
-    <div className = "grid2">
-    { logged && quot.author === loggedUser.username && 
-    <>
-    
-    <Button block style={{ height : "100%", float : "left", marginRight : "1%"}} variant="danger" onClick = {() => deletePost(quot._id)}><RiDeleteBinLine /></Button>
-    
-    <Link to = {{
-      pathname : '/edit/'+quot._id, 
-      }}>
-
-     <Button block style={{  height : "100%" , marginRight : "1%"}} variant="info"> <RiEdit2Fill /> </Button> 
-
-   </Link> 
- 
-    
-    </>
-}
-    </div>
-
-</div>
-
-    ));
+const quotesArray = quotes.slice(0).reverse().map(post => 
+<Post 
+    likes ={post.likes.length}
+    liked = { (post.likes.indexOf(loggedUser._id) !== -1 )? true:false}
+    post = {post}
+    likeThisPost = {()=>postLiker(post._id)}
+/>);
 
 return (
+   < div id="fullPage" style={{minHeight : "100vh"}}>
 
-   < div>
+<NewPostModal 
+          show={newPostPage}
+          onHide={() => setNewPostPage(false)}
+          message="hey thr"
+          userid = {loggedUser._id}
+/>
 
-   
-   
-       <img alt="background" className="body-img" src="https://images.unsplash.com/photo-1619484537774-7e7b877ae4b5?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max"/>
-
-<Carousel fade className="carousel-main" nextLabel="" prevLabel="" nextIcon="" prevIcon="">
-
-  {quotes.slice(0).reverse().map((quot => 
-<Carousel.Item interval={4000}>
-  
-<div>
-        <Card className="carousel-card">
-        <Card.Img className="carousel-img" src="https://source.unsplash.com/random/flatlay" alt="quote-image" width="100%" height="100%" />
-        <Card.ImgOverlay>
-        <Card.Body className="card-body" >
-
-        <blockquote className="blockquote mb-0">
-          <p>
-          {quot.quote}
-          </p> 
-
-          <footer className="blockquote-footer" >
-          <cite title="Source Title"  style = {{color : "yellow"}}>{quot.author}</cite>
-        </footer>
-
-        </blockquote>
-
-        </Card.Body>
-
-      
-        </Card.ImgOverlay>
-        </Card>
-
-    </div>
-    </Carousel.Item>)
-    )}
-
-</Carousel>
-
-<Accordion  >
-  <Card className = "accor-card" style = {{marginTop : "2%", borderRadius : "20px"}}>
-  <Card.Header style = {{ padding : "0",margin : "0",width : "100%", borderRadius : "20px"}}>
-      <Accordion.Toggle as={Button} eventKey="0" className="Accor" onClick = {check} style={{margin : "0", padding : "2%", backgroundColor : "lightcoral",  width : "100%", borderRadius : "20px"}}>
-        have a thought ? <BsFillChatSquareQuoteFill />  
-      </Accordion.Toggle>
-    </Card.Header>
-      
-    <Accordion.Collapse eventKey="0">
-    <Form style= {{margin : "2% auto"}}>    
-    <Form.Group controlId="exampleForm.ControlTextarea1">
-    <Form.Label style ={{color : "seagreen"}}>Your content here</Form.Label>
-    <Form.Control as="textarea" rows={3} placeholder="your content here" required cols="100"  autocomplete="off" name = "quote" value = {quote.quote} onChange ={handleChange}style = {{ border  : "1px solid seagreen"}} />
+<div onMouseDown={newPostHandler}>
+  <BsFillPlusCircleFill className = "status"/>
+<Form id="newPost" className="p-2 mt-3 mb-3" >
+<FaUserCircle style={{fontSize : "200%", color : "pink"}}/>
+<div  style={{display : "inline-block"}}>
+  <Form.Group controlId="">
+    <Form.Control type="text"  placeholder = "what's on your mind ???"  style={{border : "0", textAlign : "end", width : "100%"}}/>
   </Form.Group>
-    
-    <Button block style={{marginTop : "2%", width : "100%", borderRadius : "20px"}} variant="success" type = "submit" onClick = {handleClick} >Post</Button>
-   
-   </Form> 
+  </div>
+</Form>
+</div>
 
-      </Accordion.Collapse>
-      </Card>
- 
-</Accordion>
+      {/* <img alt="background" className="body-img" 
+src="https://images.unsplash.com/photo-1604155669054-d41e0814c359?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1268&q=80"      /> */}
 
 
-<hr style={{color : "green"}}/>
-<blockquote className="blockquote mb-1" style={{textAlign : "center",padding :'0%', color : "green", fontSize : "150"} } >
-  <p>POSTS</p>
-</blockquote>
+{
+      deleteError && <Modal variant = "danger" show={deleted}><Modal.Body> {deleteError}</Modal.Body></Modal>
+}
+    {
+      deleted &&
+      <Modal show={deleted} centered><Modal.Body style={{background : "white", textAlign : "center", color : "#971243", boxShadow : "5px 5px 20px black",fontWeight : "bolder"}}> <i>your post was deleted successfully</i></Modal.Body></Modal>
+  
+}
 
-<hr style={{ color : "green"}}/>
+{
+  loading?
+  <Spinner variant="dark" size="lg"  animation="grow" style={{position : "absolute",left : "50%", top : "80%" }}/>
+   :
+  quotesArray
+}
 
-      {quotesArray}
+  <a href="#top" style={{ textDecoration: "none", color : '#971243', marginLeft : "45%", fontSize : "200%"}}><IoIosArrowUp /></a> 
 
-<a href="#top" style={{ textDecoration: "none", color : 'black', marginLeft : "45%", fontSize : "20px"}}><IoIosArrowUp /></a>
   </div>
       );
 }
 
-export default Quote;
+//state retrieve
+const mapStateToProps = (store) => ({
+  allPosts : store.postStore.allPosts,
+  loading : store.postStore.loading,
+  ERR_loading : store.postStore.error,
+  logged : store.userStore.loggedIn,
+  loggedUser : store.userStore.loggedUser,
+  deleting : store.authStore.deleting,
+  deleted : store.authStore.deleted,
+  deleteError : store.authStore.deleteError,
+});
+
+
+export default connect(mapStateToProps,{
+  getAllPosts,
+  getLoggedUser,
+  likePost
+})(Quote);

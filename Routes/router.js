@@ -1,44 +1,182 @@
 const express = require('express');
 const router = express.Router();
+const jwt = require('jsonwebtoken');
+const db = require('../Models');
+const bcrypt = require('bcrypt');
 
-const Quote = require('../Models/quoteModel');
 
-router.post('/post' , (req, res) => {
-    const newQuote = new Quote(
-        {
-            author : req.body.author,
-            quote : req.body.quote,
+//========================= search user by username
+router.get('/search/:username' , async (req, res, next) => {
+    try{
+        const {username} = req.params;
+        const user = await db.Client.find({});
+        const searching = user.filter( info => {
+            const uname = info.username.toLowerCase();
+            return (uname.indexOf(username.toLowerCase()) === 0);
+        }); 
+        
+        if(searching.length>0){
+            //found
+            res.send(searching);
+        }
+        //not found
+        res.json(false);
+    }catch(error){
+        return next({
+            mesage : error.message
         });
-    newQuote.save();
-    res.send(newQuote);
-});
-
-router.get('/disp' , async (req, res) => {
-    try{
-        const quotes = await Quote.find();
-        res.send(quotes);
-    }catch(err){
-        res.send(err);
-    }
-});
-
-router.get('/delete/:id', async (req, res) => {
-    try{
-       const rem = await Quote.deleteOne({_id : req.params.id});
-       res.send(rem);
-    }catch(err){
-        res.send(err);
     }
 });
 
 
-router.post('/edit/:id', async (req, res) => {
+//===================== CURRENT LOGGED USER if any
+router.get('/current' ,async(req, res, next) => {
+    try{
 
-        await Quote.updateOne(
-           {_id : req.params.id},
-           {quote : req.body.quote}
-           );
-           console.log('edited')
+        const token = req.cookies.token;
+        if(token){
+            const verified = jwt.verify(token, process.env.JWT_SECRET_KEY);
+            if(verified){
+                const user = await db.Client.findById(verified.userId);
+                console.log('sent : '+user)
+                res.send(user);
+            }
+            else{
+                console.log('no logged in user found !');
+                res.send(null);
+            }
+        }
+        else{
+            console.log('null');
+            res.send(null);
+        }
+    }catch(error){
+        console.log(error);
+      res.send(null);
+    }
+});
+
+
+//============== All Posts ===========
+router.get('/getallposts' , async (req, res, next) => {
+    try{
+        const posts = await db.Post.find({})
+        .populate({path : "uploader", select :"-password"}).sort({createdAt : 1});
+        console.log('get all posts route success', posts);
+        res.send(posts);
+    }catch(error){
+        return next({
+            mesage : error.message
+        });
+    }
+});
+
+
+//===================SINGLE POST BY ID=====================
+router.get('/getpost/:id' , async (req, res) => {
+    try{
+        const post = await db.Post.findById(req.params.id)
+        .populate({path : "uploader", select : "-password"});
+        console.log('get post route success');
+        res.send(post);
+    }catch(err){
+        return next({
+            mesage : err.message
+        });
+    }
+});
+
+//=================== POSTS BY userID=====================
+router.get('/getmyposts/:id' , async (req, res) => {
+    try{
+        const user = await db.User.findById(req.params.id)
+        .populate("posts");
+        const posts = user.posts;
+        console.log('get my post route success');
+        res.send(posts);
+    }catch(err){
+        return next({
+            mesage : error.message
+        });
+    }
+});
+
+//====================LOGIN=============
+router.post('/login', async(req, res, next) => {
+    try{
+        const {username, password } = req.body;
+        console.log('logginng in with :',req.body)
+        const user = await db.Client.findOne({username});
+        if(!user){
+            console.log('wrong username');
+            return res.json(false);
+        }
+        else {
+            if(await bcrypt.compare(password,user.password)){
+                //jwt work
+                const token = jwt.sign({
+                   userId : user._id,
+                },
+                process.env.JWT_SECRET_KEY 
+                );
+                //send the token to browser cookie
+                console.log('logged in as '+user.username);
+                res.cookie( "token", token, {httpOnly : true}).send(true);
+            }
+            else{
+                return res.json(false);
+            }
+        }
+    }
+    catch(error){
+        console.log(error);
+        return next({
+            message : error.message
+        });    
+    }
+});
+
+
+//=====================SIGNUP===============
+router.post('/signup', async(req, res) => {
+    const {username, password, confirmpassword } = req.body;
+    try{
+
+        if(password !== confirmpassword){
+            return res.json({
+                status : false,
+                message : "passwords do not match !"
+        });
+    }
+        const user = await db.Client.findOne({username});
+        if(!user){
+            if( password.length < 7)
+            return res.json({
+                status : false,
+                message : "passwords too short (< 7) !"
+        });
+                const newU = new db.Client({
+                    username, 
+                    password :  await bcrypt.hash(password, 10)
+                });
+
+                newU.save();
+                console.log('registered ' + newU)
+                res.json({status : true, message : "registered successfully"});
+        }
+        else{
+            return res.json({
+                status : false,
+                message : "username already exists"
+        });
+        }
+
+    }catch(error){
+        console.log(error);
+        return next({
+            message : "server-side error"
+        });
+    }   
 });
 
 module.exports = router;

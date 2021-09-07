@@ -2,37 +2,32 @@ const express = require('express');
 const app = express();
 const Route = require('./Routes/router');
 const userRoute = require('./Routes/userRoute');
+const errorHandler = require('./handlers/errorHandler');
 
 const PORT = process.env.PORT || 5000;
 const path = require('path');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const Quote = require('./Models/quoteModel');
 const bodyParser = require('body-parser');
 
 const cookieParser = require('cookie-parser');
-
 require('dotenv/config');
-
 app.use(bodyParser.json());
-
 app.use(cors());
-
 app.use(express.json());
 app.use(cookieParser());
 
-app.get('/quotes', async function(req, res) {
-
-    try{
-        const quotes = await Quote.find();
-        res.send(quotes);
-        console.log('fetching successfull  ....');
-
-    }catch(err){
-        console.log('fetching unsuccessfull  ....');
- }
+// app.use(errorHandler);
+//error handler MW
+app.use(function(err, req, res, next){
+    res.status(err.status || 400).json({
+        message : err.message
+    });
 });
 
+app.get('/', (req, res)=>{
+    res.send('running');
+});
 app.use('/', Route);
 app.use('/user', userRoute);
   
@@ -52,7 +47,6 @@ mongoose.connect(process.env.CONN_STRING,
  );
 
 
- 
 if(process.env.NODE_ENV == "production"){
     app.use(express.static("quoteblog/build"));
 }

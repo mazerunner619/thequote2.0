@@ -1,14 +1,21 @@
 import {useState } from 'react'
 import axios from 'axios'
-import {Form, Button} from 'react-bootstrap'
+import {Form} from 'react-bootstrap'
 import {useHistory} from 'react-router-dom'
+import {Button} from '@material-ui/core'
+import { withRouter } from 'react-router-dom'
+import {Signup as signupAction} from '../ReduxStore/actions/userActions'
+import {connect} from 'react-redux'
 
-export default function Signup(props) {
+
+ function Signup({
+  signupAction,loginE
+}) {
 
   const [user, setUser] = useState({
     username : "",
     password : "",
-    password1 : ""
+    confirmpassword : ""
   });
 
   var hist = useHistory();
@@ -16,44 +23,21 @@ export default function Signup(props) {
   function HandleChange(e){
 
     const {name, value} = e.target;
-
     setUser( prev => { return{...prev, [name] : value}
     });
   }
 
+
   async function HandleClick(e){
     e.preventDefault();
-
-    if(user.password1 !== user.password){
-      alert('passwords do not match !')
-    }
-    else if(user.username && user.password){
-    // post to login route
-    const resp = await axios.post('/user/signup', user);
-    
-    alert(resp.data);
-    if(resp.data === 'registered successfully'){
-        hist.push('/login')
-    }
-    }
-    else{
-      alert('fill all the fields');
-  }
-
+    signupAction(user,hist);
 }
-  return (
-    <div style={{  
-      backgroundImage: "url(" + "https://images.unsplash.com/photo-1619484537774-7e7b877ae4b5?ixlib=rb-1.2.1&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max" + ")",
-      backgroundPosition: 'center',
-      backgroundSize: 'cover',
-      backgroundRepeat: 'no-repeat', 
-      width : "100vw",
-      height : "100vh"
-    }} >
-    
 
-    <Form>
-    <h2 style = {{textAlign : "center", padding : "2%" , color : "lightcoral",  fontFamily :"fantasy", letterSpacing : "3px"}}>Signup</h2>
+  return (
+    <div id="fullPage" >   
+
+    <Form className="authPage">
+    <h2 style = {{textAlign : "center", padding : "2%" , color : "#b22c5a",  fontFamily :"fantasy", letterSpacing : "3px"}}>Signup</h2>
 <hr style={{color : "lightcoral", border : "3px solid lightcoral", borderRadius : "5px", margin : "0 auto", width :  "90%", marginBottom : "2%"}} />
   <Form.Group controlId="formBasicEmail">
     <Form.Label  style={{color : "black"}}>enter username</Form.Label>
@@ -69,20 +53,30 @@ export default function Signup(props) {
 
   <Form.Group controlId="formBasicPassword">
     <Form.Label  style={{color : "black"}}>confirm password</Form.Label>
-    <Form.Control type="password" placeholder="confirm Password" required name="password1" value={user.password1} onChange = {HandleChange} style={{border : "1px solid cyan"}}/>
+    <Form.Control type="password" placeholder="confirm Password" required name="confirmpassword" value={user.confirmpassword} onChange = {HandleChange} style={{border : "1px solid cyan"}}/>
   </Form.Group>
-
+  <b>{loginE}</b>
 <hr/>
 
-  <Button variant="info" type="submit" onClick = {HandleClick}>
+<Button variant="contained" color="secondary" type="submit" onClick = {HandleClick} block style ={{width : "100%"}} >
     Signup
   </Button>
-
+  <hr/>
+  <center style={{background : "white"}}><p>already have an account ? <a href="/login">login</a></p></center>
 </Form>
 </div>
 
   );
 }
+
+
+const mapStateToProps = (store) => ({
+  loginE : store.userStore.loginE
+});
+
+export default connect(mapStateToProps,{
+  signupAction
+})(withRouter(Signup));
 
 
 

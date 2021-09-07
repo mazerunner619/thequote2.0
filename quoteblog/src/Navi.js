@@ -1,29 +1,43 @@
 import './App.css';
 import {Navbar, Nav, Spinner} from 'react-bootstrap'
-import { useContext } from 'react';
-import AuthContext from './context/authContext';
 import { FaUserCircle , FaQuoteRight, FaQuoteLeft } from 'react-icons/fa';
 import {LinkContainer} from 'react-router-bootstrap';
 import {BsChatQuoteFill} from 'react-icons/bs';
+import {MdNotificationsActive} from 'react-icons/md'
+import {Link} from 'react-router-dom'
+import { withRouter } from 'react-router-dom';
 
+
+//redux
+import  {connect} from 'react-redux'
+import {getLoggedUser, Logout} from './ReduxStore/actions/userActions'
 
 import axios from 'axios';
+import { useEffect, useState } from 'react';
+import {useHistory} from 'react-router'
 
-export default function Navi() {
+function Navi({
+  loggedUser,
+  loggedIn,
+  loading,
+  error ,
+  getLoggedUser, //from connect
+  Logout
+}){
+  
+  const hist = useHistory();
 
-  const {logged, getLogged,loggedUser,  getLoggedUser} = useContext(AuthContext);
-
-  async function logout(e){
-    e.preventDefault();
-    await axios.get('/user/logout');
-    getLogged();
-    getLoggedUser();
+    useEffect( ()=>{
+      getLoggedUser()
+  }, [loggedIn]);
+  
+  async function getLoggedOut(){
+    Logout(hist);
   }
-
 
   return (
 
-    <Navbar collapseOnSelect expand="lg" bg="light" variant="light" style= {{padding : "2%"}}>
+    <Navbar collapseOnSelect expand="lg"  variant="dark" style= {{padding : "2%", background :"#971243"}}>
   
   <Navbar.Brand href="/" >
   < FaQuoteLeft />{' '}The Quote{' '}<BsChatQuoteFill /> {' '}<FaQuoteRight />
@@ -34,13 +48,23 @@ export default function Navi() {
   <Navbar.Collapse id="responsive-navbar-nav">
 
  <Nav  style = {{marginLeft : "auto"}}>
+{
+  loggedIn && loggedUser &&
+  <LinkContainer to={{
+    pathname : "/notifications",
+    state : {userId : loggedUser._id}
+  }}>
+  <Nav.Link ><MdNotificationsActive style={{fontSize : "150%"}} />{loggedUser.notifications.length}</Nav.Link> 
+ </LinkContainer>
+}
 
-
-{logged === true && 
+{loggedIn && 
 <>
 {
-  loggedUser ?
-  <Nav.Link style = {{textDecoration : "underline"}}><FaUserCircle/>{' '+loggedUser.username}</Nav.Link> 
+  loggedUser?
+  // <LinkContainer to="/profile">
+  <Nav.Link ><FaUserCircle style={{fontSize : "150%"}}/>{' '+loggedUser.username}</Nav.Link> 
+  // </LinkContainer>
   :
   <Spinner animation="border" role="status">
   <span className="sr-only"></span>
@@ -50,9 +74,11 @@ export default function Navi() {
 </>
 }
 
-  {logged === false && 
+  {!loggedIn && 
   <>
-
+  {
+    !loading &&
+    <>
   <LinkContainer to ="/login">
       <Nav.Link>Login
       </Nav.Link>
@@ -62,15 +88,14 @@ export default function Navi() {
         <Nav.Link>Signup
         </Nav.Link>
     </LinkContainer>
-
+    </>
+ }
     </>
   }
 
-    {logged === true && 
-    <LinkContainer to = "/logout">
-        <Nav.Link onClick = {logout}>Logout
+    {loggedIn && 
+        <Nav.Link onClick = {getLoggedOut}>Logout
         </Nav.Link>
-    </LinkContainer>
 }
     
     </Nav>
@@ -79,10 +104,17 @@ export default function Navi() {
 
 </Navbar>
 
-
   );
 }
 
+const mapStateToProps = (store) => ({
+  loggedUser : store.userStore.loggedUser,
+  loggedIn : store.userStore.loggedIn,
+  loading : store.userStore.loading,
+  error : store.userStore.error
+});
+
+export default connect(mapStateToProps,{getLoggedUser,Logout})(withRouter(Navi));
 
 
 

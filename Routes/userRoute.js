@@ -1,166 +1,405 @@
+//edit a post <-> delete a post  <-> upload a post    => requires authorization
+//commment to a post <-> like a post => requires logged user
+
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
-const User = require('../Models/userModel');
 const jwt = require('jsonwebtoken');
+const authMW = require('../authMW');
+const sendNotification = require('../handlers/notifyHandler');
+//cloudinary and multer functions
+const {upload, uploadToCloud, fileUpload, uploadFromURL} = require('../handlers/cloudinary');
+const db = require('../Models');
 
-router.get('/current' ,async(req, res) => {
+
+function isLoggedIn(req, res, next){
     const token = req.cookies.token;
     if(token){
         const verified = jwt.verify(token, process.env.JWT_SECRET_KEY);
         if(verified){
-            const user = await User.findById(verified.userId);
-            res.send(user);
-            console.log('sent : '+user)
+            const clientID = req.params.userid;
+            if(clientID === verified.userId)
+            next();
+            else 
+            res.status(401).send('UNAUTHORIZED !');
+        }else{
+        res.status(401).send('UNAUTHORIZED !');
         }
-        else{
-            console.log('null');
-            res.send(null);
-        }
+    }else{
+        res.status(401).send('UNAUTHORIZED !');
     }
-    else{
-        console.log('null');
+}
+
+
+//============== send Friend Request ===========
+router.get('/request/:from/:to' , async (req, res, next) => {
+    try{
+        const {from, to} = req.params;
+        const receiver = await db.Client.findById(to);
+        if(!receiver){
+            return next({
+                mesage : 'Profile not found !'
+            });
+        }
+
+        const sender = await db.Client.findById(from);
+        const alreadyRequested = sender.sentRequests.filter(id => id.toString() === to);
+        if(alreadyRequested.length > 0){
+            return next({
+                mesage : 'Request already pending !'
+            });
+        }
+
+        const alreadyFriends = sender.friends.filter(id => id.toString() === to);
+        if(alreadyFriends.length > 0){
+            return next({
+                mesage : 'Already Friends !'
+            });
+        }
+
+        const newReq = await db.Request.create({
+            from,
+            to
+        });
+
+        sender.sentRequests.push(newReq._id);
+        receiver.receivedRequests.push(newReq._id);
+        //send notification to receiver===============================================
+        sendNotification(from, to, "sent you a friend request");
+        await sender.save();
+        await receiver.save();
+        console.log('request sent');
+        res.json(true);
+
+    }catch(error){
+        return next({
+            mesage : error.message
+        });
+    }
+});
+
+
+//============== Accept Friend Request ===========
+router.get('/:userid/requests/:reqid/accept' , async (req, res, next) => {
+    try{
+        const {userid, reqid} = req.params;
+        const req = await db.Request.findById(reqid);
+        if(!req){
+            return next({
+                mesage : 'Request not found, might have been unsent from the user'
+            });
+        }
+        if(req.to.toString() !== userid.toString() ){
+            return next({
+                message : 'unauthorized !!!'
+            });
+        }
+        const receiver = await db.Client.findById(userid); 
+        const alreadyFriends = receiver.friends.filter(id => id.toString() === req.from);
+        if(alreadyFriends.length > 0){
+            return next({
+                mesage : 'Already Friends !'
+            });
+        }        
+
+        const sender = await db.Client.findById(req.from);
+        req.accepted = true;
+        await req.save();
+        sender.friends.push(userid);
+        receiver.friends.push(req.from);   
+        //send notification to sender
+        sendNotification(userid,req.from, "accepted your friend request");
+        await sender.save();
+        await receiver.save();
+        console.log('request accepted');
+        res.json(true);
+
+    }catch(error){
+        return next({
+            mesage : error.message
+        });
+    }
+});
+
+//============== Reject Friend Request ===========
+router.get('/:userid/requests/:reqid/reject' , async (req, res, next) => {
+    try{
+        const {userid, reqid} = req.params;
+
+        const req = await db.Request.findById(reqid);
+        if(!req){
+            return next({
+                mesage : 'Request not found, might have been unsent from user'
+            });
+        }
+        
+        if(req.to.toString() !== userid.toString()){
+            return next({
+                message : 'unauthorized !!!'
+            });
+        }        
+        //remove the request from db
+        await db.Request.deleteOne({_id : reqid});
+
+        const sender = await db.Client.findById(req.from);
+        updatedSenderSentRequests = sender.sentRequests.filter( id => id.toString() !== reqid.toString());
+        sender.sentRequests = updatedSenderSentRequests;
+        const receiver = await db.Client.findById(userid);     
+        updatedReceiverReceivedRequests = receiver.receivedRequests.filter( id => id.toString() !== reqid.toString());
+        receiver.receivedRequests = updatedReceiverReceivedRequests;
+
+        await sender.save();
+        await receiver.save();
+        console.log('request rejected');
+        res.json(true);
+
+    }catch(error){
+        return next({
+            mesage : error.message
+        });
+    }
+});
+
+
+
+//================================search user by id
+router.get('/getuser/:userID' ,async(req, res) => {
+    try{
+        const user = await db.User.findById(req.params.userID);
+        res.send(user);
+    }catch(error){
+        console.log('get user route error ',error);
         res.send(null);
     }
 });
 
-//not used this middleware currently
 
-// async function checkUser(req, res, next){
-//     const token = req.cookies.token;
-//     if(token){
-//         const verified = jwt.verify(token,process.env.JWT_SECRET_KEY);
-//         if(verified){
-//             const user = await User.findById(verified.userId);
-//             console.log(user);
-//             res.locals.currentUser = user.username;
-//             next();
-//         }
-//         else{
-//             console.log('null');
-//             res.locals.currentUser = null;
-//             next()
-//         }
-//     }
-//     else{
-//         console.log('null');
-//         res.locals.currentUser = null;
-//         next()
-//     }
-// }
-
-// fetch all reg. users
-router.get('/' ,async(req, res) => {
+//========================================= upload post 
+router.post('/newpost/:userid',upload.single('image'),async(req, res, next) => {
     try{
-        const users = await User.find({});
-    res.send(users);
-    }catch(error){
-        res.send(error);
+        const FILE = req.file;
+        console.log(req.body);
+         console.log('new post uploadingnew post uploadingnew post uploading......',FILE);
+        const {userid} = req.params;
+        const {content} = req.body;
+        let image = {};
+if(FILE){
+        const {public_id, secure_url} = await uploadToCloud(FILE.path);   
+            image.imageID = public_id,
+            image.imageURL = secure_url
     }
+    else{
+        const {public_id, secure_url} = await uploadFromURL("https://source.unsplash.com/random/900%C3%97700/?pink,cloud,moon");   
+            image.imageID = public_id,
+            image.imageURL = secure_url        
+    }
+
+       const newPost = await db.Post.create({
+            uploader : userid,
+            content : content,
+            image : image
+        });
+
+        console.log('new post',newPost);
+
+    //add to users posts
+        const user = await db.Client.findById(userid);
+        user.posts.push(newPost._id);
+        await user.save();
+    return res.send(true);
+}catch(error){
+    return next({
+        message : error.message
+    });
+}
 });
 
-router.get('/del', async(req, res) => {
-    await User.deleteMany({});
-    res.send('cleared the user colletion');
-});
-
-
-//check if user is logged in ? By checking if a cookie is present on client side -> if present is it verified (jwt)
-
-router.get('/isLogged', async(req, res) => {
-    const token = req.cookies.token;
-    console.log(token);
+//===============================================DELETE POST
+router.delete('/:userid/delete/:postid', isLoggedIn,async (req, res, next) => {
     try{
+
+        console.log('n delete route');
+        console.log(req.params.userid);
+console.log(req.params.postid);
+        const {userid, postid} = req.params;
+        const post =  await db.Post.findById(postid);
+        console.log(post);
+        if(post.uploader.toString() !== userid.toString()){
+            return next({
+                message : "wait a minute .... Who are you !!!"
+            });
+    }
+    await db.Post.deleteOne({_id : postid});
+    const user = await db.Client.findById(userid);
+     const usersupdateposts = user.posts.filter( post => post.toString() !== postid.toString());
+     user.posts = usersupdateposts;
+     await user.save();
+
+    return res.json(true);
+    }catch(err){
+  return next({
+        message : err.message
+    }); 
+   }
+});
+
+//===========================LIKE | DISLIKE POST 
+router.post('/:userid/like/:postid', isLoggedIn,async (req, res, next) => {
+    try{
+
+        const {userid, postid} = req.params;
+        const post =  await db.Post.findById(postid);
+        const alreadyLiked = post.likes.filter( liker => liker.toString() === userid.toString());
+
+        if(alreadyLiked.length > 0){//dislike
+            const newLikes = post.likes.filter(liker => liker.toString() !== userid.toString());
+            post.likes = newLikes;
+            await post.save();
+
+        }else{//like
+            post.likes.push(userid);
+            sendNotification(userid,post.uploader,"liked your post");
+            await post.save();
+        }
+        res.json(true);
+    }catch(err){
+  return next({
+        message : err.message
+    }); 
+   }
+});
+
+//===================================COMMENT ON POST
+router.post('/:userid/comment/:postid', isLoggedIn,async (req, res, next) => {
+    try{
+        const {userid, postid} = req.params;
+        const {comment} = req.body;
+        const post =  await db.Post.findById(postid);
+        const user = await db.Client.findById(userid);
+
+        const eligible = user.friends.filter(fid => fid.toString() === userid.toString());
+        if(!eligible.length){
+            return next({
+                message : "you can comment only to posts of your friends"
+            });
+        }
+        const newComment =  await db.Comment.create({
+            comment,
+            commentBy : userid,
+            commentTo : post.uploader    
+        });
+
+        post.comments.push(newComment._id);
+        sendNotification(userid,post.uploader,"commented on your post");
+        res.json(true);
+    }catch(err){
+  return next({
+        message : err.message
+    }); 
+   }
+});
+
+
+//=======================================EDIT POST 
+router.post('/:userid/edit/:postid',isLoggedIn,async (req, res, next) => {
+try{
+    console.log('n edut route');
+    const {userid, postid} = req.params;
+    const {content} = req.body;
+    const post =  await db.Post.findById(postid);
+    if(post.uploader.toString() !== userid.toString()){
+        return next({
+            message : "F*CK you :)"
+        });
+}
+    post.content = content;
+    await post.save();
+    res.json(true);
+}catch(err){
+    console.log(err.message);
+    return next({
+        message : err.message
+    });
+}
     
-        if(!token) {
-            console.log('not logged in');
-            return res.json(false);
-        }
-
-        //else verify the token with jwt secret key
-        jwt.verify( token, process.env.JWT_SECRET_KEY );
-        
-        console.log('logged in');
-        res.json(true);  ///cookie is present with this token
-    }catch(error){
-        console.log(error);
-        res.json(false);
-    }
-})
-
-//login user => creatw token when user logs in successfully
-router.post('/login', async(req, res) => {
-
-    const {username, password } = req.body;
-
-    console.log('in user login router => user : '+req.body.username);
-
-    try{
-        const user = await User.findOne({username});
-        if(!user){
-            res.send('wrong username');
-        }
-
-        else {
-            if(await bcrypt.compare(password,user.password)){
-                //jwt work
-
-                const token = jwt.sign({
-                   userId : user._id,
-                },
-                process.env.JWT_SECRET_KEY 
-                );
-
-                //send the token to browser cookie
-                console.log('logged in as '+user.username);
-                res.cookie( "token", token, {httpOnly : true}).send();
-            }
-            else{
-                res.send('wrong password')
-            }
-        }
-
-    }
-    catch(error){
-        res.send('serverside ErrOR'+error);
-    }
-      
 });
 
 
-//signup user
-router.post('/signup', async(req, res) => {
-    const {username, password } = req.body;
+//==================================== GET NOTIFICATIONs by userID
+router.get('/notifications/:userid',async (req, res, next) => {
     try{
-        const user = await User.findOne({username});
-        if(!user){
-            if( password.length < 7)
-            return res.send('password too short')
-            
-                const newU = new User({
-                    username, 
-                    password :  await bcrypt.hash(password, 10)
-                });
+        console.log('notifications :=>', req.params.userid);
+        const {userid} = req.params;
+        const user = await db.Client.findById(userid)
+        .populate({path : "notifications"});
+        const data = user.notifications;
+        console.log('notifications :=> ',data);
+        res.send(data);
+    }catch(err){
+        console.log(err.message);
+        return next({
+            message : err.message
+        });
+    }
+});
 
-                newU.save();
-                console.log('registered ' + newU)
-                res.send('registered successfully');
-        }
-        else{
-            console.log('seems username is already taken !')
-            res.send('seems username is already taken !')
-        }
+//==================================== DELETE ALL NOTIFICATIONS by user id
+router.post('/:userid/notification/deleteall',isLoggedIn, async (req, res, next) => {
+    try{
+        const {userid} = req.params;
+        const user = await db.Client.findById(userid);
+        user.notifications = [];
+        await user.save();
+        let notices = await db.Notification.find({});
+        console.log('initial',notices.length);
 
-    }catch(error){
-        console.log(error);
+        await db.Notification.deleteMany({to : userid});
+
+        notices = await db.Notification.find({});
+        console.log('final',notices.length);
+
+        res.json(true);
+    }catch(err){
+        console.log(err.message);
+        return next({
+            message : err.message
+        });
     }   
 });
 
-router.get('/logout' , (req, res) => {
+//==================================== DELETE NOTIFICATION by ID
+router.post('/:userid/notification/:nid/delete',isLoggedIn ,async (req, res, next) => {
+    try{
+        const {userid, nid} = req.params;
+        const user = await db.Client.findById(userid);
+        const noti = await db.Notification.findById(nid);
+        if(noti.to.toString() !== userid.toString()){
+            console.log('you cannot delete others notifications');
+            return res.json(false);
+        }
+        const updatedN = user.notifications.filter(id => id.toString() !== nid.toString());
+        user.notifications = updatedN;
+        await user.save();
+        await db.Notification.deleteOne({ _id : nid });
+        res.json(true);
+    }catch(err){
+        console.log(err.message);
+        return next({
+            message : err.message
+        });
+    }
+        
+    });
+
+
+
+//========================== LOGOUT
+router.post('/logout' , (req, res) => {
+    console.log('logged out');
     res.cookie("token", "",{
     httpOnly : true,
     expires : new Date(0)
-    }).send();
+    }).send('logged out successfully');
 })
 
 module.exports = router;

@@ -5,35 +5,23 @@ import Navi from './Navi';
 import {BrowserRouter, Route} from 'react-router-dom'
 import Login from './auths/login'
 import Signup from './auths/signup'
-import Edit from './editPost'
-import { useContext } from 'react';
-import AuthContext from './context/authContext';
+import Notification from './components/Notification'
+import Profile from './components/profile'
 
 function Router() {
 
-  const {logged} =  useContext(AuthContext);
-  console.log('logged or not : '+logged);
 
   return (
-
   <BrowserRouter>
       <Navi />
+      <Route path = "/" exact component={Quote} />
+      <Route path="/login" component = {Login}/>
+      <Route path="/signup" component={Signup} />
+      <Route path="/profile" component={Profile} />
+      <Route path="/notifications" component={Notification} />
       
-      <Route path = "/" exact>
-        <Quote />
-  </Route>
 
-  <Route path = "/edit/:id" component = {Edit} />
-
-  <Route path="/login" >
-        <Login />
-  </Route>
-
-  <Route path="/signup" >
-        <Signup  />
-  </Route>
-
-    </BrowserRouter>
+  </BrowserRouter>
   );
 
 }
