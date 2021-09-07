@@ -1,13 +1,12 @@
 import {useContext, useState } from 'react'
 import axios from 'axios'
 import {Form, Alert} from 'react-bootstrap'
-import { LinkContainer } from 'react-router-bootstrap';
 import { useHistory } from 'react-router';
 import {Button} from '@material-ui/core'
 import {connect} from 'react-redux'
 import {getAllPosts} from '../ReduxStore/actions/postActions'
 import {Login as LoginAction, getLoggedUser} from '../ReduxStore/actions/userActions'
-import {withRouter} from 'react-router-dom'
+import {withRouter, Link} from 'react-router-dom'
 
 function Login({LoginAction, loginE}) {
 
@@ -53,7 +52,7 @@ function Login({LoginAction, loginE}) {
     Login
   </Button>
 <hr/>
-<center style={{background : "white"}}><p>don't have an account ? <LinkContainer to="/signup">Signup</LinkContainer></p></center>
+don't have an account ? <Link to="/signup">signup</Link>
 </Form>
 </div>
 

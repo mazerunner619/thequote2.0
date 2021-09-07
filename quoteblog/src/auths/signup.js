@@ -3,10 +3,9 @@ import axios from 'axios'
 import {Form} from 'react-bootstrap'
 import {useHistory} from 'react-router-dom'
 import {Button} from '@material-ui/core'
-import { withRouter } from 'react-router-dom'
+import { withRouter, Link } from 'react-router-dom'
 import {Signup as signupAction} from '../ReduxStore/actions/userActions'
 import {connect} from 'react-redux'
-import { LinkContainer } from 'react-router-bootstrap';
 
 
  function Signup({
@@ -63,7 +62,7 @@ import { LinkContainer } from 'react-router-bootstrap';
     Signup
   </Button>
   <hr/>
-  <center style={{background : "white"}}><p>already have an account ? <LinkContainer to="/login">login</LinkContainer></p></center>
+  already registered ? <Link to="/login">login</Link>
 </Form>
 </div>
 
