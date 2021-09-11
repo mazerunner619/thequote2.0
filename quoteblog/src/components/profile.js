@@ -78,7 +78,6 @@ loggedUser && loggedUser.profilePicture && loggedUser.profilePicture.imageURL ?
 }
 <br />
 <p style={{ border : "1px solid #97124368", textAlign : "center", color : "white"}}><i>posts</i></p>
-{loggedUser._id}
 <div className="m-2">
 <Container fluid>
 <Row id="myuploads" style={{display : "none"}}>
