@@ -1,4 +1,7 @@
 const cloudinary = require('cloudinary');
+const sharp      = require("sharp");
+const sizeOf     = require("image-size");
+const streamifier = require('streamifier');
 const multer = require('multer');
 require('dotenv/config');
 const {Readable} = require("stream");
@@ -10,7 +13,7 @@ cloudinary.config({
 });
 
 var imageFilter = function (req, file, cb) {
-  
+
   if (!file.originalname.match(/\.(jpg|jpeg|png)$/i)) {
           return cb(new Error('Only image files are allowed!'), false);
       }
@@ -29,35 +32,16 @@ const storage = multer.diskStorage({
     }
 })
 
-const upload = multer({ storage : storage , fileFilter : imageFilter});
+const upload = multer({ storage : storage, fileFilter : imageFilter});
 
 //========================================================================
 
-// GETTING ANGLE OF IMAGE(ORIENTATION OF IMAGE)
-const getAngle = (number) => {
-	switch(number){
-		case "1" :
-			return(0);
-			
-		case "8" :
-			return(270);
-			
-		case "3" :
-			return(180);
-			
-		case "6" :
-			return(90);
-	}	
-}
-
+//to compress images > 3MB
 const fileUpload = async (file) => {
   try{
-    let imgobj = {
-      secure_url : null,
-      public_id : null
-    };
+    let imgobj = {};
      if(file){
-             if(file.size > 2000000){
+             if(file.size > 3000000){
                //compression of image => gices buffer data | hencse upload using uploadFromBuffer
                  let buffdata;
                  let dimensions = sizeOf(file.path);
@@ -89,8 +73,8 @@ const fileUpload = async (file) => {
                  var result = await uploadToCloud(file.path);
                 }
 
-             imgobj.secure_url = result.secure_url;
-             imgobj.public_id = result.public_id;
+             imgobj.dataurl = result.secure_url;
+             imgobj.dataid = result.public_id;
      }
      return imgobj;
     }catch(error){
@@ -99,22 +83,26 @@ const fileUpload = async (file) => {
 }
 
 
-//bufer upload
-  // Upload buffer image to cloudinary 
-  const uploadFromBuffer = (req) => {
-    return new Promise((resolve, reject) => {
-      let cld_upload_stream = cloudinary.v2.uploader.upload_stream({exif : true},
-       (error, result) => {
-         if (result) {
-           resolve(result);
-         } else {
-           reject(error);
-          }
-        }
-      );
-      streamifier.createReadStream(req).pipe(cld_upload_stream);
-    });
- };
+ // Upload buffer image to cloudinary 
+const uploadFromBuffer = (req) => {
+     return new Promise((resolve, reject) => {
+       let cld_upload_stream = cloudinary.v2.uploader.upload_stream({exif : true},
+        (error, result) => {
+          if (result) {
+            resolve(result);
+          } else {
+            reject(error);
+           }
+         }
+       );
+       streamifier.createReadStream(req).pipe(cld_upload_stream);
+     });
+  };
+
+
+
+
+//================================================================
 
 const uploadToCloud = (filePath) => {
     return new Promise((resolve, reject) => {
@@ -137,9 +125,7 @@ const uploadFromURL = (image_url) => {
 });
 }
 
-
-
-module.exports.fileUpload = fileUpload;
+module.exports.fileUpload = fileUpload ;
 module.exports.uploadFromURL = uploadFromURL;
 module.exports.upload = upload;
 module.exports.uploadToCloud = uploadToCloud;

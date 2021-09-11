@@ -11,6 +11,8 @@ import {
 } 
 from '../actionTypes';
 
+
+import {getLoggedUser} from './userActions'
 import axios from 'axios'
 
 
@@ -50,14 +52,16 @@ export const getPost = (postID) => async(dispatch)=>{
 }
 
 //get all posts of a user
-export const getMyPosts = (userID) => async(dispatch)=>{
+export const getMyPosts = () => async(dispatch)=>{
     try{
+
         dispatch({
             type : GET_MY_POSTS
         });
-
-        const {data} = await axios.get(`/getmyposts/${userID}`);
+        const currUser = await axios.get('/current');
+        const {data} = await axios.get(`/getmyposts/${currUser.data._id}`);
         dispatch({ type : GET_MY_POSTS_SUCCESS , payload : data });
+        console.log('from redux store',data)
         return data;
 
     }catch(error){

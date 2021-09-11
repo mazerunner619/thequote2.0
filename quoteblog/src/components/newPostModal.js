@@ -24,7 +24,6 @@ function NewPostModal({
 
 
   function changeForm(e){
-
 const {name, value} = e.target;
     if(name === "image"){
       setData({
@@ -38,7 +37,7 @@ const {name, value} = e.target;
   }
 
   async function handleClick(e){
-
+    console.log(data);
     e.preventDefault(); //prevent refresh / reload of page
     if(data.content){
     const dummyForm = new FormData();
@@ -46,8 +45,8 @@ const {name, value} = e.target;
     dummyForm.append('content',data.content);
     console.log('from frontend => ',data);
     await uploadNewPost(dummyForm, userid);
-    // getAllPosts();
-    setTimeout(()=>window.location.reload(), 2200);
+    await getAllPosts();
+    setTimeout(()=>window.location.reload(), 2000);
   }
 }
 
@@ -91,7 +90,10 @@ return (
       {!data.content && "you didn't write anything"}
     </Form.Text>
     <hr/>
-    <input type="file" id="imageUpload" name="image" onChange={changeForm} className="inputBtn"/>
+    <label for="file-upload" class="custom-file-upload-newpost">
+     Upload Image
+</label>
+<input id="file-upload" type="file" name="image" onChange={changeForm}/>
     <Form.Text className="text-muted">
       {!data.image && "you didn't choose an image"}
     </Form.Text>

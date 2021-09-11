@@ -13,7 +13,12 @@ import {
     LOGIN_SUCCESS,
     LOGIN_ERROR,
     SIGNUP,
-    SIGNUP_SUCCESS
+    SIGNUP_SUCCESS,
+    UPDATE_PROFILE_ERROR,
+     UPDATE_PROFILE_SUCCESS,
+     UPDATE_PROFILE,
+     UPDATE_PROFILE_REVERT
+
     } from '../actionTypes'
 
 const INITIAL_STATE = {
@@ -26,7 +31,10 @@ const INITIAL_STATE = {
     errorN : null,
     logging : false,
     loginE : null,
-    signingup : false
+    signingup : false,
+    updateP : false,
+    updatePS : false,
+    updatePE : null
 }
 
 export default function userReducer( state = INITIAL_STATE, action){
@@ -53,24 +61,29 @@ export default function userReducer( state = INITIAL_STATE, action){
         }
 
         case USER_NOTIFICATION : return{
+            ...state,
             loadingN : true,
         }
 
         case USER_NOTIFICATION_SUCCESS : return{
+            ...state,
             loadingN : false,
             notifications : action.payload
         }
 
         case USER_NOTIFICATION_ERROR : return{
+            ...state,
             loadingN : false,
             errorN : action.payload
         }
 
         case LOGIN : return{
+            ...state,
             logging : true
         }
 
         case LOGOUT : return{
+            ...state,
             loggedIn : false,
             loggedUser : {},
             notifications : []
@@ -78,18 +91,46 @@ export default function userReducer( state = INITIAL_STATE, action){
 
 
         case LOGIN_SUCCESS : return{
+            ...state,
             loggedIn : true
         }
         case LOGIN_ERROR : return{
+            ...state,
             loginE : action.payload
         }
 
         case SIGNUP : return{
+            ...state,
             signingup : true
         }
 
         case SIGNUP_SUCCESS : return{
+            ...state,
             signingup : false
+        }
+
+        case UPDATE_PROFILE : return{
+            ...state,
+            updateP : true
+        }
+        case UPDATE_PROFILE_SUCCESS : return{
+            ...state,
+            updateP : false,
+            updatePS : true,
+            updatePE : action.payload
+        }
+        case UPDATE_PROFILE_ERROR : return{
+            ...state,
+            updateP : false,
+            updatePS : false,
+            updatePE : action.payload
+
+        }
+        case UPDATE_PROFILE_REVERT : return{
+            ...state,
+            updateP : false,
+            updatePS : false,
+            updatePE : null
         }
 
         default : return state

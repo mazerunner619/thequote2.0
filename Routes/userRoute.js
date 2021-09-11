@@ -10,7 +10,67 @@ const sendNotification = require('../handlers/notifyHandler');
 //cloudinary and multer functions
 const {upload, uploadToCloud, fileUpload, uploadFromURL} = require('../handlers/cloudinary');
 const db = require('../Models');
+const Compress = require('react-image-file-resizer');
 
+const resizeFile = (file) =>
+  new Promise((resolve, reject) => {
+    Compress.imageFileResizer(
+      file,
+      300,
+      300,
+      "JPEG",
+      50,
+      0,
+      (uri) => {
+         console.log(uri);
+         resolve(uri);
+      },
+      "base64"
+    );
+  });
+
+//========================================= update profle info 
+router.post('/:userid/profile/update',upload.single('image'),async(req, res, next) => {
+    try{
+        console.log('updating profile');
+        const FILE = req.file;
+        const {userid} = req.params;
+        const {bio, username} = req.body;
+        let image = {};
+        const {dataid,dataurl} = await fileUpload(FILE);   
+        image.imageID = dataid;
+        image.imageURL = dataurl;
+        const user = await db.Client.findById(userid);
+        if(FILE)user.profilePicture=image;
+        if(bio.length > 0){
+            user.bio = bio;
+        }
+        
+        if(username.length > 0){
+            const alreadyexists = await db.Client.find({username : username});
+            if(alreadyexists.length > 0 && alreadyexists[0].username !== user.username){
+                console.log('name already exists');
+                return res.json({
+                    status : false,
+                    message : "username already exists"
+                });
+            }
+            user.username = username;
+        }
+        await user.save();
+        console.log('uodated profile');
+
+   return res.json({
+                    status : true,
+                    message : "your profile was updated"
+                });
+            }
+        catch(error){
+    return next({
+        message : error.message
+    });
+}
+});
 
 function isLoggedIn(req, res, next){
     const token = req.cookies.token;
@@ -178,20 +238,23 @@ router.get('/getuser/:userID' ,async(req, res) => {
 router.post('/newpost/:userid',upload.single('image'),async(req, res, next) => {
     try{
         const FILE = req.file;
-        console.log(req.body);
-         console.log('new post uploadingnew post uploadingnew post uploading......',FILE);
+        console.log('from backend initial file => ',FILE);
         const {userid} = req.params;
         const {content} = req.body;
         let image = {};
+
 if(FILE){
-        const {public_id, secure_url} = await uploadToCloud(FILE.path);   
-            image.imageID = public_id,
-            image.imageURL = secure_url
+        const fileRes = await fileUpload(FILE);   
+        console.log(fileRes, 'from backend fileupload');
+        console.log('final file => ',fileRes);
+            image.imageID = fileRes.dataid,
+            image.imageURL = fileRes.dataurl
     }
     else{
-        const {public_id, secure_url} = await uploadFromURL("https://source.unsplash.com/random/900%C3%97700/?pink,cloud,moon");   
-            image.imageID = public_id,
-            image.imageURL = secure_url        
+        const fileRes = await uploadFromURL("https://source.unsplash.com/random/900%C3%97700/?pink,cloud,moon");   
+        console.log(fileRes, 'from backend fileupload');
+        image.imageID = fileRes.public_id,
+        image.imageURL = fileRes.secure_url     
     }
 
        const newPost = await db.Post.create({

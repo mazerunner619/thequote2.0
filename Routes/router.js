@@ -87,16 +87,16 @@ router.get('/getpost/:id' , async (req, res) => {
 });
 
 //=================== POSTS BY userID=====================
-router.get('/getmyposts/:id' , async (req, res) => {
+router.get('/getmyposts/:id' , async (req, res, next) => {
     try{
-        const user = await db.User.findById(req.params.id)
+        const user = await db.Client.findById(req.params.id)
         .populate("posts");
         const posts = user.posts;
-        console.log('get my post route success');
+        console.log(' from backend =====> ',posts);
         res.send(posts);
     }catch(err){
         return next({
-            mesage : error.message
+            mesage : err.message
         });
     }
 });

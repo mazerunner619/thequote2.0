@@ -14,6 +14,9 @@ import Post from './components/Post'
 import {getAllPosts} from './ReduxStore/actions/postActions'
 import {getLoggedUser} from './ReduxStore/actions/userActions'
 import {likePost} from './ReduxStore/actions/authActions';
+import $ from 'jquery'
+
+
 function Quote({
   deleting,
   deleted,
@@ -72,7 +75,7 @@ return (
           userid = {loggedUser._id}
 />
 
-<div onMouseDown={newPostHandler}>
+<div onMouseDown={newPostHandler} >
   <BsFillPlusCircleFill className = "status"/>
 <Form id="newPost" className="p-2 mt-3 mb-3" >
 <FaUserCircle style={{fontSize : "200%", color : "pink"}}/>

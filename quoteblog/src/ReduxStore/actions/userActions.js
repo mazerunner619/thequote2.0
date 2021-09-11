@@ -14,6 +14,10 @@ import {
 USER_NOTIFICATION,
  USER_NOTIFICATION_SUCCESS,
   USER_NOTIFICATION_ERROR,
+  UPDATE_PROFILE,
+  UPDATE_PROFILE_SUCCESS,
+  UPDATE_PROFILE_ERROR,
+  UPDATE_PROFILE_REVERT,
   LOGOUT
 }
 from '../actionTypes'
@@ -24,7 +28,7 @@ import { useHistory } from 'react-router';
 export const getLoggedUser = () => async(dispatch)=>{
     try{
 
-        console.log('caslled gt log usrr');
+        console.log('called gt log usrr');
         dispatch({
             type : GET_LOGGED_USER
         });
@@ -142,6 +146,38 @@ export const getUserNotification = () => async(dispatch)=>{
         dispatch({ type : USER_NOTIFICATION_ERROR , payload : error.message });
     }
 }
+
+export const updateProfileInfo = (formdata) => async(dispatch)=>{
+    try{
+        dispatch({
+            type : UPDATE_PROFILE
+        });
+        const currUser = await axios.get('/current');
+        const {data} = await axios.post(`user/${currUser.data._id}/profile/update`, formdata);
+        if(data.status){
+            dispatch({
+                type : UPDATE_PROFILE_SUCCESS, payload : data.message
+            });
+        }else{
+            dispatch({
+                type : UPDATE_PROFILE_ERROR,
+                payload : data.message
+            });
+        }
+        setTimeout(()=>
+        dispatch({
+            type : UPDATE_PROFILE_REVERT,
+            payload : data.message
+        })
+        ,3000);
+    }catch(error){
+        console.log(error.message);
+        dispatch({ type : UPDATE_PROFILE_ERROR , payload : error.message });
+    }
+}
+
+
+
 
 
 

@@ -5,7 +5,7 @@ import {LinkContainer} from 'react-router-bootstrap';
 import {BsChatQuoteFill} from 'react-icons/bs';
 import {MdNotificationsActive} from 'react-icons/md'
 import { withRouter } from 'react-router-dom';
-
+import $ from 'jquery'
 
 //redux
 import  {connect} from 'react-redux'
@@ -13,6 +13,10 @@ import {getLoggedUser, Logout} from './ReduxStore/actions/userActions'
 
 import { useEffect } from 'react';
 import {useHistory} from 'react-router'
+
+$(function(){
+    $("#topper").fadeIn();
+});
 
 function Navi({
   loggedUser,
@@ -23,6 +27,9 @@ function Navi({
   Logout
 }){
   
+  
+
+
   const hist = useHistory();
 
     useEffect( ()=>{
@@ -35,7 +42,7 @@ function Navi({
 
   return (
 
-    <Navbar collapseOnSelect expand="lg"  variant="dark" style= {{padding : "2%", background :"#971243"}}>
+    <Navbar id="topper" collapseOnSelect expand="lg"  variant="dark" style= {{display : "none",padding : "2%", background :"#971243"}}>
   
   <Navbar.Brand href="/" >
   < FaQuoteLeft />{' '}The Quote{' '}<BsChatQuoteFill /> {' '}<FaQuoteRight />
@@ -60,9 +67,9 @@ function Navi({
 <>
 {
   loggedUser?
-  // <LinkContainer to="/profile">
+  <LinkContainer to="/profile">
   <Nav.Link ><FaUserCircle style={{fontSize : "150%"}}/>{' '+loggedUser.username}</Nav.Link> 
-  // </LinkContainer>
+  </LinkContainer>
   :
   <Spinner animation="border" role="status">
   <span className="sr-only"></span>
