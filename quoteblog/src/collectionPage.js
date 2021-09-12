@@ -9,7 +9,7 @@ import {BsFillPlusCircleFill} from 'react-icons/bs'
 
 import NewPostModal from './components/newPostModal'
 
-import  {connect} from 'react-redux'
+import  {connect, useDispatch, useSelector} from 'react-redux'
 import Post from './components/Post'
 import {getAllPosts} from './ReduxStore/actions/postActions'
 import {getLoggedUser} from './ReduxStore/actions/userActions'
@@ -17,47 +17,33 @@ import {likePost} from './ReduxStore/actions/authActions';
 import $ from 'jquery'
 
 
-function Quote({
-  deleting,
-  deleted,
-  deleteError,
-  allPosts,
-  loading,
-  ERR_loading,
-  getAllPosts,
-  getLoggedUser,
-  logged,
-  loggedUser,
-  likePost
-}){
-
+export default function Quote(){
 const hist = useHistory();
+const dispatch = useDispatch();
+const {loggedIn, loggedUser} = useSelector( state => state.userStore);
+const {allPosts, loading, ERR_loading} = useSelector( state => state.postStore);
+const {deleting, deleted, deleteError} = useSelector( state => state.authStore);
 
 
 const [newPostPage, setNewPostPage] = useState(false);
 
-  const [quotes, setQuotes] = useState([]);
-
   useEffect( () => {
-    getAllPosts();
-    getLoggedUser();
-    setQuotes(allPosts);
-    console.log(quotes);
-  }, [allPosts.length]);
+     dispatch(getAllPosts());
+  console.log('frontEnd rendered',allPosts);
+  }, [dispatch]);
 
 
   const newPostHandler = () => {
-    if(logged)
+    if(loggedIn)
     setNewPostPage(true);
     else 
     hist.push('/login');
   }
-
   const postLiker = (postid)=>{
     likePost(postid, loggedUser._id);
   }
 
-const quotesArray = quotes.slice(0).reverse().map(post => 
+const quotesArray = allPosts.slice(0).reverse().map(post => 
 <Post 
     likes ={post.likes.length}
     liked = { (post.likes.indexOf(loggedUser._id) !== -1 )? true:false}
@@ -71,7 +57,6 @@ return (
 <NewPostModal 
           show={newPostPage}
           onHide={() => setNewPostPage(false)}
-          message="hey thr"
           userid = {loggedUser._id}
 />
 
@@ -101,7 +86,7 @@ src="https://images.unsplash.com/photo-1604155669054-d41e0814c359?ixid=MnwxMjA3f
 }
 
 {
-  loading?
+  allPosts.length === 0?
   <Spinner variant="dark" size="lg"  animation="grow" style={{position : "absolute",left : "50%", top : "80%" }}/>
    :
   quotesArray
@@ -112,22 +97,3 @@ src="https://images.unsplash.com/photo-1604155669054-d41e0814c359?ixid=MnwxMjA3f
   </div>
       );
 }
-
-//state retrieve
-const mapStateToProps = (store) => ({
-  allPosts : store.postStore.allPosts,
-  loading : store.postStore.loading,
-  ERR_loading : store.postStore.error,
-  logged : store.userStore.loggedIn,
-  loggedUser : store.userStore.loggedUser,
-  deleting : store.authStore.deleting,
-  deleted : store.authStore.deleted,
-  deleteError : store.authStore.deleteError,
-});
-
-
-export default connect(mapStateToProps,{
-  getAllPosts,
-  getLoggedUser,
-  likePost
-})(Quote);

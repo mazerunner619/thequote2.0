@@ -45,9 +45,12 @@ mongoose.connect(process.env.CONN_STRING,
     }
  );
 
-
 if(process.env.NODE_ENV == "production"){
     app.use(express.static("quoteblog/build"));
+
+    app.get('*', (req, res) => {
+      res.sendFile(path.resolve(__dirname, 'quoteblog', 'build', 'index.html'));
+    });
 }
 
 

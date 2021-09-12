@@ -1,6 +1,6 @@
 import React,{useContext, useEffect, useState} from 'react';
 import axios from 'axios';
-import {Form, Card, Dropdown, Alert,Row, Col} from 'react-bootstrap';
+import {Form, Card, Dropdown, Image,Alert,Row, Col} from 'react-bootstrap';
 import { useHistory } from 'react-router';
 
 import {BsThreeDotsVertical, BsHeartFill, BsHeart} from 'react-icons/bs'
@@ -8,13 +8,15 @@ import {FaUserCircle} from 'react-icons/fa'
 import { RiSendPlaneLine,RiDeleteBinLine, RiEdit2Fill} from 'react-icons/ri'
 
 import EditPostModal from './editPostModal'
-import  {connect} from 'react-redux'
+import  {connect, useDispatch} from 'react-redux'
 import {getAllPosts} from '../ReduxStore/actions/postActions'
 import {deletePost} from '../ReduxStore/actions/authActions'
 
 function Post({
   post, getAllPosts,deletePost, deleting, deleted, deleteError, loggedUser , likeThisPost , liked , likes
  }){
+
+  const dispatch = useDispatch();
 
     const [editModal, setEditModal] = useState(false);
     const [LIKED, setLIKED] = useState(liked);
@@ -24,7 +26,7 @@ function Post({
       console.log('deleting');
       e.preventDefault();
       await deletePost(id, loggedUser._id);
-      setTimeout(() => window.location.reload(),3000)
+      dispatch(getAllPosts);
     }
   
     return(
@@ -33,7 +35,13 @@ function Post({
           <Card.Header>
             <Row>
               <Col>
-              <FaUserCircle className="mt-2" style={{fontSize:"150%"}}/>{' '}<i>{}</i>
+              {
+                post.uploader.profilePicture && post.uploader.profilePicture.imageURL ?
+                <Image src={post.uploader.profilePicture.imageURL} alt="uploader-pic" roundedCircle id="post-uploader"/>
+                :
+                <Image src="https://workhound.com/wp-content/uploads/2017/05/placeholder-profile-pic.png" roundedCircle id="post-uploader"/>
+              }
+              
                 </Col>
                 <Col style={{textAlign : "end"}}>
                 <Dropdown>

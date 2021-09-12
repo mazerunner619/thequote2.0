@@ -4,22 +4,25 @@ import {Button} from '@material-ui/core'
 import axios from 'axios';
 import { useHistory } from 'react-router';
 import {editPost} from '../ReduxStore/actions/authActions';
-import {connect} from 'react-redux'
+import {getAllPosts} from '../ReduxStore/actions/postActions'
 
-function MyVerticallyCenteredModal({
-  show, onHide, postId, postQuote, loggedUser, editing, edited, editError, editPost
+import {connect, useDispatch, useSelector} from 'react-redux'
+
+export default function MyVerticallyCenteredModal({
+  show, onHide, postId, postQuote
 }) {
+
+  const dispatch = useDispatch();
+  const {loggedUser} = useSelector( state => state.userStore);
+const {editing, edited, editError} = useSelector( state => state.authStore);
 
   const [ quote, setQuote ] = useState(postQuote);
 async function HandleClick(e){
 console.log(postId);
 e.preventDefault();
 if(quote){
- await editPost(postId, loggedUser._id, {content : quote});
-  window.location.reload();
-}
-else{
-  alert('you can\'t post an empty content !');
+ await dispatch(editPost(postId, loggedUser._id, {content : quote}));
+ await dispatch(getAllPosts());
 }
 }
 
@@ -50,9 +53,23 @@ return (
     </Form.Label>
     <Form.Control as="textarea" rows="5"  required   autocomplete="off" name = "quote" value = {quote} onChange = {(e)=>setQuote(e.target.value)} />
   </Form.Group>   
-  
+  {
+    !quote.length && <b>content is empty !</b>
+  }
+  {
+      editError &&
+      <Alert variant="danger">
+        {editError}
+    </Alert>
+}
+  {
+      edited &&
+      <Alert variant="success">
+        your post was updated successfully
+    </Alert>
+}
    </Form> 
-   
+
     </Modal.Body>
     <Modal.Footer>
     {!editing?
@@ -67,18 +84,5 @@ return (
 
   }
 
-
-  const mapStateToProps = (store) => ({
-
-    editing : store.authStore.editing,
-    edited : store.authStore.edited,
-    editError : store.authStore.editError,
-    loggedUser : store.userStore.loggedUser
-  
-  });
-  
-  export default connect(mapStateToProps,{
-    editPost, 
-  })(MyVerticallyCenteredModal);
   
   

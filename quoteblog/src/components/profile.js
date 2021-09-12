@@ -22,13 +22,15 @@ export default function Profile(){
   const dispatch = useDispatch();
   const {loggedUser,loading} = useSelector( state => state.userStore);
   const currUserPosts = useSelector( state => state.postStore.myPosts);
+  const loadingPosts = useSelector( state => state.postStore.loading);
+
 
   const [editProfileModal, setProfile] = useState(false);
   const [currimg, setcurrimg] = useState("");
 
 
   useEffect(()=>{
-    dispatch(getLoggedUser);
+    dispatch(getLoggedUser());
     dispatch(getMyPosts());
     console.log('from frontend user',loggedUser);
     console.log('from frontend posts',currUserPosts);
@@ -81,14 +83,22 @@ loggedUser && loggedUser.profilePicture && loggedUser.profilePicture.imageURL ?
 <div className="m-2">
 <Container fluid>
 <Row id="myuploads" style={{display : "none"}}>
-  {myPostsArr}
+  { loadingPosts ?
+          (<Spinner className = "ml-auto mr-auto" animation="grow" variant="info"  size="lg"/>)
+          :
+      (    myPostsArr.length ?
+          myPostsArr
+          :
+          <b style={{textAlign:"center"}}><i>you have no recent posts</i></b>
+          )
+
+}
 </Row>
 </Container>
 </div>
 
 
 
-      {/* <b style={{position : "absolute", top : "50%", left : "50%", transform : "translate(-50%, -50%)"}}><i>working on it</i></b> */}
 
       <ShowDP
         show={editModal}

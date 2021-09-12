@@ -62,6 +62,14 @@ input[type="file"] {
   padding: 3px;
 }
 
+#post-uploader {
+  width: 50px;
+}
+
+#topper {
+  display: none;
+}
+
 Form {
   position: relative;
   padding: 2%;
@@ -76,6 +84,7 @@ Form {
 }
 
 .profile-dp {
+  margin-top: 2%;
   width: 100px;
   height: 100px;
 }
@@ -233,6 +242,10 @@ Form {
 }
 
 @media screen and (max-width: 480px) {
+  #post-uploader {
+    width: 35px;
+  }
+
   .profile-dp {
     width: 70px;
     height: 70px;

@@ -7,6 +7,8 @@ import {MdNotificationsActive} from 'react-icons/md'
 import { withRouter } from 'react-router-dom';
 import $ from 'jquery'
 
+
+
 //redux
 import  {connect} from 'react-redux'
 import {getLoggedUser, Logout} from './ReduxStore/actions/userActions'
@@ -15,8 +17,12 @@ import { useEffect } from 'react';
 import {useHistory} from 'react-router'
 
 $(function(){
-    $("#topper").fadeIn();
+  setTimeout(()=>$("#topper").fadeToggle(),1000 );
+  setTimeout(()=>$("#topper").fadeToggle(),1500 );
+  setTimeout(()=>$("#topper").fadeToggle(),1700 );
+
 });
+
 
 function Navi({
   loggedUser,
@@ -42,17 +48,17 @@ function Navi({
 
   return (
 
-    <Navbar id="topper" collapseOnSelect expand="lg"  variant="dark" style= {{display : "none",padding : "2%", background :"#971243"}}>
+    <Navbar collapseOnSelect expand="lg"  variant="dark" style= {{padding : "2%", background :"#971243"}}>
   
-  <Navbar.Brand href="/" >
-  < FaQuoteLeft />{' '}The Quote{' '}<BsChatQuoteFill /> {' '}<FaQuoteRight />
+  <Navbar.Brand href="/" id="topper">
+  < FaQuoteLeft />{' '}The Quote{' '}<BsChatQuoteFill/> {' '}<FaQuoteRight />
   </Navbar.Brand>
 
   <Navbar.Toggle aria-controls="responsive-navbar-nav" />
 
   <Navbar.Collapse id="responsive-navbar-nav">
 
- <Nav  style = {{marginLeft : "auto"}}>
+ <Nav style = {{marginLeft : "auto"}}>
 {
   loggedIn && loggedUser &&
   <LinkContainer to={{

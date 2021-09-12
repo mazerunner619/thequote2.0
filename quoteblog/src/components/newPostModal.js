@@ -3,19 +3,19 @@ import {Modal,Alert , Form} from 'react-bootstrap'
 import {uploadNewPost} from '../ReduxStore/actions/authActions'
 import {getLoggedUser} from '../ReduxStore/actions/userActions'
 import {getAllPosts} from '../ReduxStore/actions/postActions'
-import {connect} from 'react-redux'
+import {connect, useDispatch,useSelector} from 'react-redux'
 import {Button} from '@material-ui/core'
 
-function NewPostModal({
-  uploading,
-  uploadError,
-  uploaded,
-  message,
+
+export default function NewPostModal({
   show,
   onHide,
-  uploadNewPost,
   userid
 }) {
+
+  const dispatch = useDispatch();
+const {uploading, uploaded, uploadError} = useSelector( state => state.authStore);
+
 
   const [ data, setData ] = useState({
     content : "",
@@ -44,9 +44,9 @@ const {name, value} = e.target;
     dummyForm.append('image',data.image);
     dummyForm.append('content',data.content);
     console.log('from frontend => ',data);
-    await uploadNewPost(dummyForm, userid);
-    await getAllPosts();
-    setTimeout(()=>window.location.reload(), 2000);
+    await dispatch(uploadNewPost(dummyForm, userid));
+     await dispatch(getAllPosts());
+  onHide();
   }
 }
 
@@ -117,16 +117,3 @@ return (
   </div>
 );
 }
-
-const mapStateToProps = (store) => ({
-
-  uploading : store.authStore.uploading,
-  uploadError : store.authStore.uploadError,
-  uploaded : store.authStore.uploaded,
-
-});
-
-export default connect(mapStateToProps,{
-  uploadNewPost, getLoggedUser,getAllPosts
-})(NewPostModal);
-
