@@ -10,9 +10,8 @@ import $ from 'jquery'
 
 
 //redux
-import  {connect} from 'react-redux'
+import  {connect, useDispatch, useSelector} from 'react-redux'
 import {getLoggedUser, Logout} from './ReduxStore/actions/userActions'
-
 import { useEffect } from 'react';
 import {useHistory} from 'react-router'
 
@@ -20,30 +19,22 @@ $(function(){
   setTimeout(()=>$("#topper").fadeToggle(),1000 );
   setTimeout(()=>$("#topper").fadeToggle(),1500 );
   setTimeout(()=>$("#topper").fadeToggle(),1700 );
-
 });
 
 
-function Navi({
-  loggedUser,
-  loggedIn,
-  loading,
-  error ,
-  getLoggedUser, //from connect
-  Logout
-}){
-  
-  
+export default function Navi(){
 
-
+  const dispatch = useDispatch();
+  const {loggedUser,loggedIn, loading,error} = useSelector( state => state.userStore);
+  
   const hist = useHistory();
 
     useEffect( ()=>{
-      getLoggedUser()
-  }, [loggedIn]);
+      dispatch(getLoggedUser());
+  }, [dispatch]);
   
   async function getLoggedOut(){
-    Logout(hist);
+    await dispatch(Logout(hist));
   }
 
   return (
@@ -118,14 +109,6 @@ function Navi({
   );
 }
 
-const mapStateToProps = (store) => ({
-  loggedUser : store.userStore.loggedUser,
-  loggedIn : store.userStore.loggedIn,
-  loading : store.userStore.loading,
-  error : store.userStore.error
-});
-
-export default connect(mapStateToProps,{getLoggedUser,Logout})(withRouter(Navi));
 
 
 

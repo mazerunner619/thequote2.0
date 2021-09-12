@@ -40,7 +40,7 @@ const [newPostPage, setNewPostPage] = useState(false);
     hist.push('/login');
   }
   const postLiker = (postid)=>{
-    likePost(postid, loggedUser._id);
+    dispatch(likePost(postid, loggedUser._id));
   }
 
 const quotesArray = allPosts.slice(0).reverse().map(post => 

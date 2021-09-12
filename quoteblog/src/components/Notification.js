@@ -1,7 +1,7 @@
 import {Card, Spinner, Alert, Button} from 'react-bootstrap';
 import {connect, useDispatch, useSelector} from 'react-redux'
 import {MdDelete} from 'react-icons/md'
-import {getUserNotification} from '../ReduxStore/actions/userActions'
+import {getLoggedUser, getUserNotification} from '../ReduxStore/actions/userActions'
 import { useEffect, useState } from 'react';
 import {useHistory} from 'react-router'
 import {withRouter} from 'react-router-dom'
@@ -24,7 +24,10 @@ const {loggedUser,loadingN,notifications,errorN} = useSelector( state => state.u
   
     async function deleteN(e,id){
       e.preventDefault();
-      await dispatch(deleteNotification(loggedUser._id,id));      
+      await dispatch(deleteNotification(loggedUser._id,id));  
+      await dispatch(getUserNotification());  
+      await dispatch(getLoggedUser());    
+    
     }
 
     const notiArr = notifications.slice(0).reverse().map( noti =>
