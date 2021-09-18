@@ -7,6 +7,9 @@ import {FiSend} from 'react-icons/fi'
 import {FaUserCircle} from 'react-icons/fa'
 import {BsFillPlusCircleFill} from 'react-icons/bs'
 
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
+
 import NewPostModal from './components/newPostModal'
 
 import  {connect, useDispatch, useSelector} from 'react-redux'
@@ -15,6 +18,12 @@ import {getAllPosts} from './ReduxStore/actions/postActions'
 import {getLoggedUser} from './ReduxStore/actions/userActions'
 import {likePost} from './ReduxStore/actions/authActions';
 import $ from 'jquery'
+
+
+// $(function(){
+//   setTimeout(()=>$("#quote-logo").animate({marginLeft : '50%'}),1500 );
+//   setTimeout(()=>$("#quote-logo").animate({marginLeft : '1%'}),1700 );
+// });
 
 
 export default function Quote(){
@@ -61,7 +70,13 @@ return (
 />
 
 <div onMouseDown={newPostHandler} >
-  <BsFillPlusCircleFill className = "status"/>
+  {/* <BsFillPlusCircleFill className = "status"/> */}
+  <div className="status">
+  <Fab color="secondary" aria-label="add">
+  <AddIcon />
+</Fab>
+</div>
+
 <Form id="newPost" className="p-2 mt-3 mb-3" >
 <FaUserCircle style={{fontSize : "200%", color : "pink"}}/>
 <div  style={{display : "inline-block"}}>
@@ -71,10 +86,6 @@ return (
   </div>
 </Form>
 </div>
-
-      {/* <img alt="background" className="body-img" 
-src="https://images.unsplash.com/photo-1604155669054-d41e0814c359?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1268&q=80"      /> */}
-
 
 {
       deleteError && <Modal variant = "danger" show={deleted}><Modal.Body> {deleteError}</Modal.Body></Modal>

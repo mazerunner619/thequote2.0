@@ -221,19 +221,6 @@ router.get('/:userid/requests/:reqid/reject' , async (req, res, next) => {
 });
 
 
-
-//================================search user by id
-router.get('/getuser/:userID' ,async(req, res) => {
-    try{
-        const user = await db.User.findById(req.params.userID);
-        res.send(user);
-    }catch(error){
-        console.log('get user route error ',error);
-        res.send(null);
-    }
-});
-
-
 //========================================= upload post 
 router.post('/newpost/:userid',upload.single('image'),async(req, res, next) => {
     try{

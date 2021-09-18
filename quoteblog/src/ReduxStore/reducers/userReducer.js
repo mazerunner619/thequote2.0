@@ -22,7 +22,11 @@ import {
     } from '../actionTypes'
 
 const INITIAL_STATE = {
-    loggedUser : {} ,
+    loggedUser : {},
+    findUser : {},
+    findUserS : false,
+    findUserE : null,
+    findUserLoading : false,
     loggedIn : false,
     loading : false,
     error : null,
@@ -58,6 +62,25 @@ export default function userReducer( state = INITIAL_STATE, action){
             loggedIn : false,
             loggedUser : {},
             error : action.payload
+        }
+
+        case GET_USER : return{
+            ...state,
+            findUserLoading : true
+        }
+
+        case GET_USER_SUCCESS : return{
+            ...state,
+            findUserLoading : false,
+            findUserS : true,
+            findUser : action.payload
+        }
+
+        case GET_USER_ERROR : return{
+            ...state,
+            findUserLoading : false,
+            findUserS : {},
+            findUserE : action.payload
         }
 
         case USER_NOTIFICATION : return{

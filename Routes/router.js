@@ -5,22 +5,19 @@ const db = require('../Models');
 const bcrypt = require('bcrypt');
 
 
-//========================= search user by username
+//========================= search users by username
 router.get('/search/:username' , async (req, res, next) => {
     try{
         const {username} = req.params;
+        console.log(`search request for ${username} => `);
         const user = await db.Client.find({});
         const searching = user.filter( info => {
             const uname = info.username.toLowerCase();
-            return (uname.indexOf(username.toLowerCase()) === 0);
+            return (uname.indexOf(username.toLowerCase()) !== -1);
         }); 
-        
-        if(searching.length>0){
-            //found
-            res.send(searching);
-        }
-        //not found
-        res.json(false);
+        console.log(searching.length);
+        console.log(`search request for ${username}`);
+        res.send(searching);
     }catch(error){
         return next({
             mesage : error.message
@@ -28,6 +25,30 @@ router.get('/search/:username' , async (req, res, next) => {
     }
 });
 
+//================================search user by id
+router.get('/getuser/:userID' ,async(req, res) => {
+    try{
+        const user = await db.Client.findById(req.params.userID)
+        .select('-password');
+                res.send(user);
+    }catch(error){
+        console.log('get user route error ',error);
+        res.send(null);
+    }
+});
+
+//================================search user by id
+// router.get('/getS' ,async(req, res) => {
+//     try{
+//         const user = await db.Client.find({})
+//         .select('-password');
+//         // .populate({ path : "posts friends"});
+//         res.send(user);
+//     }catch(error){
+//         console.log('get user route error ',error);
+//         res.send(null);
+//     }
+// });
 
 //===================== CURRENT LOGGED USER if any
 router.get('/current' ,async(req, res, next) => {

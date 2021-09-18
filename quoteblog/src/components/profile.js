@@ -23,6 +23,7 @@ export default function Profile(){
   const {loggedUser,loading} = useSelector( state => state.userStore);
   const currUserPosts = useSelector( state => state.postStore.myPosts);
   const loadingPosts = useSelector( state => state.postStore.loading);
+  const userPostsS = useSelector( state => state.postStore.userPostsS);
 
 
   const [editProfileModal, setProfile] = useState(false);
@@ -83,15 +84,11 @@ loggedUser && loggedUser.profilePicture && loggedUser.profilePicture.imageURL ?
 <div className="m-2">
 <Container fluid>
 <Row id="myuploads" style={{display : "none"}}>
-  { loadingPosts ?
-          (<Spinner className = "ml-auto mr-auto" animation="grow" variant="info"  size="lg"/>)
-          :
-      (    myPostsArr.length ?
+  {  userPostsS && 
+  myPostsArr.length ?
           myPostsArr
           :
           <b style={{textAlign:"center"}}><i>you have no recent posts</i></b>
-          )
-
 }
 </Row>
 </Container>

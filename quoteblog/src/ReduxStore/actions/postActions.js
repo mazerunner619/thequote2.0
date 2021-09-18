@@ -7,7 +7,10 @@ import {
     GET_POST_SUCCESS,
     GET_MY_POSTS,
     GET_MY_POSTS_ERROR,
-    GET_MY_POSTS_SUCCESS
+    GET_MY_POSTS_SUCCESS,
+    GET_USER_POSTS,
+    GET_USER_POSTS_SUCCESS,
+    GET_USER_POSTS_ERROR
 } 
 from '../actionTypes';
 
@@ -67,6 +70,23 @@ export const getMyPosts = () => async(dispatch)=>{
     }catch(error){
         console.log(error.message);
         dispatch({ type : GET_MY_POSTS_ERROR , payload : error.message });
+    }
+}
+
+//get all posts of a user
+export const getUserPosts = (id) => async(dispatch)=>{
+    try{
+
+        dispatch({
+            type : GET_USER_POSTS
+        });
+        const {data} = await axios.get(`/getmyposts/${id}`);
+        dispatch({ type : GET_USER_POSTS_SUCCESS , payload : data });
+        console.log('from redux store',data)
+        return data;
+    }catch(error){
+        console.log(error.message);
+        dispatch({ type : GET_USER_POSTS_ERROR , payload : error.message });
     }
 }
 

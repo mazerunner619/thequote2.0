@@ -70,6 +70,14 @@ input[type="file"] {
 #topper {
   display: none;
 }
+.react-icons {
+  color: white;
+  font-size: 150%;
+}
+
+#quote-logo {
+  margin-left: -1000px;
+}
 
 Form {
   position: relative;
@@ -110,13 +118,9 @@ Form {
 .status {
   display: none;
   z-index: 1;
-  padding: 1px;
-  font-size: 350%;
   position: fixed;
   right: 4%;
   bottom: 4%;
-  color: #971243;
-  border: 1px solid #971243;
   border-radius: 50%;
   transition-duration: 0.3s;
   box-shadow: 5px 5px 10px black;

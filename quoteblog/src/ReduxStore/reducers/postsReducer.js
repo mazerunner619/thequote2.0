@@ -9,12 +9,20 @@ import {
 
     GET_POST,
     GET_POST_SUCCESS,
-    GET_POST_ERROR 
+    GET_POST_ERROR,
+
+    GET_USER_POSTS,
+    GET_USER_POSTS_SUCCESS,
+    GET_USER_POSTS_ERROR
+
     } from '../actionTypes'
 
 const INITIAL_STATE = {
     allPosts : [],
     myPosts : [],
+    userPosts  : [],
+    userPostsL : false,
+    userPostsS : false,
     post : {},
     loading : false,
     error : null
@@ -42,19 +50,41 @@ export default function postsReducer( state = INITIAL_STATE, action){
 
         case GET_MY_POSTS : return{
             ...state,
-            loading : true
+            userPostsL : true,
+            userPostsS : false,
         }
 
         case GET_MY_POSTS_SUCCESS : return{
             ...state,
-            loading : false,
-            myPosts : action.payload
+            userPostsL : false,
+            myPosts : action.payload,
+            userPostsS : true
         }
 
         case GET_MY_POSTS_ERROR : return{
             ...state,
-            loading : false,
-            error : action.payload
+            userPostsL : false,
+            error : action.payload,
+            userPostsS : false
+        }
+
+        case GET_USER_POSTS : return{
+            ...state,
+        userPostsL : true,
+        userPostsS : false,
+        }
+
+        case GET_USER_POSTS_SUCCESS : return{
+            ...state,
+            userPosts  : action.payload,
+            userPostsL : false,
+            userPostsS : true,
+        }
+
+        case GET_USER_POSTS_ERROR : return{
+            ...state,
+            userPostsL : false,
+            userPostsS : false,
         }
 
         case GET_POST : return {

@@ -7,6 +7,8 @@ import Login from './auths/login'
 import Signup from './auths/signup'
 import Notification from './components/Notification'
 import Profile from './components/profile'
+import Search from './components/search'
+import ProfileViewer from './components/profileViewer'
 
 function Router() {
 
@@ -19,7 +21,8 @@ function Router() {
       <Route path="/signup" component={Signup} />
       <Route path="/profile" component={Profile} />
       <Route path="/notifications" component={Notification} />
-      
+      <Route path="/search/:what" component={Search} />
+      <Route path="/show/:id/profile" component={ProfileViewer} />      
 
   </BrowserRouter>
   );
