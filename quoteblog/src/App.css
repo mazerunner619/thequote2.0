@@ -258,6 +258,10 @@ Form {
 }
 
 @media screen and (max-width: 480px) {
+  * {
+    font-size: 95%;
+  }
+
   #post-uploader {
     width: 35px;
     height: 35px;

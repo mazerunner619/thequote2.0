@@ -23,24 +23,10 @@ export default function ProfileViewer({match}){
   
    const [editModal, setEditModal] = useState(false);
 
-//   const myPostsArr = userPosts.map(x => 
-//   <Col sm={4} md={3} lg={3} xs={4} className="p-0">
-
-//     <div className="square">
-//   <img  className="content" onClick = {()=>{
-//       setcurrimg(x.image.imageURL);
-//     setEditModal(true);
-// }}
-
-// src={x.image.imageURL} alt="profile pic"/>
-// </div>
-//  </Col>
-//     );
-
 
   return (
 
-    <div id="fullPage" style={{background : "black"}}>
+    <div id="fullPage" style={{background : "rgba(0,0,0,0.8)"}}>
 
       {
         findUserLoading ?
@@ -64,20 +50,6 @@ findUser && findUser.profilePicture && findUser.profilePicture.imageURL ?
     <br/><br/><span ><i>{findUser.username}</i></span>{'  '}
     <p className="m-1"><i className="text-muted">{findUser.bio ? findUser.bio : "add a short bio...."}</i></p>
 </div>
-{/* <p style={{ border : "1px solid #97124368", textAlign : "center", color : "white"}}><i>posts</i></p>
-<div className="m-2">
-<Container fluid>
-<Row>
-  { userPostsS &&
-      myPostsArr.length ?
-          myPostsArr
-          :
-          <b style={{textAlign:"center"}}><i>no recent posts by {findUser.username}</i></b>
-
-}
-</Row>
-</Container>
-</div> */}
 </>
 }
 

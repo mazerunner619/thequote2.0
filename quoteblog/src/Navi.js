@@ -114,7 +114,7 @@ export default function Navi(){
             <InputBase
               placeholder="search..."
               onChange={(e)=>setSearch(e.target.value)}
-              onKeyDown = {(e) => search.length && e.key === "Enter" && handleSearch(e.target.value)}
+              onKeyDown = {(e) => search.length &&   e.key === "Enter" && handleSearch(e.target.value)}
               classes={{
                 root: classes.inputRoot,
                 input: classes.inputInput,

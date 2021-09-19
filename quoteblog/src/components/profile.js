@@ -54,7 +54,7 @@ export default function Profile(){
 //  </Col>
 //     );
   return (
-    <div id="fullPage" style={{background : "black"}}>
+    <div id="fullPage" style={{background : "rgba(0,0,0,0.8)"}}>
       {
         loading ?
         <Spinner style={{ position:"absolute", left : "50%", top : "50%"}} animation="border" variant="info"  size="lg"/>
@@ -73,33 +73,14 @@ loggedUser && loggedUser.profilePicture && loggedUser.profilePicture.imageURL ?
 :
 <Image onClick = {()=>{
 }} className="profile-dp" src="https://tse2.mm.bing.net/th?id=OIP.2YwsAzk2qcqjdw9KRoYjgAHaE8&pid=Api&P=0&w=228&h=153" roundedCircle alt="profile-pic"/>
-}
-
-<br/><br/><span ><i>{loggedUser.username}</i></span>{'  '}
-    <p className="m-1"><i className="text-muted">{loggedUser.bio ? loggedUser.bio : "add a short bio...."}</i></p>
-
-
-    <div style={{float :"right", cursor : "pointer"}} ><i onClick = {()=>setProfile(true)}>EDIT {' '}<FiEdit3 /></i></div>
-
+}<br/>
+<span >
+  <i>{loggedUser.username}</i></span>{'  '}
+  <div style={{float :"right", cursor : "pointer",  color : "white"}} ><i onClick = {()=>setProfile(true)}>update profile{' '}<FiEdit3 /></i></div>
+  <p style={{overflowWrap : "break-word"}} className="m-1"><i className="text-muted">{loggedUser.bio ? loggedUser.bio : "add a short bio...."}</i></p>
 </div>
 </>
 }
-<br />
-
-{/* 
-<p style={{ border : "1px solid #97124368", textAlign : "center", color : "white"}}><i>posts</i></p>
-<div className="m-2">
-<Container fluid>
-<Row id="myuploads" style={{display : "none"}}>
-  {  userPostsS && 
-  myPostsArr.length ?
-          myPostsArr
-          :
-          <b style={{textAlign:"center"}}><i>you have no recent posts</i></b>
-}
-</Row>
-</Container>
-</div> */}
 
 {
   !loading && loggedUser && loggedUser.posts &&
