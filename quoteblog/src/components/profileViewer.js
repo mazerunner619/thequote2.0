@@ -4,6 +4,7 @@ import  ShowDP from './profilePicOpen'
 import {getUserPosts} from '../ReduxStore/actions/postActions'
 import {getUser} from '../ReduxStore/actions/userActions'
 import {useSelector, useDispatch} from 'react-redux'
+import Menu from '../components/profileMenu'
 import $ from 'jquery'
 
 export default function ProfileViewer({match}){
@@ -22,18 +23,21 @@ export default function ProfileViewer({match}){
   
    const [editModal, setEditModal] = useState(false);
 
-  const myPostsArr = userPosts.map(x => 
-  <Col sm={4} md={3} lg={3} xs={4} className="p-0">
+//   const myPostsArr = userPosts.map(x => 
+//   <Col sm={4} md={3} lg={3} xs={4} className="p-0">
 
-    <div className="square">
-  <img  className="content" onClick = {()=>{
-      setcurrimg(x.image.imageURL);
-    setEditModal(true);
-}}
-src={x.image.imageURL} alt="profile pic"/>
-</div>
- </Col>
-    );
+//     <div className="square">
+//   <img  className="content" onClick = {()=>{
+//       setcurrimg(x.image.imageURL);
+//     setEditModal(true);
+// }}
+
+// src={x.image.imageURL} alt="profile pic"/>
+// </div>
+//  </Col>
+//     );
+
+
   return (
 
     <div id="fullPage" style={{background : "black"}}>
@@ -60,10 +64,7 @@ findUser && findUser.profilePicture && findUser.profilePicture.imageURL ?
     <br/><br/><span ><i>{findUser.username}</i></span>{'  '}
     <p className="m-1"><i className="text-muted">{findUser.bio ? findUser.bio : "add a short bio...."}</i></p>
 </div>
-
-<br />
-
-<p style={{ border : "1px solid #97124368", textAlign : "center", color : "white"}}><i>posts</i></p>
+{/* <p style={{ border : "1px solid #97124368", textAlign : "center", color : "white"}}><i>posts</i></p>
 <div className="m-2">
 <Container fluid>
 <Row>
@@ -76,21 +77,19 @@ findUser && findUser.profilePicture && findUser.profilePicture.imageURL ?
 }
 </Row>
 </Container>
-</div>
+</div> */}
 </>
 }
 
-
-
-
-
+{
+  !findUserLoading && findUser && findUser.posts &&
+  <Menu posts = {findUser.posts} requests={null} friends = {findUser.friends} profile = {false}/>
+}
       <ShowDP
         show={editModal}
         onHide={() => setEditModal(false)}
         image ={currimg}
       />
-      
-
       </div>
 
   );

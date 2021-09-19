@@ -27,7 +27,13 @@ const {loggedUser,loadingN,notifications,errorN} = useSelector( state => state.u
       await dispatch(deleteNotification(loggedUser._id,id));  
       await dispatch(getUserNotification());  
       await dispatch(getLoggedUser());    
-    
+    }
+
+    async function deleteAllN(e){
+      e.preventDefault();
+      await dispatch(deleteAllNotifications(loggedUser._id));  
+      await dispatch(getUserNotification());  
+      await dispatch(getLoggedUser());    
     }
 
     const notiArr = notifications.slice(0).reverse().map( noti =>
@@ -51,10 +57,9 @@ const {loggedUser,loadingN,notifications,errorN} = useSelector( state => state.u
 
           <IoIosArrowBack className="m-3" onClick={history.goBack} style={{fontSize : "300%",borderRadius : "50%", border : "1px solid black", color : "#0d47a1", float : "left", boxShadow :" 15px 5px 10px grey"}}/>
           {
-            notifications.length>0 && <Button variant="danger" style={{ display : "inline",float : "right"}} className="mr-3 mt-2" onClick = {async() => {
-            await dispatch(deleteAllNotifications(loggedUser._id));
-          }
-          }><MdDelete/> clear all </Button> 
+            notifications.length>0 && <Button variant="danger" style={{ display : "inline",float : "right"}} className="mr-3 mt-2" 
+            onClick = {(e) => deleteAllN(e)}
+            ><MdDelete/> clear all </Button> 
         }
 
  {errorN && <Alert variant="danger">{errorN}</Alert>}

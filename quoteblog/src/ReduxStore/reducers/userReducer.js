@@ -17,7 +17,7 @@ import {
     UPDATE_PROFILE_ERROR,
      UPDATE_PROFILE_SUCCESS,
      UPDATE_PROFILE,
-     UPDATE_PROFILE_REVERT
+     UPDATE_PROFILE_REVERT,
 
     } from '../actionTypes'
 
@@ -38,7 +38,9 @@ const INITIAL_STATE = {
     signingup : false,
     updateP : false,
     updatePS : false,
-    updatePE : null
+    updatePE : null,
+    userRequests : [],
+    userConnections : []
 }
 
 export default function userReducer( state = INITIAL_STATE, action){
@@ -155,6 +157,7 @@ export default function userReducer( state = INITIAL_STATE, action){
             updatePS : false,
             updatePE : null
         }
+
 
         default : return state
     }

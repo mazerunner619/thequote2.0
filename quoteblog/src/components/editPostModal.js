@@ -23,6 +23,7 @@ e.preventDefault();
 if(quote){
  await dispatch(editPost(postId, loggedUser._id, {content : quote}));
  await dispatch(getAllPosts());
+ onHide();
 }
 }
 

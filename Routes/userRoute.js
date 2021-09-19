@@ -29,6 +29,25 @@ const resizeFile = (file) =>
     );
   });
 
+  
+function isLoggedIn(req, res, next){
+    const token = req.cookies.token;
+    if(token){
+        const verified = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        if(verified){
+            const clientID = req.params.userid;
+            if(clientID === verified.userId)
+            next();
+            else 
+            res.status(401).send('UNAUTHORIZED !');
+        }else{
+        res.status(401).send('UNAUTHORIZED !');
+        }
+    }else{
+        res.status(401).send('UNAUTHORIZED !');
+    }
+}
+
 //========================================= update profle info 
 router.post('/:userid/profile/update',upload.single('image'),async(req, res, next) => {
     try{
@@ -72,65 +91,59 @@ router.post('/:userid/profile/update',upload.single('image'),async(req, res, nex
 }
 });
 
-function isLoggedIn(req, res, next){
-    const token = req.cookies.token;
-    if(token){
-        const verified = jwt.verify(token, process.env.JWT_SECRET_KEY);
-        if(verified){
-            const clientID = req.params.userid;
-            if(clientID === verified.userId)
-            next();
-            else 
-            res.status(401).send('UNAUTHORIZED !');
-        }else{
-        res.status(401).send('UNAUTHORIZED !');
-        }
-    }else{
-        res.status(401).send('UNAUTHORIZED !');
-    }
-}
 
 
 //============== send Friend Request ===========
-router.get('/request/:from/:to' , async (req, res, next) => {
+router.post('/request/:userid/:to' , isLoggedIn ,async (req, res, next) => {
+    console.log('sending request =>');
     try{
-        const {from, to} = req.params;
+        const {userid, to} = req.params;
+
         const receiver = await db.Client.findById(to);
         if(!receiver){
-            return next({
-                mesage : 'Profile not found !'
+            return res.json({
+                mesage : 'Profile not found !',
+                status : false
             });
         }
 
-        const sender = await db.Client.findById(from);
-        const alreadyRequested = sender.sentRequests.filter(id => id.toString() === to);
+        const sender = await db.Client.findById(userid)
+        .populate({ path : "sentRequests"});
+        const alreadyRequested = sender.sentRequests.filter(id => id.to.toString() === to.toString());
         if(alreadyRequested.length > 0){
-            return next({
-                mesage : 'Request already pending !'
+            console.log('Request already pending !');
+            return res.json({
+                mesage : 'request already pending !',
+                status : false
             });
         }
 
         const alreadyFriends = sender.friends.filter(id => id.toString() === to);
         if(alreadyFriends.length > 0){
-            return next({
-                mesage : 'Already Friends !'
+            console.log('already friends  !');
+
+            return res.json({
+                mesage : 'already friends !',
+                status : false
             });
         }
 
         const newReq = await db.Request.create({
-            from,
+            from : userid,
             to
         });
 
         sender.sentRequests.push(newReq._id);
         receiver.receivedRequests.push(newReq._id);
         //send notification to receiver===============================================
-        sendNotification(from, to, "sent you a friend request");
+        sendNotification(userid, to, "sent you a friend request");
         await sender.save();
         await receiver.save();
         console.log('request sent');
-        res.json(true);
-
+        return res.json({
+            mesage : 'request sent !',
+            status : true
+        });
     }catch(error){
         return next({
             mesage : error.message
@@ -138,41 +151,57 @@ router.get('/request/:from/:to' , async (req, res, next) => {
     }
 });
 
-
 //============== Accept Friend Request ===========
-router.get('/:userid/requests/:reqid/accept' , async (req, res, next) => {
+router.post('/:userid/requests/:reqid/accept' , isLoggedIn,async (req, res, next) => {
+    console.log('accepting reqeust');
     try{
         const {userid, reqid} = req.params;
-        const req = await db.Request.findById(reqid);
-        if(!req){
-            return next({
+        const R = await db.Request.findById(reqid);
+        if(!R){
+            return res.json({
+                status : false,
                 mesage : 'Request not found, might have been unsent from the user'
             });
         }
-        if(req.to.toString() !== userid.toString() ){
-            return next({
+        if(R.to.toString() !== userid.toString() ){
+            console.log('unauthorized user');
+            return res.json({
+                status : false,
                 message : 'unauthorized !!!'
             });
         }
         const receiver = await db.Client.findById(userid); 
-        const alreadyFriends = receiver.friends.filter(id => id.toString() === req.from);
+        const alreadyFriends = receiver.friends.filter(id => id.toString() === R.from);
         if(alreadyFriends.length > 0){
-            return next({
-                mesage : 'Already Friends !'
+            console.log('already friends');
+            return res.json({
+                status : false,
+                message : 'already friends !!!'
             });
         }        
 
-        const sender = await db.Client.findById(req.from);
-        req.accepted = true;
-        await req.save();
+        const sender = await db.Client.findById(R.from);
+        await db.Request.findByIdAndDelete(reqid);
+        
         sender.friends.push(userid);
-        receiver.friends.push(req.from);   
-        //send notification to sender
-        sendNotification(userid,req.from, "accepted your friend request");
+        receiver.friends.push(R.from);
+
+        const newReceivedR = receiver.receivedRequests.filter( R => R.toString() !== reqid.toString() );
+        const newSentR = sender.sentRequests.filter( R => R.toString() !== reqid.toString());
+
+        receiver.receivedRequests = newReceivedR;
+        sender.sentRequests = newSentR;
+
+        sendNotification(userid,R.from, "accepted your friend request");
+
         await sender.save();
         await receiver.save();
+
         console.log('request accepted');
-        res.json(true);
+        res.json({
+            message : "request accepted",
+            status : true
+        });
 
     }catch(error){
         return next({
@@ -181,37 +210,56 @@ router.get('/:userid/requests/:reqid/accept' , async (req, res, next) => {
     }
 });
 
-//============== Reject Friend Request ===========
-router.get('/:userid/requests/:reqid/reject' , async (req, res, next) => {
+
+
+//============== DELETE Friend Request ===========
+router.post('/:userid/requests/:reqid/delete' , isLoggedIn,async (req, res, next) => {
+    console.log('deleting reqeust');
     try{
         const {userid, reqid} = req.params;
-
-        const req = await db.Request.findById(reqid);
-        if(!req){
-            return next({
-                mesage : 'Request not found, might have been unsent from user'
+        const R = await db.Request.findById(reqid);
+        if(!R){
+            return res.json({
+                status : false,
+                mesage : 'Request not found, might have been unsent from the user'
             });
         }
-        
-        if(req.to.toString() !== userid.toString()){
-            return next({
+        if(R.to.toString() !== userid.toString() ){
+            console.log('unauthorized user');
+            return res.json({
+                status : false,
                 message : 'unauthorized !!!'
             });
+        }
+        const receiver = await db.Client.findById(userid); 
+        const alreadyFriends = receiver.friends.filter(id => id.toString() === R.from);
+        if(alreadyFriends.length > 0){
+            console.log('already friends');
+            return res.json({
+                status : false,
+                message : 'already friends !!!'
+            });
         }        
-        //remove the request from db
-        await db.Request.deleteOne({_id : reqid});
 
-        const sender = await db.Client.findById(req.from);
-        updatedSenderSentRequests = sender.sentRequests.filter( id => id.toString() !== reqid.toString());
-        sender.sentRequests = updatedSenderSentRequests;
-        const receiver = await db.Client.findById(userid);     
-        updatedReceiverReceivedRequests = receiver.receivedRequests.filter( id => id.toString() !== reqid.toString());
-        receiver.receivedRequests = updatedReceiverReceivedRequests;
+        const sender = await db.Client.findById(R.from);
+        // R.accepted = false;
+        await db.Request.findByIdAndDelete(reqid);
 
+        const newReceivedR = receiver.receivedRequests.filter( R => R.toString() !== reqid.toString() );
+        const newSentR = sender.sentRequests.filter( R => R.toString() !== reqid.toString());
+
+        receiver.receivedRequests = newReceivedR;
+        sender.sentRequests = newSentR;
+
+        // sendNotification(userid,req.from, "accepted your friend request"); || do not send rejection notification
         await sender.save();
-        await receiver.save();
-        console.log('request rejected');
-        res.json(true);
+        await receiver.save();    
+
+        console.log('request deleted');
+        res.json({
+            message : "request deleted",
+            status : true
+        });
 
     }catch(error){
         return next({
@@ -441,8 +489,6 @@ router.post('/:userid/notification/:nid/delete',isLoggedIn ,async (req, res, nex
         
     });
 
-
-
 //========================== LOGOUT
 router.post('/logout' , (req, res) => {
     console.log('logged out');
@@ -453,4 +499,3 @@ router.post('/logout' , (req, res) => {
 })
 
 module.exports = router;
-

@@ -22,7 +22,11 @@ COMMENT,
  COMMENT_ERROR,
  REVERT_AUTH,
  DELETE_NOTIFICATION,
- DELETE_ALL_NOTIFICATION
+ DELETE_ALL_NOTIFICATION,
+ SEND_REQUEST,
+ DELETE_REQUEST,
+ ACCEPT_REQUEST
+ 
 } from '../actionTypes'
 
 export const uploadNewPost = (post, userid) => async(dispatch) => {
@@ -192,6 +196,44 @@ export const deleteNotification = (userId,notiId) => async(dispatch) => {
     }
 }
 
+export const sendRequest = (senderid, receiverid) => async(dispatch) => {
+    try{
+        console.log('dispatched send_req__');
+        dispatch({
+            type : SEND_REQUEST
+        });
+            await axios.post(`/user/request/${senderid}/${receiverid}`);
+           return true;
+    }catch(err){
+        console.log('delete noti error',err);
+    }
+}
+
+export const acceptRequest = (userid,reqid) => async(dispatch) => {
+    try{
+        console.log('dispatched accpt req');
+        dispatch({
+            type : ACCEPT_REQUEST
+        });
+            await axios.post(`user/${userid}/requests/${reqid}/accept`);
+            return true;
+    }catch(err){
+        console.log('accept req error',err);
+    }
+}
+
+export const deleteRequest = (userid,reqid) => async(dispatch) => {
+    try{
+        console.log('dispatched delete_noti');
+        dispatch({
+            type : DELETE_REQUEST
+        });
+        await axios.post(`user/${userid}/requests/${reqid}/delete`);
+        return true;
+    }catch(err){
+        console.log('delete req error',err);
+    }
+}
 
 
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { fade, makeStyles } from '@material-ui/core/styles';
-import InputBase from '@material-ui/core/InputBase';
+import {InputBase, IconButton, Badge} from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 
 import './App.css';
@@ -10,6 +10,10 @@ import {LinkContainer} from 'react-router-bootstrap';
 import {BsChatQuoteFill} from 'react-icons/bs';
 import {MdNotificationsActive} from 'react-icons/md'
 import { withRouter } from 'react-router-dom';
+
+import NotificationsIcon from '@material-ui/icons/Notifications';
+
+
 import $ from 'jquery'
 
 
@@ -110,7 +114,7 @@ export default function Navi(){
             <InputBase
               placeholder="search..."
               onChange={(e)=>setSearch(e.target.value)}
-              onKeyDown = {(e) => e.key === "Enter" && handleSearch(e.target.value)}
+              onKeyDown = {(e) => search.length && e.key === "Enter" && handleSearch(e.target.value)}
               classes={{
                 root: classes.inputRoot,
                 input: classes.inputInput,
@@ -123,7 +127,11 @@ export default function Navi(){
     pathname : "/notifications",
     state : {userId : loggedUser._id}
   }}>
-  <Nav.Link ><MdNotificationsActive style={{fontSize : "150%"}} />{loggedUser.notifications.length}</Nav.Link> 
+  <Nav.Link >
+          <Badge badgeContent={loggedUser.notifications.length} color="secondary">
+            <NotificationsIcon />
+          </Badge>
+  </Nav.Link> 
  </LinkContainer>
  </>
 }
@@ -167,6 +175,7 @@ export default function Navi(){
         <Nav.Link onClick = {getLoggedOut}>Logout
         </Nav.Link>
 }
+
     
     </Nav>
 

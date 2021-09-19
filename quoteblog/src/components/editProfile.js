@@ -6,6 +6,7 @@ import { useHistory } from 'react-router';
 import {editPost} from '../ReduxStore/actions/authActions';
 import {connect,useSelector , useDispatch} from 'react-redux'
 import {updateProfileInfo,getLoggedUser} from '../ReduxStore/actions/userActions'
+import {AiTwotoneCamera} from 'react-icons/ai'
 
 export default function MyVerticallyCenteredModal({
   show, onHide, im
@@ -32,6 +33,7 @@ dummyForm.append("bio",bio);
 dummyForm.append("username",username);
  await dispatch(updateProfileInfo(dummyForm));
    await dispatch(getLoggedUser());
+   onHide();
 }
 
 return (
@@ -68,7 +70,7 @@ im && im.profilePicture && im.profilePicture.imageURL ?
 }
   <div class="overlay">
   <label for="file-upload" class="custom-file-upload">
-     Upload
+     <AiTwotoneCamera size="lg"/>
 </label>
 <input id="file-upload" type="file" name="image" onChange={(e) => setDp(e.target.files[0])}/>
   </div>

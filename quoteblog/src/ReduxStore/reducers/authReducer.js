@@ -16,7 +16,16 @@ import {
      COMMENT_ERROR,
      REVERT_AUTH,
      DELETE_NOTIFICATION,
-     DELETE_ALL_NOTIFICATION
+     DELETE_ALL_NOTIFICATION,
+     SEND_REQUEST,
+     SEND_REQUEST_SUCCESS,
+     SEND_REQUEST_ERROR,
+     ACCEPT_REQUEST_SUCCESS,
+     ACCEPT_REQUEST_ERROR,
+     ACCEPT_REQUEST,
+     DELETE_REQUEST_SUCCESS,
+     DELETE_REQUEST_ERROR,
+     DELETE_REQUEST
     } from '../actionTypes'
 
 
@@ -39,7 +48,19 @@ import {
 
         editing : false,
         edited : false,
-        editError : null
+        editError : null,
+
+        sendingR : false,
+        sentR: true,
+        sendRE : null,
+
+        acceptingR : false,
+        acceptedR : false,
+        acceptRE : null,
+
+        deletingR : false,
+        deletedR : false,
+        deleteRE : null
     }
 
 
@@ -119,9 +140,7 @@ import {
 
         
         case DELETE_NOTIFICATION : {
-            return{
-
-            }
+            return{}
         }
         case DELETE_ALL_NOTIFICATION :{
             return {}
@@ -129,31 +148,53 @@ import {
 
 
         case LIKE_POST_SUCCESS : {
-            return{
-
-            }
+            return{}
         }
         case LIKE_POST_ERROR : {
-            return{
-
-            }
+            return{}
         }
 
         case COMMENT : {
-            return{
-
-            }
+            return{}
         }
         case COMMENT_SUCCESS : {
-            return{
-
-            }
+            return{}
         }
         case COMMENT_ERROR : {
-            return{
-
-            }
+            return{}
         }
+
+        case SEND_REQUEST : {
+            return{}
+        }
+        case SEND_REQUEST_SUCCESS : {
+            return{}
+        }
+        case SEND_REQUEST_ERROR : {
+            return{}
+        }
+
+        case ACCEPT_REQUEST : {
+            return{}
+        }
+        case ACCEPT_REQUEST_SUCCESS : {
+            return{}
+        }
+        case ACCEPT_REQUEST_ERROR : {
+            return{}
+        }
+
+        case DELETE_REQUEST : {
+            return{}
+        }
+        case DELETE_REQUEST_SUCCESS : {
+            return{}
+        }
+        case DELETE_REQUEST_ERROR : {
+            return{}
+        }
+
+
 
         case REVERT_AUTH : {
             return{

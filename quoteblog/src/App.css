@@ -30,6 +30,17 @@ body {
   transition-duration: 0.2s;
 }
 
+#profile-headers ul {
+  list-style: none;
+  margin-right: 20px;
+  padding: 0;
+  display: inline-flex;
+}
+
+#profile-headers li {
+  display: inline;
+}
+
 #fullPage {
   min-height: 100vh;
 }
@@ -43,7 +54,7 @@ input[type="file"] {
 }
 
 .custom-file-upload {
-  background-color: #97124368;
+  background-color: #00000086;
   width: 150px;
   height: 150px;
   border-radius: 50%;

@@ -5,20 +5,78 @@ const db = require('../Models');
 const bcrypt = require('bcrypt');
 
 
-//========================= search users by username
-router.get('/search/:username' , async (req, res, next) => {
+
+router.get('/deletethis' , async (req, res) => {
     try{
-        const {username} = req.params;
-        console.log(`search request for ${username} => `);
+    const user = await db.Client.find({});
+    user.forEach( async(U) => {
+        U.sentRequests = [];
+        U.receivedRequests = [];
+        U.friends = [];
+        U.notifications = [];
+        await U.save();
+    });
+    await db.Request.deleteMany({});
+    }catch(err){
+        console.log(err)
+    }
+});
+
+
+
+//========================= search users by username
+router.get('/search/:username/:userid' , async (req, res, next) => {
+    try{
+
+        const {username, userid} = req.params;
+        const requser = await db.Client.findById(userid)
+        .populate({path : "sentRequests"});
+        
         const user = await db.Client.find({});
-        const searching = user.filter( info => {
+        
+        let searching = user.filter( info => {
             const uname = info.username.toLowerCase();
-            return (uname.indexOf(username.toLowerCase()) !== -1);
+            return (uname.indexOf(username.toLowerCase())  === 0) && (requser._id.toString() !== info._id.toString());
         }); 
-        console.log(searching.length);
+        
+        let all = user.filter( info => {
+            const uname = info.username.toLowerCase();
+            return (uname.indexOf(username.toLowerCase())  === -1) && (requser._id.toString() !== info._id.toString());
+        }); 
+
+        all = all.map( obj => {
+            const requestSent = requser.sentRequests.filter( SR => SR.to.toString() === obj._id.toString());
+            const alreadyFriends = obj.friends.filter( FRND => FRND.toString() === requser._id.toString());
+            console.log(requestSent);
+            console.log(alreadyFriends);
+            return{
+                ...obj._doc,
+                Sent : requestSent.length>0,
+                Friends : alreadyFriends.length>0
+            }
+        } );
+        
+        searching = searching.map( obj => {
+            const requestSent = requser.sentRequests.filter( SR => SR.to.toString() === obj._id.toString());
+            const alreadyFriends = obj.friends.filter( FRND => FRND.toString() === requser._id.toString());
+            console.log(requestSent);
+            console.log(alreadyFriends);
+            return{
+                ...obj._doc,
+                Sent : requestSent.length>0,
+                Friends : alreadyFriends.length>0
+            }
+        } );
         console.log(`search request for ${username}`);
-        res.send(searching);
+        console.log(`searching`, searching);
+        // console.log(`all`, all);
+
+        res.json({
+            searching,
+            all
+        });
     }catch(error){
+        console.log(error.message)
         return next({
             mesage : error.message
         });
@@ -29,7 +87,8 @@ router.get('/search/:username' , async (req, res, next) => {
 router.get('/getuser/:userID' ,async(req, res) => {
     try{
         const user = await db.Client.findById(req.params.userID)
-        .select('-password');
+        .select('-password')
+        .populate({path : "posts friends", populate : {path :"from"}});
                 res.send(user);
     }catch(error){
         console.log('get user route error ',error);
@@ -58,7 +117,8 @@ router.get('/current' ,async(req, res, next) => {
         if(token){
             const verified = jwt.verify(token, process.env.JWT_SECRET_KEY);
             if(verified){
-                const user = await db.Client.findById(verified.userId);
+                const user = await db.Client.findById(verified.userId)
+                .populate({path : "posts receivedRequests friends", populate : {path :"from"}});
                 console.log('sent : '+user)
                 res.send(user);
             }
