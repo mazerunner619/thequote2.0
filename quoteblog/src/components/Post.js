@@ -2,6 +2,8 @@ import React,{useContext, useEffect, useState} from 'react';
 import axios from 'axios';
 import {Form, Card, Dropdown, Image,Alert,Row, Col} from 'react-bootstrap';
 import { useHistory } from 'react-router';
+import { fade, makeStyles } from '@material-ui/core/styles';
+import {InputBase, IconButton, Avatar, Badge} from '@material-ui/core'
 
 import {BsThreeDotsVertical, BsHeartFill, BsHeart} from 'react-icons/bs'
 import {FaUserCircle} from 'react-icons/fa'
@@ -12,10 +14,22 @@ import  {connect, useDispatch} from 'react-redux'
 import {getAllPosts} from '../ReduxStore/actions/postActions'
 import {deletePost} from '../ReduxStore/actions/authActions'
 
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+    '& > *': {
+      margin: theme.spacing(1),
+    },
+  },
+}));
+
+
 function Post({
   post, getAllPosts,deletePost, deleting, deleted, deleteError, loggedUser , likeThisPost , liked , likes
  }){
 
+  const classes = useStyles();
   const dispatch = useDispatch();
 
     const [editModal, setEditModal] = useState(false);
@@ -28,6 +42,11 @@ function Post({
       await deletePost(id, loggedUser._id);
       dispatch(getAllPosts);
     }
+
+    function fomatDate(date){
+      let newDate = new Date(date).toLocaleDateString("en-US", {weekday : "short", month : "short", day : "numeric"});
+      return newDate;
+    }
   
     return(
         <div className = "grid">
@@ -37,11 +56,12 @@ function Post({
               <Col>
               {
                 post.uploader.profilePicture && post.uploader.profilePicture.imageURL ?
-                <Image src={post.uploader.profilePicture.imageURL} alt="uploader-pic" roundedCircle id="post-uploader"/>
+                <Avatar alt="user-pic" src={post.uploader.profilePicture.imageURL} />
                 :
-                <Image src="https://workhound.com/wp-content/uploads/2017/05/placeholder-profile-pic.png" roundedCircle id="post-uploader"/>
+                <Avatar alt="user-pic" src="https://workhound.com/wp-content/uploads/2017/05/placeholder-profile-pic.png"/>
               }
-              
+              {/* {post.createdAt.toLocaleDateString("en-US",{weekday : "long", year : "long", month : "short", day : "2-digit"})} */}
+              {' '}{fomatDate(post.createdAt)}
                 </Col>
                 <Col style={{textAlign : "end"}}>
                 <Dropdown>
@@ -72,14 +92,17 @@ function Post({
             }
                 </div>     
             <Card.Footer>
+            {LIKES.length}{' '}
               {
                 LIKED?
-              
+                <>
+                     
                       <BsHeartFill style={{fontSize : "150%", color :"red"}} onClick={()=>{
                         setLIKED(!LIKED);
                         setLIKES(p=>p-1);
                         likeThisPost();
                       }}/>
+                    </>
                       :
                       <BsHeart style={{fontSize : "150%"}} onClick={()=>{
                         setLIKED(!LIKED);
@@ -88,7 +111,7 @@ function Post({
                       }} 
                       />  
               } 
-                      {' '}{LIKES}              
+                      {' '}liked by {likes[0].username} and {likes.length -1 }{' '}others              
             </Card.Footer>
 
             <div className="postCaption">

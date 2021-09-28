@@ -10,24 +10,17 @@ import $ from 'jquery'
 export default function ProfileViewer({match}){
 
   const dispatch = useDispatch();
-  const {findUser, findUserE, findUserS, findUserLoading} = useSelector( state => state.userStore);
-  const {userPosts, userPostsL, userPostsS} = useSelector( state => state.postStore);
-
+  const {findUser, findUserLoading} = useSelector( state => state.userStore);
   const [currimg, setcurrimg] = useState("");
-
+  const [editModal, setEditModal] = useState(false);
 
   useEffect(()=>{
-    dispatch(getUser(match.params.id));
-    dispatch(getUserPosts(match.params.id));
-  },[]);
-  
-   const [editModal, setEditModal] = useState(false);
-
+     dispatch(getUser(match.params.id));
+  }, []);
 
   return (
 
     <div id="fullPage" style={{background : "rgba(0,0,0,0.8)"}}>
-
       {
         findUserLoading ?
         <Spinner style={{ position:"absolute", left : "50%", top : "50%"}} animation="border" variant="info"  size="lg"/>
@@ -53,10 +46,8 @@ findUser && findUser.profilePicture && findUser.profilePicture.imageURL ?
 </>
 }
 
-{
-  !findUserLoading && findUser && findUser.posts &&
-  <Menu posts = {findUser.posts} requests={null} friends = {findUser.friends} profile = {false}/>
-}
+  <Menu userid = {match.params.id} profile = {false}/>
+
       <ShowDP
         show={editModal}
         onHide={() => setEditModal(false)}

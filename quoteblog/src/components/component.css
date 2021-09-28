@@ -1,0 +1,140 @@
+#chatting-page {
+  background-color: rgb(0, 0, 0);
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 85vh;
+  /* display: flex; */
+  /* flex-direction: column; */
+  /* align-items: center; */
+  /* justify-content: center; */
+  /* box-sizing: border-box; */
+  /* border: 1px solid yellow; */
+}
+
+.hideScrollbars::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.hideScrollbars {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+#chatting-body {
+  overflow: scroll;
+  background-color: black;
+  height: 70%;
+  width: 100%;
+  padding: 1%;
+}
+
+.msg-left {
+  color: aliceblue;
+  border: 0.5px solid #971243;
+  border-radius: 0 5px 5px 5px;
+  max-width: 65%;
+  width: fit-content;
+  padding: 5px;
+  font-size: large;
+  font-weight: lighter;
+  cursor: pointer;
+  transition-duration: 0.3s;
+}
+
+.msg-right {
+  color: aliceblue;
+  border-radius: 5px 0 5px 5px;
+  border: 1px solid black;
+  background-color: #971243;
+  max-width: 65%;
+  width: fit-content;
+  margin-left: auto;
+  padding: 5px;
+  font-weight: lighter;
+  font-size: large;
+  cursor: pointer;
+  transition-duration: 0.3s;
+}
+
+#chats-body {
+  overflow: scroll;
+  background-color: rgb(66, 63, 63);
+  height: 90%;
+  width: 100%;
+  padding: 1%;
+}
+
+#chats-body > ul > li {
+  color: aliceblue;
+  background-color: #971243;
+  margin: 5px;
+  border-radius: 5px;
+  padding: 5px;
+  font-size: large;
+  cursor: pointer;
+  transition-duration: 0.3s;
+}
+
+#chats-body > ul > li:hover {
+  background-color: #ca1256;
+  box-shadow: 2px 2px 5px rgb(44, 41, 41);
+}
+
+#chatting-header {
+  box-shadow: 0 5px 10px rgb(66, 61, 61);
+  position: relative;
+  background-color: #971243;
+  text-align: left;
+  height: 10%;
+  padding-left: 5px;
+  width: 100%;
+}
+
+#chatting-header > h2 {
+  position: absolute;
+  bottom: 0;
+  color: rgb(66, 63, 63);
+  font-weight: bolder;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+#chatting-bottom {
+  background-color: rgb(0, 0, 0);
+  height: 5%;
+  margin: 1%;
+  width: 98%;
+  display: flex;
+}
+
+#chatting-input {
+  font-size: large;
+  padding-left: 10px;
+  border: 0;
+  border-radius: 20px 0 0 20px;
+  width: 80%;
+  transition-duration: 0.4s;
+  box-sizing: border-box;
+}
+
+#chatting-send {
+  border: 0;
+  background-color: #971243;
+  color: white;
+  border-radius: 0 20px 20px 0;
+  width: 20%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition-duration: 0.4s;
+}
+
+#chatting-send:hover {
+  background-color: #62092a;
+}
+
+#chatting-send > h3:hover {
+  transform: translate(3px, 0);
+  color: aliceblue;
+}

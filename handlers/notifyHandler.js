@@ -5,7 +5,7 @@ const sendNotification = async(senderID, receiverID, message)=>{
     const sender = await db.Client.findById(senderID);
     const noti = `${sender.username} ${message}`;
     const newNotification = await db.Notification.create({
-        message : noti,
+        message : message,
         from : senderID,
         to : receiverID
     });

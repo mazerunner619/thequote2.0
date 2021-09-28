@@ -48,6 +48,25 @@ function isLoggedIn(req, res, next){
     }
 }
 
+
+router.post('/:userid/unfriend/:fid',isLoggedIn,async(req, res, next) => {
+try{
+    const {userid, fid} = req.params;
+    const user = await db.Client.findById(userid);
+    const friend = await db.Client.findById(fid);
+    const userFriendlist = user.friends.filter( friend => friend.toString() !== fid.toString());
+    const friendFriendlist = friend.friends.filter( friend => friend.toString() !== userid.toString());
+    user.friends = userFriendlist;
+    friend.friends = friendFriendlist;
+    await user.save();
+    await friend.save();
+    res.send(true);
+}catch(err){
+    return next({
+        message : err.message
+    })
+}
+});
 //========================================= update profle info 
 router.post('/:userid/profile/update',upload.single('image'),async(req, res, next) => {
     try{
@@ -429,12 +448,32 @@ router.get('/notifications/:userid',async (req, res, next) => {
         console.log('notifications :=>', req.params.userid);
         const {userid} = req.params;
         const user = await db.Client.findById(userid)
-        .populate({path : "notifications"});
+        .populate({path : "notifications", populate : {path : "from"}});
         const data = user.notifications;
         console.log('notifications :=> ',data);
         res.send(data);
     }catch(err){
         console.log(err.message);
+        return next({
+            message : err.message
+        });
+    }
+});
+
+
+//==================================== GET ROOMSs by userID
+router.get('/rooms/:userid',async (req, res, next) => {
+    try{
+        console.log('rooms :=>', req.params.userid);
+        const {userid} = req.params;
+        const user = await db.Client.findById(userid)
+        .populate({path : "rooms", populate : {path : "admin members"}});
+
+        const data = user.rooms;
+        console.log('rooms :=> ',data);
+        res.send(data);
+    }catch(err){
+        console.log(err);
         return next({
             message : err.message
         });

@@ -16,7 +16,6 @@ export default function Notification({
   const history = useHistory();
   const dispatch = useDispatch();
 const {loggedUser,loadingN,notifications,errorN} = useSelector( state => state.userStore);
-
   
     useEffect(()=>{
        dispatch(getUserNotification());      
@@ -43,8 +42,10 @@ const {loggedUser,loadingN,notifications,errorN} = useSelector( state => state.u
       style={{ width: '96vw'}}
       className="ml-auto mr-auto mb-1"
     >          <Card.Body>
+      
         <Card.Text>
-          {noti.message}
+          <div style={{display : "inline", color : "grey", fontWeight : "bolder", cursor : "pointer"}} onClick={()=>history.push(`/show/${noti.from._id}/profile`)}>{noti.from.username}</div>
+          {' '}{noti.message}
           <Button variant="outline-danger" className="ml-auto" style={{float : "right" ,fontSize : "130%"}} onClick = {(e) => deleteN(e,noti._id)}><MdDelete /></Button>
         </Card.Text>
       </Card.Body>

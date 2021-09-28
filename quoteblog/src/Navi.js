@@ -1,22 +1,23 @@
 import React, { useState } from 'react';
+import socketClient from "socket.io-client";
 import { fade, makeStyles } from '@material-ui/core/styles';
-import {InputBase, IconButton, Badge} from '@material-ui/core';
+import {InputBase, IconButton, Avatar, Badge} from '@material-ui/core';
+import { deepOrange, deepPurple } from '@material-ui/core/colors';
 import SearchIcon from '@material-ui/icons/Search';
-
 import './App.css';
 import {Navbar, Nav, Spinner} from 'react-bootstrap'
 import { FaUserCircle , FaQuoteRight, FaQuoteLeft } from 'react-icons/fa';
 import {LinkContainer} from 'react-router-bootstrap';
 import {BsChatQuoteFill} from 'react-icons/bs';
 import {MdNotificationsActive} from 'react-icons/md'
+import {RiSendPlaneFill} from 'react-icons/ri'
 import { withRouter } from 'react-router-dom';
+import {disconnectSocket} from './auths/getOnline'
+import {  } from '@material-ui/core/styles';
 
 import NotificationsIcon from '@material-ui/icons/Notifications';
 
-
 import $ from 'jquery'
-
-
 //redux
 import  {connect, useDispatch, useSelector} from 'react-redux'
 import {getLoggedUser, Logout} from './ReduxStore/actions/userActions'
@@ -24,6 +25,16 @@ import { useEffect } from 'react';
 import {useHistory} from 'react-router'
 
 const useStyles = makeStyles((theme) => ({
+
+  root: {
+    display: 'flex',
+    marginTop : "-5px",
+
+    '& > *': {
+      margin: theme.spacing(1),
+    },
+  },
+
   search: {
     position: 'relative',
     borderRadius: theme.shape.borderRadius,
@@ -67,7 +78,14 @@ const useStyles = makeStyles((theme) => ({
 $(function(){
   setTimeout(()=>$("#quote-logo").animate({marginLeft : '50%'}),800 );
   setTimeout(()=>$("#quote-logo").animate({marginLeft : '5px'}),900 );
-});
+  setTimeout(()=>$("#quote-logo").css("transform", "rotateZ(90deg)"),600 );
+  setTimeout(()=>$("#quote-logo").css("transform", "scale(1.2)"),600 );
+  setTimeout(()=>$("#quote-logo").css("transform", "rotateZ(180deg)"),1200 );
+  setTimeout(()=>$("#quote-logo").css("transform", "scale(1.5)"),1200 );
+  setTimeout(()=>$("#quote-logo").css("transform", "rotateZ(360deg)"),1500 );
+  setTimeout(()=>$("#quote-logo").css("transform", "scale(1)"),1500 );
+
+})
 
 
 export default function Navi(){
@@ -84,6 +102,7 @@ export default function Navi(){
   }, [dispatch]);
   
   async function getLoggedOut(){
+    disconnectSocket();
     await dispatch(Logout(hist));
   }
 
@@ -114,7 +133,7 @@ export default function Navi(){
             <InputBase
               placeholder="search..."
               onChange={(e)=>setSearch(e.target.value)}
-              onKeyDown = {(e) => search.length &&   e.key === "Enter" && handleSearch(e.target.value)}
+              onKeyDown = {(e) => search.length && e.key === "Enter" && handleSearch(e.target.value)}
               classes={{
                 root: classes.inputRoot,
                 input: classes.inputInput,
@@ -141,7 +160,9 @@ export default function Navi(){
 {
   loggedUser?
   <LinkContainer to="/profile">
-  <Nav.Link ><FaUserCircle style={{fontSize : "150%"}}/>{' '+loggedUser.username}</Nav.Link> 
+  <Nav.Link style={{textAlign : "center"}}>
+  <Avatar alt="user-pic" src={loggedUser.profilePicture.imageURL} />
+    </Nav.Link> 
   </LinkContainer>
   :
   <Spinner animation="border" role="status">
@@ -171,10 +192,21 @@ export default function Navi(){
     </>
   }
 
+  
+{
+  loggedIn && 
+  <LinkContainer to="/chatting">
+  <Nav.Link >
+  <RiSendPlaneFill style={{ fontSize : "150%"}} />
+    </Nav.Link> 
+  </LinkContainer>
+}
+
     {loggedIn && 
         <Nav.Link onClick = {getLoggedOut}>Logout
         </Nav.Link>
 }
+
 
     
     </Nav>

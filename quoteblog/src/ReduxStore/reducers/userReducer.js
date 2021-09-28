@@ -18,6 +18,9 @@ import {
      UPDATE_PROFILE_SUCCESS,
      UPDATE_PROFILE,
      UPDATE_PROFILE_REVERT,
+     USER_ROOMS,
+     USER_ROOMS_SUCCESS,
+     USER_ROOMS_ERROR
 
     } from '../actionTypes'
 
@@ -40,6 +43,8 @@ const INITIAL_STATE = {
     updatePS : false,
     updatePE : null,
     userRequests : [],
+    userRooms  : [],
+    loadingRooms : false,
     userConnections : []
 }
 
@@ -70,6 +75,24 @@ export default function userReducer( state = INITIAL_STATE, action){
             ...state,
             findUserLoading : true
         }
+
+        case USER_ROOMS : return{
+            ...state,
+            loadingRooms : true
+        }
+
+        case USER_ROOMS_SUCCESS : return{
+            ...state,
+            loadingRooms : false,
+            userRooms : action.payload
+        }
+
+        case USER_ROOMS_ERROR : return{
+            ...state,
+            loadingRooms : false,
+            userRooms : []
+        }
+
 
         case GET_USER_SUCCESS : return{
             ...state,

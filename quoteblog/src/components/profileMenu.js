@@ -1,5 +1,5 @@
-import {Form, Spinner,Container, Row, Col, Card, Image} from 'react-bootstrap'
-import React from 'react';
+import {Form, Spinner,Container, Row, Col, Card, Image, Popover, OverlayTrigger, Dropdown} from 'react-bootstrap'
+import React,{useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -15,10 +15,13 @@ import { useHistory } from 'react-router';
 import { acceptRequest, deleteRequest } from '../ReduxStore/actions/authActions';
 import {getUser} from '../ReduxStore/actions/userActions'
 import { useDispatch, useSelector } from 'react-redux';
+import {BiDotsHorizontalRounded} from 'react-icons/bi'
+import axios from 'axios';
+import  ShowDP from './profilePicOpen'
+
 
 function TabPanel(props) {
   const { children, value,posts, index, ...other } = props;
-
   return (
     <div
       role="tabpanel"
@@ -36,57 +39,52 @@ function TabPanel(props) {
   );
 }
 
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
-};
-
-function a11yProps(index) {
-  return {
-    id: `scrollable-prevent-tab-${index}`,
-    'aria-controls': `scrollable-prevent-tabpanel-${index}`,
-  };
-}
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
+    width : "100vw",
+    padding : "0",
+    margin : "0"
   },
 }));
 
-
-export default function ScrollableTabsButtonPrevent({posts, friends, requests, userid, profile}) {
+export default function ScrollableTabsButtonPrevent({ userid, profile}) {
 
   const dispatch = useDispatch();
   const hist = useHistory();
 
-  const {findUser, findUserE, findUserS, findUserLoading} = useSelector( state => state.userStore);
-  //   const [POSTS, setPOSTS] = React.useState([]);
-  //   const [REQS, setREQS] = React.useState([]);
-  //   const [FRI, setFRI] = React.useState([]);
+  const {findUser, findUserE, findUserS, findUserLoading, loggedUser} = useSelector( state => state.userStore);
+    const [POSTS, setPOSTS] = useState([]);
+    const [REQS, setREQS  ] = useState([]);
+    const [FRI, setFRI] = useState([]);
+    const [currimg, setcurrimg] = useState("");
 
-  // React.useEffect(()=>{
-  //  dispatch(getUser(userid));
-  // },[]);
+    const [render, setRender] = useState(0);
+  useEffect(()=>{
+    async function getInfo(){
+      const data = await dispatch(getUser(userid));
+      setPOSTS(data.posts);
+      setFRI(data.friends);
+      setREQS(data.receivedRequests);
+    }
+  getInfo();
+  },[dispatch, render]);
 
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
 
 async function handleAcceptRequest(id){
-    // e.preventDefault();
-    const data = await dispatch(acceptRequest(userid,id));
-    window.location.reload();
+    await dispatch(acceptRequest(userid,id));
+    setRender(render === 0 ? 1 : 0)
 }
 
 async function handleDeleteRequest(id){
-  // e.preventDefault();
-  await dispatch(deleteRequest(userid,id));
-  window.location.reload();
+ await dispatch(deleteRequest(userid,id));
+ setRender(render === 0 ? 1 : 0)
 }
 
-  const requestsArr = (requests !== null)?(
-  requests.map( res =>   
+  const requestsArr = REQS.map( res =>   
     <Col>
         <Card bg="dark" text="dark">
     <Card.Body>
@@ -115,16 +113,24 @@ async function handleDeleteRequest(id){
 </Row>
     </Card>
     </Col>
-  )
-  )
-  :
-  [];
-  const friendsArr = friends.map( res =>   
+  );
+
+  const friendsArr = FRI.map( res =>   
     <Col>
     <Card bg="dark" text="dark">
-
     <Card.Body>
- 
+      
+    <Dropdown>
+  <Dropdown.Toggle id="dropdown-basic" style = {{display : "inline",background :"#ff4081", width : "40px",height : "40px", borderRadius : "20px", float :"right"}}>
+  </Dropdown.Toggle>
+  <Dropdown.Menu>
+    <Dropdown.Item href="#/action-1" onClick = {async()=>{
+      await axios.post(`/user/${loggedUser._id}/unfriend/${res._id}`);
+      setRender(render === 0 ? 1 : 0);
+    }}  >unfriend</Dropdown.Item>
+  </Dropdown.Menu>
+</Dropdown>
+
         <div style={{float : "left"}} className = "mr-2">
     {
                 res.profilePicture && res.profilePicture.imageURL ?
@@ -142,18 +148,21 @@ async function handleDeleteRequest(id){
     </Col>
   );
 
-  const myPostsArr = posts.map(x => 
+  const myPostsArr = POSTS.map(x => 
     <Col sm={4} md={3} lg={3} xs={4} className="p-0">
       <div className="square">
     <img  className="content" 
-//     onClick = {()=>{
-//         setcurrimg(x.image.imageURL);
-//       setEditModal(true);
-//   }}
+    onClick = {()=>{
+        setcurrimg(x.image.imageURL);
+      setEditModal(true);
+  }}
   src={x.image.imageURL} alt="profile pic"/>
   </div>
    </Col>
 );
+
+const [editModal, setEditModal] = useState(false);
+
 
 
   const handleChange = (event, newValue) => {
@@ -162,6 +171,15 @@ async function handleDeleteRequest(id){
 
   return (
     <div className={classes.root}>
+       <ShowDP
+        show={editModal}
+        onHide={() => setEditModal(false)}
+        image ={currimg}
+      />
+{
+      findUserLoading ? "loading..." :
+
+<>
       <AppBar position="static">
        
      <Tabs
@@ -176,18 +194,18 @@ async function handleDeleteRequest(id){
         >
 
   <Tab label="posts" icon={
-  <Badge badgeContent={posts.length} color="secondary">
+  <Badge badgeContent={POSTS.length} color="secondary">
   <PersonPinIcon color="secondary"/>
   </Badge>
   } aria-label="posts" />
 <Tab label="friends" icon={
-  <Badge badgeContent={friends.length} color="secondary">
+  <Badge badgeContent={FRI.length} color="secondary">
   <PeopleAltIcon color="secondary" />
   </Badge>
   } aria-label="connections" />
 {
 profile &&  <Tab label="requests" icon={
-  <Badge badgeContent={requests.length} color="secondary">
+  <Badge badgeContent={REQS.length} color="secondary">
 <PersonAddIcon color="secondary"/>
 </Badge>
 } aria-label="requests" />
@@ -198,37 +216,39 @@ profile &&  <Tab label="requests" icon={
 
       <TabPanel value={value} index={0}>
          <Row id="myuploads">
-         {posts.length>0
+         {
+         POSTS.length>0
         ?
         myPostsArr
         :
         <b style={{textAlign:"center" , color : "#b6416c"}}><i>nothing to show</i></b>
-      }   
+      }
           </Row>
-      </TabPanel>
-      <TabPanel value={value} index={1}>
-      <Row xs={1} lg={1} className="g-1 ml-auto mr-auto">
-      {friends.length>0
-        ?
-        friendsArr
-        :
-        <b style={{textAlign:"center" , color : "#b6416c"}}><i>nothing to show</i></b>
-      }           </Row>
-      </TabPanel>
-      {
-        profile && 
-      <TabPanel value={value} index={2}>
-      <Row xs={1} lg={1} className="g-1 ml-auto mr-auto">
-        {requests.length>0
-        ?
-        requestsArr
-        :
-        <b style={{textAlign:"center" , color : "#b6416c"}}><i>nothing to show</i></b>
-      }   
-        </Row>
-      </TabPanel>
+          </TabPanel>
+          <TabPanel value={value} index={1}>
+          <Row xs={1} lg={1} className="g-1 ml-auto mr-auto">
+          {FRI.length>0
+            ?
+            friendsArr
+            :
+            <b style={{textAlign:"center" , color : "#b6416c"}}><i>nothing to show</i></b>
+          }           </Row>
+              </TabPanel>
+          {
+            profile && 
+          <TabPanel value={value} index={2}>
+          <Row xs={1} lg={1} className="g-1 ml-auto mr-auto">
+            {REQS.length>0
+            ?
+            requestsArr
+            :
+            <b style={{textAlign:"center" , color : "#b6416c"}}><i>nothing to show</i></b>
+          }   
+            </Row>
+          </TabPanel>
+          }
+          </>
 }
-      
     </div>
   );
 }

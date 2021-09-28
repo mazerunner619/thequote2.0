@@ -1,21 +1,30 @@
-import {useContext, useState } from 'react'
+import {useContext, useState, useEffect } from 'react'
 import axios from 'axios'
 import {Form, Alert} from 'react-bootstrap'
 import { useHistory } from 'react-router';
 import {Button} from '@material-ui/core'
-import {connect} from 'react-redux'
+import {connect, useDispatch, useSelector} from 'react-redux'
 import {getAllPosts} from '../ReduxStore/actions/postActions'
 import {Login as LoginAction, getLoggedUser} from '../ReduxStore/actions/userActions'
 import {withRouter, Link} from 'react-router-dom'
 
+
 function Login({LoginAction, loginE}) {
+
+  const hist = useHistory();
+  const dispatch = useDispatch();
+  const {loggedIn} = useSelector( state => state.userStore);
+
+  useEffect(() => {
+    if(loggedIn)
+    hist.push('/'); 
+  }, [loggedIn])
 
   const [user, setUser] = useState({
     username : "",
     password : "",
   });
 
-  const hist = useHistory();
 
   function HandleChange(e){
     const {name, value} = e.target;
@@ -30,8 +39,7 @@ function Login({LoginAction, loginE}) {
   return (
 
     <div id="fullPage">
-      
-    <Form className="authPage">      
+    <Form className="authPage">    
     <h2 style = {{textAlign : "center", padding : "2%" , color : "#b22c5a",  fontFamily :"fantasy", letterSpacing : "3px"}}>Login</h2>
     <hr style={{color : "lightcoral", border : "3px solid lightcoral", borderRadius : "5px", margin : "0 auto", width :  "90%", marginBottom : "2%"}} />
   <Form.Group controlId="formBasicEmail">

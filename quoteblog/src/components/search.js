@@ -29,6 +29,7 @@ $(function(){
 
 export default function Search({match}) {
 
+  const [search, setSearch] = useState("");
   const hist = useHistory();
   const [result, setResult] = useState([]);
   const [all, setAll] = useState([]);

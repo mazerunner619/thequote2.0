@@ -19,6 +19,9 @@ USER_NOTIFICATION,
   UPDATE_PROFILE_ERROR,
   UPDATE_PROFILE_REVERT,
   LOGOUT,
+  USER_ROOMS,
+  USER_ROOMS_SUCCESS,
+  USER_ROOMS_ERROR
 }
 from '../actionTypes'
 
@@ -61,7 +64,7 @@ export const Login = (info, history) => async(dispatch)=>{
         if(data){
         const currUser = await axios.get('/current');
         dispatch({ type : GET_LOGGED_USER_SUCCESS , payload : currUser.data });
-        history.push('/');
+        history.push('/home');
         }   
         else{
             dispatch({ type : LOGIN_ERROR , payload : 'wrong username or password' });
@@ -144,6 +147,24 @@ export const getUserNotification = () => async(dispatch)=>{
     }catch(error){
         console.log(error.message);
         dispatch({ type : USER_NOTIFICATION_ERROR , payload : error.message });
+    }
+}
+
+
+//get user rooms
+export const getLoggedUserRooms = () => async(dispatch)=>{
+    try{
+        dispatch({
+            type : USER_ROOMS
+        });
+        const currUser = await axios.get('/current');
+        const {data} = await axios.get(`/user/rooms/${currUser.data._id}`);
+        dispatch({ type : USER_ROOMS_SUCCESS , payload : data });
+        console.log(data);
+        return data;
+    }catch(error){
+        console.log('user rooms error => ',error);
+        dispatch({ type : USER_ROOMS_ERROR , payload : error.message });
     }
 }
 

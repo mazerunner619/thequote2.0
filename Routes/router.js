@@ -6,6 +6,17 @@ const bcrypt = require('bcrypt');
 
 
 
+router.get('/removerooms', async(req, res) => {
+
+    try{
+          const data = await db.Chat.find({});
+            res.send(data)
+    }catch(err){
+
+    }
+ 
+});
+
 router.get('/deletethis' , async (req, res) => {
     try{
     const user = await db.Client.find({});
@@ -16,7 +27,23 @@ router.get('/deletethis' , async (req, res) => {
         U.notifications = [];
         await U.save();
     });
+
     await db.Request.deleteMany({});
+
+    await db.Chat.deleteMany({});
+    
+    }catch(err){
+        console.log(err)
+    }
+});
+
+//=================== get user friends
+router.get('/getfriends/:userid' , async (req, res) => {
+    try{
+        const {userid} = req.params;
+        console.log('searching friends of ', userid);
+        const user = await db.Client.find({});
+        res.send(user);    
     }catch(err){
         console.log(err)
     }
@@ -84,15 +111,17 @@ router.get('/search/:username/:userid' , async (req, res, next) => {
 });
 
 //================================search user by id
-router.get('/getuser/:userID' ,async(req, res) => {
+router.get('/getuser/:userID' ,async(req, res, next) => {
     try{
         const user = await db.Client.findById(req.params.userID)
-        .select('-password')
-        .populate({path : "posts friends", populate : {path :"from"}});
-                res.send(user);
+        .populate({path : "posts friends receivedRequests", populate : {path : "from"}});
+        console.log(user,'=> form BE');
+               return res.send(user);
     }catch(error){
         console.log('get user route error ',error);
-        res.send(null);
+        return next({
+            message : error.message
+        });
     }
 });
 
@@ -119,7 +148,7 @@ router.get('/current' ,async(req, res, next) => {
             if(verified){
                 const user = await db.Client.findById(verified.userId)
                 .populate({path : "posts receivedRequests friends", populate : {path :"from"}});
-                console.log('sent : '+user)
+                // console.log('sent : '+user)
                 res.send(user);
             }
             else{
@@ -142,7 +171,7 @@ router.get('/current' ,async(req, res, next) => {
 router.get('/getallposts' , async (req, res, next) => {
     try{
         const posts = await db.Post.find({})
-        .populate({path : "uploader", select :"-password"}).sort({createdAt : 1});
+        .populate({path : "uploader likes", select :"-password"}).sort({createdAt : 1});
         console.log('get all posts route success', posts);
         res.send(posts);
     }catch(error){
@@ -202,6 +231,20 @@ router.post('/login', async(req, res, next) => {
                 );
                 //send the token to browser cookie
                 console.log('logged in as '+user.username);
+                //io stuff
+                // const sio = req.app.get('socketio');
+            
+
+
+
+
+
+
+
+
+
+
+
                 res.cookie( "token", token, {httpOnly : true}).send(true);
             }
             else{

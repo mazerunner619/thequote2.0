@@ -1,29 +1,22 @@
 import React,{useEffect, useState} from 'react';
-import axios from 'axios';
 import {Button ,Accordion , Form , Alert,Spinner,Modal,  Row, Col} from 'react-bootstrap';
 import { useHistory } from 'react-router';
 import {IoIosArrowUp} from 'react-icons/io'
 import {FiSend} from 'react-icons/fi'
 import {FaUserCircle} from 'react-icons/fa'
 import {BsFillPlusCircleFill} from 'react-icons/bs'
-
+import {SiInstagram} from 'react-icons/si'
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
-
 import NewPostModal from './components/newPostModal'
-
 import  {connect, useDispatch, useSelector} from 'react-redux'
 import Post from './components/Post'
 import {getAllPosts} from './ReduxStore/actions/postActions'
 import {getLoggedUser} from './ReduxStore/actions/userActions'
 import {likePost} from './ReduxStore/actions/authActions';
+// import {createSocket, getonline, getOnline} from './auths/getOnline';
 import $ from 'jquery'
-
-
-// $(function(){
-//   setTimeout(()=>$("#quote-logo").animate({marginLeft : '50%'}),1500 );
-//   setTimeout(()=>$("#quote-logo").animate({marginLeft : '1%'}),1700 );
-// });
+import { createSvgIcon } from '@material-ui/core';
 
 
 export default function Quote(){
@@ -41,6 +34,14 @@ const [newPostPage, setNewPostPage] = useState(false);
   console.log('frontEnd rendered',allPosts);
   }, [dispatch]);
 
+  // useEffect(() => {
+  //   if(!loggedIn)
+  //   hist.push('/login');
+  //   // else{
+  //   //   createSocket();
+  //   //   getonline(loggedUser);
+  //   // }
+  // }, [loggedIn])
 
   const newPostHandler = () => {
     if(loggedIn)
@@ -54,7 +55,7 @@ const [newPostPage, setNewPostPage] = useState(false);
 
 const quotesArray = allPosts.slice(0).reverse().map(post => 
 <Post 
-    likes ={post.likes.length}
+    likes ={post.likes}
     liked = { (post.likes.indexOf(loggedUser._id) !== -1 )? true:false}
     post = {post}
     likeThisPost = {()=>postLiker(post._id)}
@@ -104,6 +105,13 @@ return (
 }
 
   <a href="#top" style={{ textDecoration: "none", color : '#971243', marginLeft : "45%", fontSize : "200%"}}><IoIosArrowUp /></a> 
+
+
+  <footer className="text-center text-white"  >
+  <div className="footer">
+    ©mazerunner619{'  '}<a href="https://www.instagram.com/happiest_depressed_1/" style={{color : 'white', fontSize : "20px"}}>{' '}{' '}<SiInstagram /> </a>
+  </div>
+</footer>
 
   </div>
       );

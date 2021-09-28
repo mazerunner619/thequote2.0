@@ -4,6 +4,7 @@ const userSchema = new mongoose.Schema({
   username : String,
   bio : String,
   password : String,
+  active : {type : Boolean, default : false},
   profilePicture  :{
     imageID : String,
     imageURL : String
@@ -29,6 +30,10 @@ const userSchema = new mongoose.Schema({
     type : mongoose.Schema.Types.ObjectId,
     ref : "Notification"
   }],
+  rooms : [{
+    type : mongoose.Schema.Types.ObjectId,
+    ref : "Room"
+  }]
 }
 ,
 {timestamps : true}  //.createdAt, .updatedAt

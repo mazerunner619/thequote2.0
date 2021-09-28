@@ -34,25 +34,9 @@ export default function Profile(){
 
   useEffect(()=>{
     dispatch(getLoggedUser());
-    dispatch(getMyPosts());
-    console.log('from frontend user',loggedUser);
-    console.log('from frontend posts',currUserPosts);
   },[dispatch]);
   
   const [editModal, setEditModal] = useState(false);
-
-//   const myPostsArr = currUserPosts.map(x => 
-//   <Col sm={4} md={3} lg={3} xs={4} className="p-0">
-
-//     <div className="square">
-//   <img  className="content" onClick = {()=>{
-//       setcurrimg(x.image.imageURL);
-//     setEditModal(true);
-// }}
-// src={x.image.imageURL} alt="profile pic"/>
-// </div>
-//  </Col>
-//     );
   return (
     <div id="fullPage" style={{background : "rgba(0,0,0,0.8)"}}>
       {
@@ -84,7 +68,7 @@ loggedUser && loggedUser.profilePicture && loggedUser.profilePicture.imageURL ?
 
 {
   !loading && loggedUser && loggedUser.posts &&
-  <Menu posts = {currUserPosts} requests={loggedUser.receivedRequests} friends = {loggedUser.friends} userid = {loggedUser._id} profile = {true}/>
+  <Menu userid = {loggedUser._id} profile = {true}/>
 }
 
       <ShowDP
