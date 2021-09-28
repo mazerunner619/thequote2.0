@@ -143,20 +143,6 @@ app.set('socketio', io);
 
 
         //add a new online user
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     })
 
@@ -170,9 +156,15 @@ app.use(function(err, req, res, next){
 app.use('/', Route);
 app.use('/user', userRoute);
 
-app.get('/',async (req, res) => {
-  res.send('running');
-})
+
+if(process.env.NODE_ENV == "production"){
+    app.use(express.static("quoteblog/build"));
+
+    app.get('*', (req, res) => {
+      res.sendFile(path.resolve(__dirname, 'quoteblog', 'build', 'index.html'));
+    });
+}
+
 
 mongoose.connect(process.env.CONN_STRING, 
     {
@@ -189,12 +181,4 @@ mongoose.connect(process.env.CONN_STRING,
     }
  );
 
-
-// if(process.env.NODE_ENV == "production"){
-//     app.use(express.static("quoteblog/build"));
-
-//     app.get('*', (req, res) => {
-//       res.sendFile(path.resolve(__dirname, 'quoteblog', 'build', 'index.html'));
-//     });
-// }
 

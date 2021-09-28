@@ -43,7 +43,7 @@ export default function Chatting() {
     return (
         <div>
         <Row className="m-0 justify-content-center p-0" >
-            <Col lg = {3} md={3} className="m-0 p-0">
+            <Col xs = {12} sm={12} lg = {12} md={12} className="m-0 p-0">
                 <div id="chatting-page">
 
                 <div id="chatting-header">
