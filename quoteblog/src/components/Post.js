@@ -34,7 +34,7 @@ function Post({
 
     const [editModal, setEditModal] = useState(false);
     const [LIKED, setLIKED] = useState(liked);
-    const [LIKES, setLIKES] = useState(likes);
+    const [LIKES, setLIKES] = useState(likes.length);
 
     async function handleClick(e, id){
       console.log('deleting');
@@ -92,11 +92,9 @@ function Post({
             }
                 </div>     
             <Card.Footer>
-            {LIKES.length}{' '}
               {
                 LIKED?
                 <>
-                     
                       <BsHeartFill style={{fontSize : "150%", color :"red"}} onClick={()=>{
                         setLIKED(!LIKED);
                         setLIKES(p=>p-1);
@@ -111,7 +109,9 @@ function Post({
                       }} 
                       />  
               } 
-                      {' '}liked by {likes[0].username} and {likes.length -1 }{' '}others              
+                      {' '}{
+                        LIKES>0 && <p style={{display : "inline"}}>{LIKES}</p>
+                      }        
             </Card.Footer>
 
             <div className="postCaption">
