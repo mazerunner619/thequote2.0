@@ -9,7 +9,8 @@ const sendNotification = async(senderID, receiverID, message)=>{
         from : senderID,
         to : receiverID
     });
-    receiver.notifications.push(newNotification._id);
+    receiver.notifications.notification.push(newNotification._id);
+    receiver.notifications.unread+=1;
     await receiver.save();
 }
 

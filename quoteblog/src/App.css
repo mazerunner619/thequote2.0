@@ -88,6 +88,9 @@ input[type="file"] {
 
 #quote-logo {
   margin-left: -1000px;
+  transition-duration: 1s;
+  width: 100%;
+  transition-timing-function: ease-in-out;
 }
 
 Form {

@@ -35,20 +35,22 @@ import {useHistory} from 'react-router'
 import {Row, Col} from 'react-bootstrap'
 import $ from 'jquery'
 
+let counter=0;
 
-// $(function(){
-//   // setTimeout(()=>$("#quote-logo").animate({marginLeft : '50%'}),800 );
-//   // setTimeout(()=>$("#quote-logo").animate({marginLeft : '5px'}),800 );
-//   // setTimeout(()=>$("#quote-logo").css("transform", "rotateZ(90deg)"),600 );
-//   // setTimeout(()=>$("#quote-logo").css("transform", "scale(1.2)"),600 );
-//   // setTimeout(()=>$("#quote-logo").css("transform", "scale(1.5)"),900 );
-//   // setTimeout(()=>$("#quote-logo").css("transform", "scale(1)"),1100 );
+$(function(){
+  setTimeout(()=>$("#quote-logo").animate({marginLeft : '50%'}),800 );
+  setTimeout(()=>$("#quote-logo").animate({marginLeft : '5px'}),1200 );
+  setInterval( ()=>{
+    if(counter === 0){
+      counter = 1;
+        $("#quote-logo").css("transform", "rotateZ(1deg) scale(1.08)");
+    }else{
+      counter=0;
+        $("#quote-logo").css("transform", "rotateZ(-1deg) scale(0.95)");
+    }
 
-//   // setTimeout(()=>$("#quote-logo").css("transform", "rotateZ(180deg)"),1200 );
-//   // setTimeout(()=>$("#quote-logo").css("transform", "scale(1.5)"),1200 );
-//   // setTimeout(()=>$("#quote-logo").css("transform", "rotateZ(360deg)"),1500 );
-//   // setTimeout(()=>$("#quote-logo").css("transform", "scale(1)"),1500 );
-// })
+  }, 1000)
+})
 
 
 const drawerWidth = 240;
@@ -165,53 +167,52 @@ fontFamily: "fantasy"
 <>
       <LinkContainer to="/">
       <ListItem button key={"Home"} onClick = { () => setOpenbar(false)}>
-            <ListItemIcon><BsChatQuoteFill style={{fontSize: "150%", color : "white"}}/></ListItemIcon>
+            <ListItemIcon><BsChatQuoteFill style={{fontSize: "150%", color : "#971243"}}/></ListItemIcon>
             <ListItemText primary={"Home"} />
         </ListItem>
 </LinkContainer>
-
+<Divider />
 <LinkContainer to="/profile">
       <ListItem button key={"Profile"} onClick = { () => setOpenbar(false)}>
-            <ListItemIcon><AccountCircleIcon style={{color : "white"}}/></ListItemIcon>
+            <ListItemIcon><AccountCircleIcon style={{color : "#971243"}}/></ListItemIcon>
             <ListItemText primary={loggedUser.username} />
         </ListItem>
 </LinkContainer>
-
+<Divider />
 <LinkContainer to="/notifications">
       <ListItem button key={"Notifications"} onClick = { () => setOpenbar(false)}>
             <ListItemIcon>
-            <Badge badgeContent={12} color="secondary">
-            <NotificationsActiveIcon style={{color : "white"}}/>
+            <Badge badgeContent={loggedUser.notifications.unread} color="secondary">
+            <NotificationsActiveIcon style={{color : "#971243"}}/>
           </Badge>
             </ListItemIcon>
             <ListItemText primary={"Notifications"} />
         </ListItem>
 </LinkContainer>
-
+<Divider />
 <LinkContainer to="/chatting">
       <ListItem button key={"Messages"} onClick = { () => setOpenbar(false)}>
-            <ListItemIcon><ChatIcon style={{color : "white"}}/></ListItemIcon>
+            <ListItemIcon><ChatIcon style={{color : "#971243"}}/></ListItemIcon>
             <ListItemText primary={"Messages"} />
         </ListItem>
 </LinkContainer>
-
+<Divider />
 {/* <LinkContainer to="/search">
       <ListItem button key={"search"} onClick = { () => setOpenbar(false)}>
-            <ListItemIcon><SearchIcon style={{color : "white"}}/></ListItemIcon>
+            <ListItemIcon><SearchIcon style={{color : "#971243"}}/></ListItemIcon>
             <ListItemText primary={"Find Friends"} />
         </ListItem>
 </LinkContainer> */}
-
 <LinkContainer to="/login">
       <ListItem button key={"Logout"} onClick = { () => {
           setOpenbar(false);
           getLoggedOut();
       }}>
-            <ListItemIcon><ExitToAppIcon style={{color : "white"}} /></ListItemIcon>
+            <ListItemIcon><ExitToAppIcon style={{color : "#971243"}} /></ListItemIcon>
             <ListItemText primary={"Logout"} />
         </ListItem>
 </LinkContainer>
-
+<Divider />
 </>
 }
 
@@ -223,14 +224,14 @@ fontFamily: "fantasy"
             <ListItemText primary={"Login"} />
         </ListItem>
 </LinkContainer>
-
-
+<Divider />
 <LinkContainer to="/signup">
       <ListItem button key={"Signup"} onClick = { () => setOpenbar(false)}>
             <ListItemIcon><PersonAddIcon /></ListItemIcon>
             <ListItemText primary={"Signup"} />
         </ListItem>
 </LinkContainer>
+<Divider />
 </>
 }
 

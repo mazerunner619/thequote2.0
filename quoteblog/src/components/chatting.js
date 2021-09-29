@@ -1,18 +1,13 @@
-import React, {useEffect, useState, createElement} from 'react'
-import {Row, Col, Container, Tooltip,OverlayTrigger} from 'react-bootstrap'
+import React, {useEffect, useState} from 'react'
 import socketClient from "socket.io-client";
 import {useDispatch, useSelector} from 'react-redux'
-import {getLoggedUser, getLoggedUserRooms} from '../ReduxStore/actions/userActions'
-import ChatPage from './chatPage';
-import StartChat from './joinCreateRoomModal'
-import {AiOutlinePlus} from 'react-icons/ai'
-import {RiCheckboxBlankCircleFill, RiSendPlaneLine} from 'react-icons/ri'
+import {getLoggedUser} from '../ReduxStore/actions/userActions'
+import {RiSendPlaneLine} from 'react-icons/ri'
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import axios from 'axios';
 import Avatar from '@material-ui/core/Avatar';
 import { makeStyles } from '@material-ui/core/styles';
 import {useHistory} from 'react-router'
-import $ from 'jquery'
 import './component.css'
 
 let socket;
@@ -36,7 +31,7 @@ export default function Chatting() {
     const classes = useStyles();
     const dispatch = useDispatch();
     const [isChatting ,setIsChatting] = useState(false)
-    const {loggedUser, loggedIn, userRooms} = useSelector( state => state.userStore)
+    const {loggedUser} = useSelector( state => state.userStore)
     const [friends, setFriends] = useState([]);
     const [chatwith, setWith] = useState(null);
 
@@ -78,7 +73,7 @@ export default function Chatting() {
 
     function fomatDateOldMessages(date){
       let newDate = new Date(date).toLocaleDateString("en-US", {weekday : "short", month : "short", day : "numeric"});
-      let newTime = new Date(date).toLocaleTimeString();
+      // let newTime = new Date(date).toLocaleTimeString();
       return newDate;
     }
 

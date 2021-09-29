@@ -26,10 +26,15 @@ const userSchema = new mongoose.Schema({
     type : mongoose.Schema.Types.ObjectId,
     ref : "Request"
   }],
-  notifications : [{
+  notifications : {
+
+    notification : [{
     type : mongoose.Schema.Types.ObjectId,
     ref : "Notification"
   }],
+  
+  unread : { type : Number, default : 0}
+},
   rooms : [{
     type : mongoose.Schema.Types.ObjectId,
     ref : "Room"

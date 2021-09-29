@@ -448,8 +448,10 @@ router.get('/notifications/:userid',async (req, res, next) => {
         console.log('notifications :=>', req.params.userid);
         const {userid} = req.params;
         const user = await db.Client.findById(userid)
-        .populate({path : "notifications", populate : {path : "from"}});
-        const data = user.notifications;
+        .populate({path : "notifications.notification", populate : {path : "from"}});
+        user.notifications.unread = 0;
+        const data = user.notifications.notification;
+        await user.save();
         console.log('notifications :=> ',data);
         res.send(data);
     }catch(err){
@@ -485,7 +487,7 @@ router.post('/:userid/notification/deleteall',isLoggedIn, async (req, res, next)
     try{
         const {userid} = req.params;
         const user = await db.Client.findById(userid);
-        user.notifications = [];
+        user.notifications.notification = [];
         await user.save();
         let notices = await db.Notification.find({});
         console.log('initial',notices.length);
@@ -514,8 +516,8 @@ router.post('/:userid/notification/:nid/delete',isLoggedIn ,async (req, res, nex
             console.log('you cannot delete others notifications');
             return res.json(false);
         }
-        const updatedN = user.notifications.filter(id => id.toString() !== nid.toString());
-        user.notifications = updatedN;
+        const updatedN = user.notifications.notification.filter(id => id.toString() !== nid.toString());
+        user.notifications.notification = updatedN;
         await user.save();
         await db.Notification.deleteOne({ _id : nid });
         res.json(true);

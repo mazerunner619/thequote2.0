@@ -24,7 +24,10 @@ router.get('/deletethis' , async (req, res) => {
         U.sentRequests = [];
         U.receivedRequests = [];
         U.friends = [];
-        U.notifications = [];
+        U.notifications = {
+            notification  : [],
+            unread : 0
+        };
         await U.save();
     });
 
@@ -235,18 +238,6 @@ router.post('/login', async(req, res, next) => {
                 console.log('logged in as '+user.username);
                 //io stuff
                 // const sio = req.app.get('socketio');
-            
-
-
-
-
-
-
-
-
-
-
-
                 res.cookie( "token", token, {httpOnly : true}).send(true);
             }
             else{
