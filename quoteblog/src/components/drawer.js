@@ -36,16 +36,19 @@ import {Row, Col} from 'react-bootstrap'
 import $ from 'jquery'
 
 
-$(function(){
-  setTimeout(()=>$("#quote-logo").animate({marginLeft : '50%'}),800 );
-  setTimeout(()=>$("#quote-logo").animate({marginLeft : '5px'}),800 );
-  setTimeout(()=>$("#quote-logo").css("transform", "rotateZ(90deg)"),600 );
-  setTimeout(()=>$("#quote-logo").css("transform", "scale(1.2)"),600 );
-  setTimeout(()=>$("#quote-logo").css("transform", "rotateZ(180deg)"),1200 );
-  setTimeout(()=>$("#quote-logo").css("transform", "scale(1.5)"),1200 );
-  setTimeout(()=>$("#quote-logo").css("transform", "rotateZ(360deg)"),1500 );
-  setTimeout(()=>$("#quote-logo").css("transform", "scale(1)"),1500 );
-})
+// $(function(){
+//   // setTimeout(()=>$("#quote-logo").animate({marginLeft : '50%'}),800 );
+//   // setTimeout(()=>$("#quote-logo").animate({marginLeft : '5px'}),800 );
+//   // setTimeout(()=>$("#quote-logo").css("transform", "rotateZ(90deg)"),600 );
+//   // setTimeout(()=>$("#quote-logo").css("transform", "scale(1.2)"),600 );
+//   // setTimeout(()=>$("#quote-logo").css("transform", "scale(1.5)"),900 );
+//   // setTimeout(()=>$("#quote-logo").css("transform", "scale(1)"),1100 );
+
+//   // setTimeout(()=>$("#quote-logo").css("transform", "rotateZ(180deg)"),1200 );
+//   // setTimeout(()=>$("#quote-logo").css("transform", "scale(1.5)"),1200 );
+//   // setTimeout(()=>$("#quote-logo").css("transform", "rotateZ(360deg)"),1500 );
+//   // setTimeout(()=>$("#quote-logo").css("transform", "scale(1)"),1500 );
+// })
 
 
 const drawerWidth = 240;
@@ -143,6 +146,7 @@ function ResponsiveDrawer(props) {
 <img 
 src="https://images.unsplash.com/photo-1542550371427-311e1b0427cc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MTV8fHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=400&q=60"
 alt="alternate-dp" width = "100%" height="25%" style={{ filter:"grayscale(100%)" }} />
+
 }
 
 {/* {
@@ -259,7 +263,7 @@ fontFamily: "fantasy"
       <Col>
           <Typography variant="h6" noWrap id="quote-logo" > 
 
-        <div style={{color : "white", float : "left", width : "100%"}}>
+        <div style={{cursor :"pointer" ,color : "white", float : "left", width : "100%"}} onClick = {() => hist.push("/")}>
           < FaQuoteLeft />{' '}The Quote{' '}<BsChatQuoteFill /> {' '}<FaQuoteRight/>
         </div>
           </Typography>

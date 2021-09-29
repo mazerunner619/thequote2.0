@@ -301,6 +301,14 @@ Form {
     font-size: 98%;
   }
 
+  .msg-left {
+    font-size: small;
+  }
+
+  .msg-right {
+    font-size: small;
+  }
+
   #post-uploader {
     width: 35px;
     height: 35px;

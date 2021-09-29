@@ -42,8 +42,10 @@ router.get('/getfriends/:userid' , async (req, res) => {
     try{
         const {userid} = req.params;
         console.log('searching friends of ', userid);
-        const user = await db.Client.find({});
-        res.send(user);    
+        const user = await db.Client.findById(userid)
+        .populate({path : "friends", select : "-password"});
+        const friends = user.friends;
+        res.send(friends);    
     }catch(err){
         console.log(err)
     }

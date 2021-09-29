@@ -98,8 +98,8 @@ app.set('socketio', io);
                 socket.broadcast.to(room.toString()).emit("!typing");
             })
 
-            socket.on("newmsg", async({sender, message}) => {
-                console.log(`${message} : ${sender.username} in room ${room}`);
+            socket.on("newmsg", async({sender, message, timing}) => {
+                console.log(`${message} : ${sender.username} in room ${room} at ${timing}`);
                 //save to DB this message
                 const thisChat = await db.Chat.findOne({$or:[{recepients : [data[0]._id, data[1]._id]} , {recepients : reverseRecepients}]});
                 if(!thisChat){
@@ -112,7 +112,7 @@ app.set('socketio', io);
                     });
                     await thisChat.save();
                     console.log('receivemsg');
-                    socket.broadcast.to(room.toString()).emit("receivemsg", {message, sender});
+                    socket.broadcast.to(room.toString()).emit("receivemsg", {message, sender, timing});
                 // io.to(room.toString()).emit("receivemsg", {message, sender});
                 }
     
@@ -140,7 +140,6 @@ app.set('socketio', io);
                 }
             });
         });
-
 
         //add a new online user
 
