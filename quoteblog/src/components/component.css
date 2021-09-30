@@ -78,14 +78,14 @@
 #chats-body {
   overflow: scroll;
   background-color: rgb(66, 63, 63);
-  height: 90%;
+  height: 100%;
   width: 100%;
   padding: 1%;
 }
 
 #chats-body > ul > li {
   color: aliceblue;
-  background-color: #971243;
+  background-color: #000000;
   margin: 5px;
   border-radius: 5px;
   padding: 5px;
@@ -98,7 +98,7 @@
 }
 
 #chats-body > ul > li:hover {
-  background-color: #ca1256;
+  background-color: #ca12558b;
   box-shadow: 2px 2px 5px rgb(44, 41, 41);
 }
 
@@ -166,11 +166,53 @@
 }
 
 @media screen and (max-width: 480px) {
+  #chats-body > ul > li {
+    margin: 0;
+    border-radius: 0;
+    border-bottom: 0.2px solid rgb(34, 31, 31);
+    font-size: small;
+  }
+  #chatting-page {
+    margin-top: 5px;
+    padding: 0;
+  }
   .msg-left {
     font-size: small;
   }
 
+  #chats-body {
+    padding: 0;
+  }
+
+  #chatting-header {
+    border-top: 2px solid black;
+  }
+
+  #chatting-bottom {
+    padding: 0;
+    margin-bottom: 2px;
+  }
   .msg-right {
     font-size: small;
+  }
+
+  #chatting-send {
+    border: 0;
+    background-color: #971243;
+    color: white;
+    border-radius: 0 5px 5px 0;
+    width: 20%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition-duration: 0.4s;
+  }
+
+  #chatting-input {
+    -size: small;
+    padding-left: 5px;
+    border-radius: 5px 0 0 5px;
+    background-color: black;
+    border: 0.5px solid #971243;
   }
 }

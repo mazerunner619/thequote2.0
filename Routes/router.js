@@ -7,14 +7,15 @@ const bcrypt = require('bcrypt');
 
 
 router.get('/removerooms', async(req, res) => {
-
     try{
-          const data = await db.Chat.find({});
-            res.send(data)
+        //   const data = await db.Chat.find({});
+    const user = await db.Client.find({});
+    user.forEach( async(U) => {
+        user.active = false;
+    });
+            res.send('done')
     }catch(err){
-
     }
- 
 });
 
 router.get('/deletethis' , async (req, res) => {
@@ -48,6 +49,7 @@ router.get('/getfriends/:userid' , async (req, res) => {
         const user = await db.Client.findById(userid)
         .populate({path : "friends", select : "-password"});
         const friends = user.friends;
+        console.log('sent', user)
         res.send(friends);    
     }catch(err){
         console.log(err)
@@ -177,7 +179,7 @@ router.get('/getallposts' , async (req, res, next) => {
     try{
         const posts = await db.Post.find({})
         .populate({path : "uploader likes", select :"-password"}).sort({createdAt : 1});
-        console.log('get all posts route success', posts);
+        // console.log('get all posts route success', posts);
         res.send(posts);
     }catch(error){
         return next({

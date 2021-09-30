@@ -56,7 +56,6 @@ export const getLoggedUser = () => async(dispatch)=>{
 export const Login = (info, history) => async(dispatch)=>{
     try{
         console.log('logging in ......');
-
         dispatch({
             type : LOGIN
         });
@@ -64,7 +63,7 @@ export const Login = (info, history) => async(dispatch)=>{
         if(data){
         const currUser = await axios.get('/current');
         dispatch({ type : GET_LOGGED_USER_SUCCESS , payload : currUser.data });
-        history.push('/home');
+        history.push('/');
         }   
         else{
             dispatch({ type : LOGIN_ERROR , payload : 'wrong username or password' });

@@ -34,10 +34,13 @@ app.set('socketio', io);
 
 
     io.on("connection", (socket) => {
+        console.log('socket.io connected !');
         let currentUser = {};
         console.log('new user connected with id ',socket.id);
 
         socket.on("useronline", async(data) => {
+
+            console.log('socket request to backend');
 
             if(!data){
                 console.log('user not logged in');
@@ -52,6 +55,7 @@ app.set('socketio', io);
             currentUser[socket.id]= data._id;
             currentUser['username'] = data.username;
             console.log(`${theloggeduser._id} is now online`);
+
         });
 
 

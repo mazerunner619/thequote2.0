@@ -14,7 +14,6 @@ import Post from './components/Post'
 import {getAllPosts} from './ReduxStore/actions/postActions'
 import {getLoggedUser} from './ReduxStore/actions/userActions'
 import {likePost} from './ReduxStore/actions/authActions';
-// import {createSocket, getonline, getOnline} from './auths/getOnline';
 import $ from 'jquery'
 import { createSvgIcon } from '@material-ui/core';
 
@@ -31,17 +30,7 @@ const [newPostPage, setNewPostPage] = useState(false);
 
   useEffect( () => {
      dispatch(getAllPosts());
-  console.log('frontEnd rendered',allPosts);
   }, [dispatch]);
-
-  // useEffect(() => {
-  //   if(!loggedIn)
-  //   hist.push('/login');
-  //   // else{
-  //   //   createSocket();
-  //   //   getonline(loggedUser);
-  //   // }
-  // }, [loggedIn])
 
   const newPostHandler = () => {
     if(loggedIn)

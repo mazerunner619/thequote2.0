@@ -123,7 +123,6 @@ function ResponsiveDrawer(props) {
     }, [dispatch]);
     
     async function getLoggedOut(){
-    //   disconnectSocket();
       await dispatch(Logout(hist));
     }
   
@@ -248,7 +247,7 @@ fontFamily: "fantasy"
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <AppBar position="sticky" className={classes.appBar}>
+      <AppBar position="sticky" className={classes.appBar} style={{height : "8vh", borderBottom : "1px solid yellow"}}>
         <Toolbar style={{backgroundColor : "#971243"}}>
           <IconButton
             color="inherit"

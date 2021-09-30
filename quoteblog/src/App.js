@@ -1,10 +1,10 @@
 import './App.css';
 import Router from './ParentRouter'
-import axios from 'axios';
+import axios from 'axios'
 
 axios.defaults.withCredentials = true;
-function App() {
 
+function App() {
   return (
     <>
     <Router />

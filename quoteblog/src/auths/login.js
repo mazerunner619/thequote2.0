@@ -10,21 +10,11 @@ import {withRouter, Link} from 'react-router-dom'
 
 
 function Login({LoginAction, loginE}) {
-
   const hist = useHistory();
-  const dispatch = useDispatch();
-  const {loggedIn} = useSelector( state => state.userStore);
-
-  useEffect(() => {
-    if(loggedIn)
-    hist.push('/'); 
-  }, [loggedIn])
-
   const [user, setUser] = useState({
     username : "",
     password : "",
   });
-
 
   function HandleChange(e){
     const {name, value} = e.target;

@@ -9,7 +9,6 @@ import Avatar from '@material-ui/core/Avatar';
 import { makeStyles } from '@material-ui/core/styles';
 import {useHistory} from 'react-router'
 import './component.css'
-
 let socket;
 
 const useStyles = makeStyles((theme) => ({
@@ -21,10 +20,7 @@ const useStyles = makeStyles((theme) => ({
     },
   }));
 
-  
-
 export default function Chatting() {
-
 
   const hist = useHistory();
 
@@ -34,6 +30,7 @@ export default function Chatting() {
     const {loggedUser} = useSelector( state => state.userStore)
     const [friends, setFriends] = useState([]);
     const [chatwith, setWith] = useState(null);
+    const [load, setLoad] = useState(0);
 
     let chatinfo = [chatwith, loggedUser];   
     const [msg ,setMsg] = useState("");
@@ -42,9 +39,7 @@ export default function Chatting() {
     function sendMessage(e){
         if(!msg.length)return;
         socket.emit("newmsg",{sender : loggedUser, message : msg, timing : Date.now()});
-
           const newEle = document.createElement('p');
-          
           const spanEle = document.createElement('span');
           spanEle.setAttribute('id', "time-span");
           spanEle.innerHTML = fomatDate(Date.now());
@@ -79,14 +74,14 @@ export default function Chatting() {
 
     //get all previous chats;
         useEffect(() => {
+          setLoad(1);
           socket = socketClient('https://thequoteblog.herokuapp.com/', { transports : ['websocket']});
           const getInfo =async() => {
             const userRes  = await dispatch(getLoggedUser());
 if(userRes){
              const {data} = await axios.get(`/getfriends/${userRes._id}`);
              setFriends(data);
-             console.log('loggedUser ', userRes)
-             await socket.emit('useronline', userRes);
+             setLoad(0);
 }
 else{
 hist.push('/login');
@@ -99,8 +94,8 @@ hist.push('/login');
              socket.emit("startchat", chatinfo);
           }
 
-        socket.on("connect", () => console.log(`chat connected !`));
 
+        // socket.on("connect", () => console.log(`chat connected !`));
 
           socket.on("chathistory",(chatdata) => {
 
@@ -119,7 +114,6 @@ hist.push('/login');
             const chatContainer = document.getElementById("chatting-body");
             chatContainer.scrollTop=chatContainer.scrollHeight;
         });
-
           socket.on("receivemsg", ({message, sender, timing})=> {
 
             const objclass = (sender._id === loggedUser._id) ? "msg-right" : "msg-left"; 
@@ -135,21 +129,19 @@ hist.push('/login');
             chatContainer.scrollTop=chatContainer.scrollHeight;
 
           });
-
           socket.on("typing", () => {
             setT(1);
           });
-          
+
           socket.on("!typing", () => {
             setT(0);
           });
-
           return ()=> socket.off();
-
         },[chatwith]);
 
 
         useEffect( ()=>{
+
             socket.on("chathistory",(chatdata) => {
                 document.getElementById("chatting-body").innerHTML = '';
                   for(let ind = 0 ; ind < chatdata.length ; ind++){
@@ -170,15 +162,13 @@ hist.push('/login');
         },[chatwith])
 
     return (
+      
         <div style={{background : "black"}}>
                 <div id="chatting-page" style={{display : isChatting?"none" : "flex" }} >
-                <div id="chatting-header">
-                <h2>{'chats'}</h2>
-                </div>
+
                 <div id="chats-body"  className = "hideScrollbars">
                    <ul  id="online-users" style={{ listStyle: "none" ,padding: "0"}}>
     {
-
     friends.length>0 ?
     friends.map( (friend, index) =>
     <li onClick = {()=>{
@@ -198,16 +188,18 @@ src="https://images.unsplash.com/photo-1542550371427-311e1b0427cc?ixlib=rb-1.2.1
 }
         </div>
       <div>
-            {friend.username}
+            {friend.username}<b>{friend.active ? "online":""}</b>
     </div>
 </li>)
 
 :
+
 <b style={{textAlign:"center", position:"absolute", left : "50%", top : "50%", transform : "translate(-50%, -50%)"}}><i>you have no Friends</i> {' '}
 <br/>
 <tt onClick={()=>hist.push(`/search/${'random'}`)}  style={{ textAlign : "center",cursor : "pointer", padding : "3px",color : "purple", background : "black", borderRadius : "5px"}}>find friends</tt>
 </b>
-  }
+
+}
 
 </ul>
                 </div>
