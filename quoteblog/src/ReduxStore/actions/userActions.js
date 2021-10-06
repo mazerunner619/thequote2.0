@@ -44,11 +44,13 @@ export const getLoggedUser = () => async(dispatch)=>{
         }
         else {
             dispatch({ type : GET_LOGGED_USER_ERROR , payload : "not logged in" });
+            return false;
         }
 
     }catch(error){
         console.log(error.message);
         dispatch({ type : GET_LOGGED_USER_ERROR , payload : error.message });
+        return false;
     }
 }
 
@@ -77,12 +79,11 @@ export const Login = (info, history) => async(dispatch)=>{
 
 
 
-export const Logout = (history) => (dispatch)=>{
+export const Logout = (history, userid) => async(dispatch)=>{
     console.log('logging out ');
-     axios.post('/user/logout');
+     await axios.post(`/user/${userid}/logout`);
      dispatch({type : LOGOUT });
-    history.push('/login');
-    
+    history.push('/login');   
 }
 
 

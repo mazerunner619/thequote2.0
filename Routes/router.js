@@ -5,14 +5,15 @@ const db = require('../Models');
 const bcrypt = require('bcrypt');
 
 
-
 router.get('/removerooms', async(req, res) => {
     try{
         //   const data = await db.Chat.find({});
     const user = await db.Client.find({});
     user.forEach( async(U) => {
-        user.active = false;
+        U.active = false;
+        await U.save(); 
     });
+
             res.send('done')
     }catch(err){
     }
@@ -49,7 +50,6 @@ router.get('/getfriends/:userid' , async (req, res) => {
         const user = await db.Client.findById(userid)
         .populate({path : "friends", select : "-password"});
         const friends = user.friends;
-        console.log('sent', user)
         res.send(friends);    
     }catch(err){
         console.log(err)
@@ -155,7 +155,6 @@ router.get('/current' ,async(req, res, next) => {
             if(verified){
                 const user = await db.Client.findById(verified.userId)
                 .populate({path : "posts receivedRequests friends", populate : {path :"from"}});
-                // console.log('sent : '+user)
                 res.send(user);
             }
             else{

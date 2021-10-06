@@ -33,9 +33,12 @@ import {getLoggedUser, Logout} from '../ReduxStore/actions/userActions'
 import {useDispatch, useSelector} from 'react-redux'
 import {useHistory} from 'react-router'
 import {Row, Col} from 'react-bootstrap'
+import socketClient from "socket.io-client";
+
 import $ from 'jquery'
 
 let counter=0;
+let socket;
 
 $(function(){
   setTimeout(()=>$("#quote-logo").animate({marginLeft : '50%'}),800 );
@@ -118,14 +121,23 @@ function ResponsiveDrawer(props) {
     
     const hist = useHistory();
     
-      React.useEffect( ()=>{
-        dispatch(getLoggedUser());
-    }, [dispatch]);
+    React.useEffect( ()=>{
+      const getInfo = async() => {
+        const result = await dispatch(getLoggedUser());
+      console.log('logged in ', result);
+        if(result){
+        socket = socketClient('https://thequoteblog.herokuapp.com/', { transports : ['websocket']});
+        socket.emit('useronline', result);
+        }
+      }
+      getInfo();
+  }, [dispatch, loggedIn]);
+
     
     async function getLoggedOut(){
-      await dispatch(Logout(hist));
+      await dispatch(Logout(hist, loggedUser._id));
     }
-  
+
     const handleSearch = (search) => {
       hist.push(`/search/${search}`);
     }

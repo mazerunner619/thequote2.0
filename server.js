@@ -5,7 +5,7 @@ const app = express();
 const Route = require('./Routes/router');
 const userRoute = require('./Routes/userRoute');
 const errorHandler = require('./handlers/errorHandler');
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8000;
 const path = require('path');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -34,8 +34,10 @@ app.set('socketio', io);
 
 
     io.on("connection", (socket) => {
+
         console.log('socket.io connected !');
         let currentUser = {};
+
         console.log('new user connected with id ',socket.id);
 
         socket.on("useronline", async(data) => {
@@ -53,7 +55,6 @@ app.set('socketio', io);
              await theloggeduser.save();
 
             currentUser[socket.id]= data._id;
-            currentUser['username'] = data.username;
             console.log(`${theloggeduser._id} is now online`);
 
         });
@@ -141,6 +142,8 @@ app.set('socketio', io);
                 if(err){
                     console.log(err);
                     throw err;
+                }else{
+                    console.log('done=>',done)
                 }
             });
         });

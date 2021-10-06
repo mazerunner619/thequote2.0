@@ -531,12 +531,16 @@ router.post('/:userid/notification/:nid/delete',isLoggedIn ,async (req, res, nex
     });
 
 //========================== LOGOUT
-router.post('/logout' , (req, res) => {
+router.post('/:userid/logout' , async(req, res) => {
+
+    const user = await db.Client.findById(req.params.userid);
+    user.active = false;
+    await user.save();
     console.log('logged out');
     res.cookie("token", "",{
     httpOnly : true,
     expires : new Date(0)
-    }).send('logged out successfully');
+    }).send(`${user.username}logged out !`);
 })
 
 module.exports = router;

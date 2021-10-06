@@ -1,13 +1,18 @@
 import React, {useEffect, useState} from 'react'
 import socketClient from "socket.io-client";
+import Badge from '@material-ui/core/Badge';
+import { withStyles } from '@material-ui/core/styles';
 import {useDispatch, useSelector} from 'react-redux'
 import {getLoggedUser} from '../ReduxStore/actions/userActions'
 import {RiSendPlaneLine} from 'react-icons/ri'
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
 import axios from 'axios';
 import Avatar from '@material-ui/core/Avatar';
 import { makeStyles } from '@material-ui/core/styles';
 import {useHistory} from 'react-router'
+import {BiRefresh} from 'react-icons/bi'
 import './component.css'
 let socket;
 
@@ -19,6 +24,17 @@ const useStyles = makeStyles((theme) => ({
       },
     },
   }));
+
+  const StyledBadge = withStyles((theme) => ({
+    badge: {
+      right: -3,
+      top: 13,
+      border: `2px solid green`,
+      background : "green",
+      padding: '0 4px',
+    },
+  }))(Badge);
+
 
 export default function Chatting() {
 
@@ -165,7 +181,9 @@ hist.push('/login');
       
         <div style={{background : "black"}}>
                 <div id="chatting-page" style={{display : isChatting?"none" : "flex" }} >
-
+                  {/* <h1><BiRefresh style={{cursor : "pointer", float : "right", width : "maxontent"}} onClick = { () => {
+                    window.location.reload();
+                  }}/></h1> */}
                 <div id="chats-body"  className = "hideScrollbars">
                    <ul  id="online-users" style={{ listStyle: "none" ,padding: "0"}}>
     {
@@ -180,15 +198,37 @@ hist.push('/login');
 {
 
 (friend.profilePicture && friend.profilePicture.imageURL)?
+<>
+<StyledBadge
+anchorOrigin={{
+  vertical: 'bottom',
+  horizontal: 'right',
+}}
+overlap = "circular"
+invisible = {!friend.active}
+badgeContent={'online'}>
  <Avatar alt="user-dp" src={friend.profilePicture.imageURL}/>
+ </StyledBadge>
+ </>
 :
+<>
+<StyledBadge
+anchorOrigin={{
+  vertical: 'bottom',
+  horizontal: 'right',
+}}
+overlap = "circular"
+invisible = {!friend.active}
+badgeContent={'online'}>
 <Avatar alt="user-dp" 
 src="https://images.unsplash.com/photo-1542550371427-311e1b0427cc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MTV8fHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=400&q=60"
 />
+</StyledBadge>
+</>
 }
         </div>
       <div>
-            {friend.username}<b>{friend.active ? "online":""}</b>
+            {friend.username}
     </div>
 </li>)
 
