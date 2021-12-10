@@ -13,6 +13,7 @@ import Avatar from '@material-ui/core/Avatar';
 import { makeStyles } from '@material-ui/core/styles';
 import {useHistory} from 'react-router'
 import {BiRefresh} from 'react-icons/bi'
+import {GoPrimitiveDot} from 'react-icons/go'
 import './component.css'
 let socket;
 
@@ -268,7 +269,9 @@ src="https://images.unsplash.com/photo-1542550371427-311e1b0427cc?ixlib=rb-1.2.1
 }
         </div>
       <div onClick={()=>hist.push(`/show/${chatwith._id}/profile`)} style={{cursor : "pointer"}}>
-            {chatwith.username}
+            {chatwith.username}{' '}
+            {chatwith.active?
+            <GoPrimitiveDot style={{color :"lightgreen"}}/>:""}
     </div>
                     <div>{T ? " is typing..." : ""}</div>
         </div>

@@ -6,7 +6,8 @@ import {Button} from '@material-ui/core'
 import { withRouter, Link } from 'react-router-dom'
 import {Signup as signupAction} from '../ReduxStore/actions/userActions'
 import {connect} from 'react-redux'
-
+import {AiFillEye, AiTwotoneEyeInvisible} from 'react-icons/ai';
+import {Row, Col} from 'react-bootstrap'
 
  function Signup({
   signupAction,loginE
@@ -17,6 +18,8 @@ import {connect} from 'react-redux'
     password : "",
     confirmpassword : ""
   });
+
+  const [visibility, setVisibility] = useState(false);
 
   var hist = useHistory();
 
@@ -48,12 +51,16 @@ import {connect} from 'react-redux'
 
   <Form.Group controlId="formBasicPassword">
     <Form.Label  style={{color : "black"}}>enter password</Form.Label>
-    <Form.Control type="password" placeholder="Password" required name="password" value={user.password} onChange = {HandleChange} style={{border : "1px solid cyan"}}/>
+      <Form.Control type = {visibility?"text":"password"} placeholder="Password" required name="password" value={user.password} onChange = {HandleChange} style={{border : "1px solid cyan"}}/>
   </Form.Group>
-
+  {
+    visibility?
+    <AiFillEye style = {{fontSize : "150%", margin : "0 50%", padding : "0"}} onClick = {()=>setVisibility(!visibility)}/>
+    :
+    <AiTwotoneEyeInvisible style = {{fontSize : "150%", margin : "0 50%", padding : "0"}} onClick = {()=>setVisibility(!visibility)}/>
+  }
   <Form.Group controlId="formBasicPassword">
-    <Form.Label  style={{color : "black"}}>confirm password</Form.Label>
-    <Form.Control type="password" placeholder="confirm Password" required name="confirmpassword" value={user.confirmpassword} onChange = {HandleChange} style={{border : "1px solid cyan"}}/>
+    <Form.Control type = {visibility?"text":"password"} placeholder="confirm Password" required name="confirmpassword" value={user.confirmpassword} onChange = {HandleChange} style={{border : "1px solid cyan"}}/>
   </Form.Group>
   <b>{loginE}</b>
 <hr/>
