@@ -283,11 +283,11 @@ src="https://images.unsplash.com/photo-1542550371427-311e1b0427cc?ixlib=rb-1.2.1
             <div style={{display : "inline", float : "left", cursor : "pointer"}} id = "clearChat" onClick={()=>hist.push(`/show/${chatwith._id}/profile`)} >{chatwith.username}{' '}</div>
             <div style={{display : "inline", float : "left"}} onClick={()=>hist.push(`/show/${chatwith._id}/profile`)} >{chatwith.active?
             <GoPrimitiveDot style={{color :"lightgreen"}}/>:""}</div>
+            <div style={{marginTop :"5px" ,display : "inline", float :"left"}}>{T ? " typing..." : ""}</div>
             <div id="clearChat" onClick={()=>setClearChatPage(true)}>
               clear chat <BsClockHistory style={{fontSize : "150%"}}/>
             </div>
       </div>
-                    <div>{T ? " is typing..." : ""}</div>
         </div>
 
 <div id="chatting-body" className="hideScrollbars">
@@ -295,7 +295,7 @@ src="https://images.unsplash.com/photo-1542550371427-311e1b0427cc?ixlib=rb-1.2.1
 </div>
                 
                 <div id="chatting-bottom">
-                    <input id="chatting-input"  onKeyUp={() => notifyTyping(1)} onMouseLeave={() => notifyTyping(0)} placeholder = "message..." value = {msg} type="text" onChange={(e)=>setMsg(e.target.value)} onKeyDown = {(e) => (e.keyCode === 13) ? sendMessage(e) : ""}/>
+                    <input id="chatting-input"  onKeyUp={() => notifyTyping(1)} onMouseLeave={() => notifyTyping(0)} autoComplete="off" placeholder = "message..." value = {msg} type="text" onChange={(e)=>setMsg(e.target.value)} onKeyDown = {(e) => (e.keyCode === 13) ? sendMessage(e) : ""}/>
                     <button id="chatting-send" onClick = {(e) => sendMessage(e)}><h3><RiSendPlaneLine className="text-white" style={{transform : "rotateZ(45deg)", transitionDuration : "0.3s"}}/></h3></button>
                 </div>
 </>

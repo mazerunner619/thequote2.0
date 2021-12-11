@@ -119,17 +119,23 @@ async function handleDeleteRequest(id){
     <Col>
     <Card bg="dark" text="dark">
     <Card.Body>
-      
+      {
+        profile?
     <Dropdown>
   <Dropdown.Toggle id="dropdown-basic" style = {{display : "inline",background :"#ff4081", width : "40px",height : "40px", borderRadius : "20px", float :"right"}}>
   </Dropdown.Toggle>
   <Dropdown.Menu>
+
     <Dropdown.Item href="#/action-1" onClick = {async()=>{
       await axios.post(`/user/${loggedUser._id}/unfriend/${res._id}`);
       setRender(render === 0 ? 1 : 0);
     }}  >unfriend</Dropdown.Item>
+
   </Dropdown.Menu>
 </Dropdown>
+:
+<></>
+}
 
         <div style={{float : "left"}} className = "mr-2">
     {

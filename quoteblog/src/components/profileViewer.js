@@ -5,7 +5,6 @@ import {getUserPosts} from '../ReduxStore/actions/postActions'
 import {getUser} from '../ReduxStore/actions/userActions'
 import {useSelector, useDispatch} from 'react-redux'
 import Menu from '../components/profileMenu'
-import $ from 'jquery'
 
 export default function ProfileViewer({match}){
 
