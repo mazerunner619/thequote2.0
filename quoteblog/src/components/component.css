@@ -165,6 +165,20 @@
   color: aliceblue;
 }
 
+#clearChat {
+  background-color: #ae5c7a;
+  display: "inline";
+  width: fit-content;
+  float: right;
+  padding: 4px;
+  border-radius: 15px;
+  cursor: pointer;
+  transition-duration: 0.3s;
+}
+#clearChat:hover {
+  color: black;
+}
+
 @media screen and (max-width: 480px) {
   #chats-body > ul > li {
     margin: 0;

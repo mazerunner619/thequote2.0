@@ -82,7 +82,7 @@ app.set('socketio', io);
                 console.log('ROOOMS',socket.rooms);
             }else{
                 //start a new conversation
-                console.log(` no chat hostory found for ${data[0].username} and ${data[1].username}`);
+                console.log(` no chat history found for ${data[0].username} and ${data[1].username}`);
                 const newChat = await db.Chat.create({
                     recepients : [data[0]._id, data[1]._id]
                 });
@@ -93,8 +93,19 @@ app.set('socketio', io);
                 console.log('ROOOMS',socket.rooms);
             }
 
+            socket.on("clearchat", () => {
+                console.log('clear chat request initiated.....\n');
+                db.Chat.findOneAndDelete({$or : [{recepients : [data[0]._id, data[1]._id]}, {recepients : reverseRecepients}]}, (err, done)=>{
+                    if(err){
+                        console.log('OOPS! something went wrong.....');
+                    }else{
+                        console.log(' successful ');
+                    }
+                });
+            })
+
             socket.on("typing",  (typer) => {
-                console.log(`${typer.username}  is typing...`);
+                console.log(`${typer.username}  is typing...`);                
                 socket.broadcast.to(room.toString()).emit("typing");
             })
 

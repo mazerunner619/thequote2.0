@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react'
+import ClearChatModal from './clearChat'
 import socketClient from "socket.io-client";
 import Badge from '@material-ui/core/Badge';
 import { withStyles } from '@material-ui/core/styles';
@@ -6,14 +7,13 @@ import {useDispatch, useSelector} from 'react-redux'
 import {getLoggedUser} from '../ReduxStore/actions/userActions'
 import {RiSendPlaneLine} from 'react-icons/ri'
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
-import Fab from '@material-ui/core/Fab';
-import AddIcon from '@material-ui/icons/Add';
 import axios from 'axios';
 import Avatar from '@material-ui/core/Avatar';
 import { makeStyles } from '@material-ui/core/styles';
 import {useHistory} from 'react-router'
 import {BiRefresh} from 'react-icons/bi'
 import {GoPrimitiveDot} from 'react-icons/go'
+import {BsClockHistory} from 'react-icons/bs'
 import './component.css'
 let socket;
 
@@ -48,6 +48,7 @@ export default function Chatting() {
     const [friends, setFriends] = useState([]);
     const [chatwith, setWith] = useState(null);
     const [load, setLoad] = useState(0);
+    const [clearChatPage, setClearChatPage] = useState(false);
 
     let chatinfo = [chatwith, loggedUser];   
     const [msg ,setMsg] = useState("");
@@ -77,6 +78,15 @@ export default function Chatting() {
       }
     }
 
+    function clearChatInitiate(a){
+      if(a){
+      socket.emit('clearchat');
+      window.location.reload();
+      }else{
+      setClearChatPage(false);
+      }
+    }
+
     function fomatDate(date){
       // let newDate = new Date(date).toLocaleDateString("en-US", {weekday : "short", month : "short", day : "numeric"});
       let newTime = new Date(date).toLocaleTimeString();
@@ -93,6 +103,7 @@ export default function Chatting() {
         useEffect(() => {
           setLoad(1);
           socket = socketClient('https://thequoteblog.herokuapp.com/', { transports : ['websocket']});
+          // socket = socketClient('http://localhost:8000/'); // development mode
           const getInfo =async() => {
             const userRes  = await dispatch(getLoggedUser());
 if(userRes){
@@ -237,7 +248,7 @@ src="https://images.unsplash.com/photo-1542550371427-311e1b0427cc?ixlib=rb-1.2.1
 
 <b style={{textAlign:"center", position:"absolute", left : "50%", top : "50%", transform : "translate(-50%, -50%)"}}><i>you have no Friends</i> {' '}
 <br/>
-<tt onClick={()=>hist.push(`/search/${'random'}`)}  style={{ textAlign : "center",cursor : "pointer", padding : "3px",color : "purple", background : "black", borderRadius : "5px"}}>find friends</tt>
+<tt onClick={()=>hist.push(`/search/${'search friends'}`)}  style={{ textAlign : "center",cursor : "pointer", padding : "3px",color : "purple", background : "black", borderRadius : "5px"}}>find friends</tt>
 </b>
 
 }
@@ -268,11 +279,14 @@ src="https://images.unsplash.com/photo-1542550371427-311e1b0427cc?ixlib=rb-1.2.1
 />
 }
         </div>
-      <div onClick={()=>hist.push(`/show/${chatwith._id}/profile`)} style={{cursor : "pointer"}}>
-            {chatwith.username}{' '}
-            {chatwith.active?
-            <GoPrimitiveDot style={{color :"lightgreen"}}/>:""}
-    </div>
+      <div style={{width : "100%"}}>
+            <div style={{display : "inline", float : "left", cursor : "pointer"}} id = "clearChat" onClick={()=>hist.push(`/show/${chatwith._id}/profile`)} >{chatwith.username}{' '}</div>
+            <div style={{display : "inline", float : "left"}} onClick={()=>hist.push(`/show/${chatwith._id}/profile`)} >{chatwith.active?
+            <GoPrimitiveDot style={{color :"lightgreen"}}/>:""}</div>
+            <div id="clearChat" onClick={()=>setClearChatPage(true)}>
+              clear chat <BsClockHistory style={{fontSize : "150%"}}/>
+            </div>
+      </div>
                     <div>{T ? " is typing..." : ""}</div>
         </div>
 
@@ -286,7 +300,13 @@ src="https://images.unsplash.com/photo-1542550371427-311e1b0427cc?ixlib=rb-1.2.1
                 </div>
 </>
 }
-    </div>              
+    </div>  
+    <ClearChatModal 
+          show={clearChatPage}
+          onHide={() => setClearChatPage(false)}
+          onConfirm = {() => clearChatInitiate(true)}
+          onCancel = {() => clearChatInitiate(false)}
+/>            
         </div>
 
     )
