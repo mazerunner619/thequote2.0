@@ -101,8 +101,7 @@ export default function Chatting() {
 
     //get all previous chats;
         useEffect(() => {
-          setLoad(1);
-          socket = socketClient('https://thequoteblog.herokuapp.com/', { transports : ['websocket']});
+          setLoad(1);	
           // socket = socketClient('http://localhost:8000/'); // development mode
           const getInfo =async() => {
             const userRes  = await dispatch(getLoggedUser());

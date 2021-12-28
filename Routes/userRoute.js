@@ -22,7 +22,7 @@ const resizeFile = (file) =>
       50,
       0,
       (uri) => {
-         console.log(uri);
+         //console.log(uri);
          resolve(uri);
       },
       "base64"
@@ -70,7 +70,7 @@ try{
 //========================================= update profle info 
 router.post('/:userid/profile/update',upload.single('image'),async(req, res, next) => {
     try{
-        console.log('updating profile');
+        //console.log('updating profile');
         const FILE = req.file;
         const {userid} = req.params;
         const {bio, username} = req.body;
@@ -87,7 +87,7 @@ router.post('/:userid/profile/update',upload.single('image'),async(req, res, nex
         if(username.length > 0){
             const alreadyexists = await db.Client.find({username : username});
             if(alreadyexists.length > 0 && alreadyexists[0].username !== user.username){
-                console.log('name already exists');
+                //console.log('name already exists');
                 return res.json({
                     status : false,
                     message : "username already exists"
@@ -96,7 +96,7 @@ router.post('/:userid/profile/update',upload.single('image'),async(req, res, nex
             user.username = username;
         }
         await user.save();
-        console.log('uodated profile');
+        //console.log('uodated profile');
 
    return res.json({
                     status : true,
@@ -114,7 +114,7 @@ router.post('/:userid/profile/update',upload.single('image'),async(req, res, nex
 
 //============== send Friend Request ===========
 router.post('/request/:userid/:to' , isLoggedIn ,async (req, res, next) => {
-    console.log('sending request =>');
+    //console.log('sending request =>');
     try{
         const {userid, to} = req.params;
 
@@ -130,7 +130,7 @@ router.post('/request/:userid/:to' , isLoggedIn ,async (req, res, next) => {
         .populate({ path : "sentRequests"});
         const alreadyRequested = sender.sentRequests.filter(id => id.to.toString() === to.toString());
         if(alreadyRequested.length > 0){
-            console.log('Request already pending !');
+            //console.log('Request already pending !');
             return res.json({
                 mesage : 'request already pending !',
                 status : false
@@ -139,7 +139,7 @@ router.post('/request/:userid/:to' , isLoggedIn ,async (req, res, next) => {
 
         const alreadyFriends = sender.friends.filter(id => id.toString() === to);
         if(alreadyFriends.length > 0){
-            console.log('already friends  !');
+            //console.log('already friends  !');
 
             return res.json({
                 mesage : 'already friends !',
@@ -158,7 +158,7 @@ router.post('/request/:userid/:to' , isLoggedIn ,async (req, res, next) => {
         sendNotification(userid, to, "sent you a friend request");
         await sender.save();
         await receiver.save();
-        console.log('request sent');
+        //console.log('request sent');
         return res.json({
             mesage : 'request sent !',
             status : true
@@ -172,7 +172,7 @@ router.post('/request/:userid/:to' , isLoggedIn ,async (req, res, next) => {
 
 //============== Accept Friend Request ===========
 router.post('/:userid/requests/:reqid/accept' , isLoggedIn,async (req, res, next) => {
-    console.log('accepting reqeust');
+    //console.log('accepting reqeust');
     try{
         const {userid, reqid} = req.params;
         const R = await db.Request.findById(reqid);
@@ -183,7 +183,7 @@ router.post('/:userid/requests/:reqid/accept' , isLoggedIn,async (req, res, next
             });
         }
         if(R.to.toString() !== userid.toString() ){
-            console.log('unauthorized user');
+            //console.log('unauthorized user');
             return res.json({
                 status : false,
                 message : 'unauthorized !!!'
@@ -192,7 +192,7 @@ router.post('/:userid/requests/:reqid/accept' , isLoggedIn,async (req, res, next
         const receiver = await db.Client.findById(userid); 
         const alreadyFriends = receiver.friends.filter(id => id.toString() === R.from);
         if(alreadyFriends.length > 0){
-            console.log('already friends');
+            //console.log('already friends');
             return res.json({
                 status : false,
                 message : 'already friends !!!'
@@ -216,7 +216,7 @@ router.post('/:userid/requests/:reqid/accept' , isLoggedIn,async (req, res, next
         await sender.save();
         await receiver.save();
 
-        console.log('request accepted');
+        //console.log('request accepted');
         res.json({
             message : "request accepted",
             status : true
@@ -233,7 +233,7 @@ router.post('/:userid/requests/:reqid/accept' , isLoggedIn,async (req, res, next
 
 //============== DELETE Friend Request ===========
 router.post('/:userid/requests/:reqid/delete' , isLoggedIn,async (req, res, next) => {
-    console.log('deleting reqeust');
+    //console.log('deleting reqeust');
     try{
         const {userid, reqid} = req.params;
         const R = await db.Request.findById(reqid);
@@ -244,7 +244,7 @@ router.post('/:userid/requests/:reqid/delete' , isLoggedIn,async (req, res, next
             });
         }
         if(R.to.toString() !== userid.toString() ){
-            console.log('unauthorized user');
+            //console.log('unauthorized user');
             return res.json({
                 status : false,
                 message : 'unauthorized !!!'
@@ -253,7 +253,7 @@ router.post('/:userid/requests/:reqid/delete' , isLoggedIn,async (req, res, next
         const receiver = await db.Client.findById(userid); 
         const alreadyFriends = receiver.friends.filter(id => id.toString() === R.from);
         if(alreadyFriends.length > 0){
-            console.log('already friends');
+            //console.log('already friends');
             return res.json({
                 status : false,
                 message : 'already friends !!!'
@@ -274,7 +274,7 @@ router.post('/:userid/requests/:reqid/delete' , isLoggedIn,async (req, res, next
         await sender.save();
         await receiver.save();    
 
-        console.log('request deleted');
+        //console.log('request deleted');
         res.json({
             message : "request deleted",
             status : true
@@ -292,21 +292,21 @@ router.post('/:userid/requests/:reqid/delete' , isLoggedIn,async (req, res, next
 router.post('/newpost/:userid',upload.single('image'),async(req, res, next) => {
     try{
         const FILE = req.file;
-        console.log('from backend initial file => ',FILE);
+        //console.log('from backend initial file => ',FILE);
         const {userid} = req.params;
         const {content} = req.body;
         let image = {};
 
 if(FILE){
         const fileRes = await fileUpload(FILE);   
-        console.log(fileRes, 'from backend fileupload');
-        console.log('final file => ',fileRes);
+        //console.log(fileRes, 'from backend fileupload');
+        //console.log('final file => ',fileRes);
             image.imageID = fileRes.dataid,
             image.imageURL = fileRes.dataurl
     }
     else{
         const fileRes = await uploadFromURL("https://source.unsplash.com/random/900%C3%97700/?pink,cloud,moon");   
-        console.log(fileRes, 'from backend fileupload');
+        //console.log(fileRes, 'from backend fileupload');
         image.imageID = fileRes.public_id,
         image.imageURL = fileRes.secure_url     
     }
@@ -317,7 +317,7 @@ if(FILE){
             image : image
         });
 
-        console.log('new post',newPost);
+        //console.log('new post',newPost);
 
     //add to users posts
         const user = await db.Client.findById(userid);
@@ -335,12 +335,12 @@ if(FILE){
 router.delete('/:userid/delete/:postid', isLoggedIn,async (req, res, next) => {
     try{
 
-        console.log('n delete route');
-        console.log(req.params.userid);
-console.log(req.params.postid);
+        //console.log('n delete route');
+        //console.log(req.params.userid);
+//console.log(req.params.postid);
         const {userid, postid} = req.params;
         const post =  await db.Post.findById(postid);
-        console.log(post);
+        //console.log(post);
         if(post.uploader.toString() !== userid.toString()){
             return next({
                 message : "wait a minute .... Who are you !!!"
@@ -420,7 +420,7 @@ router.post('/:userid/comment/:postid', isLoggedIn,async (req, res, next) => {
 //=======================================EDIT POST 
 router.post('/:userid/edit/:postid',isLoggedIn,async (req, res, next) => {
 try{
-    console.log('n edut route');
+    //console.log('n edut route');
     const {userid, postid} = req.params;
     const {content} = req.body;
     const post =  await db.Post.findById(postid);
@@ -433,7 +433,7 @@ try{
     await post.save();
     res.json(true);
 }catch(err){
-    console.log(err.message);
+    //console.log(err.message);
     return next({
         message : err.message
     });
@@ -445,17 +445,17 @@ try{
 //==================================== GET NOTIFICATIONs by userID
 router.get('/notifications/:userid',async (req, res, next) => {
     try{
-        console.log('notifications :=>', req.params.userid);
+        //console.log('notifications :=>', req.params.userid);
         const {userid} = req.params;
         const user = await db.Client.findById(userid)
         .populate({path : "notifications.notification", populate : {path : "from"}});
         user.notifications.unread = 0;
         const data = user.notifications.notification;
         await user.save();
-        console.log('notifications :=> ',data);
+        //console.log('notifications :=> ',data);
         res.send(data);
     }catch(err){
-        console.log(err.message);
+        //console.log(err.message);
         return next({
             message : err.message
         });
@@ -466,16 +466,16 @@ router.get('/notifications/:userid',async (req, res, next) => {
 //==================================== GET ROOMSs by userID
 router.get('/rooms/:userid',async (req, res, next) => {
     try{
-        console.log('rooms :=>', req.params.userid);
+        //console.log('rooms :=>', req.params.userid);
         const {userid} = req.params;
         const user = await db.Client.findById(userid)
         .populate({path : "rooms", populate : {path : "admin members"}});
 
         const data = user.rooms;
-        console.log('rooms :=> ',data);
+        //console.log('rooms :=> ',data);
         res.send(data);
     }catch(err){
-        console.log(err);
+        //console.log(err);
         return next({
             message : err.message
         });
@@ -490,16 +490,16 @@ router.post('/:userid/notification/deleteall',isLoggedIn, async (req, res, next)
         user.notifications.notification = [];
         await user.save();
         let notices = await db.Notification.find({});
-        console.log('initial',notices.length);
+        //console.log('initial',notices.length);
 
         await db.Notification.deleteMany({to : userid});
 
         notices = await db.Notification.find({});
-        console.log('final',notices.length);
+        //console.log('final',notices.length);
 
         res.json(true);
     }catch(err){
-        console.log(err.message);
+        //console.log(err.message);
         return next({
             message : err.message
         });
@@ -513,7 +513,7 @@ router.post('/:userid/notification/:nid/delete',isLoggedIn ,async (req, res, nex
         const user = await db.Client.findById(userid);
         const noti = await db.Notification.findById(nid);
         if(noti.to.toString() !== userid.toString()){
-            console.log('you cannot delete others notifications');
+            //console.log('you cannot delete others notifications');
             return res.json(false);
         }
         const updatedN = user.notifications.notification.filter(id => id.toString() !== nid.toString());
@@ -522,7 +522,7 @@ router.post('/:userid/notification/:nid/delete',isLoggedIn ,async (req, res, nex
         await db.Notification.deleteOne({ _id : nid });
         res.json(true);
     }catch(err){
-        console.log(err.message);
+        //console.log(err.message);
         return next({
             message : err.message
         });
@@ -534,9 +534,9 @@ router.post('/:userid/notification/:nid/delete',isLoggedIn ,async (req, res, nex
 router.post('/:userid/logout' , async(req, res) => {
 
     const user = await db.Client.findById(req.params.userid);
+    console.log(` ${user.username} logged out `);
     user.active = false;
     await user.save();
-    console.log('logged out');
     res.cookie("token", "",{
     httpOnly : true,
     expires : new Date(0)

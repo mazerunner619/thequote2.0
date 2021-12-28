@@ -38,7 +38,7 @@ router.get('/deletethis' , async (req, res) => {
     await db.Chat.deleteMany({});
     
     }catch(err){
-        console.log(err)
+        //console.log(err)
     }
 });
 
@@ -46,13 +46,13 @@ router.get('/deletethis' , async (req, res) => {
 router.get('/getfriends/:userid' , async (req, res) => {
     try{
         const {userid} = req.params;
-        console.log('searching friends of ', userid);
+        //console.log('searching friends of ', userid);
         const user = await db.Client.findById(userid)
         .populate({path : "friends", select : "-password"});
         const friends = user.friends;
         res.send(friends);    
     }catch(err){
-        console.log(err)
+        //console.log(err)
     }
 });
 
@@ -81,8 +81,8 @@ router.get('/search/:username/:userid' , async (req, res, next) => {
         all = all.map( obj => {
             const requestSent = requser.sentRequests.filter( SR => SR.to.toString() === obj._id.toString());
             const alreadyFriends = obj.friends.filter( FRND => FRND.toString() === requser._id.toString());
-            console.log(requestSent);
-            console.log(alreadyFriends);
+            //console.log(requestSent);
+            //console.log(alreadyFriends);
             return{
                 ...obj._doc,
                 Sent : requestSent.length>0,
@@ -93,24 +93,24 @@ router.get('/search/:username/:userid' , async (req, res, next) => {
         searching = searching.map( obj => {
             const requestSent = requser.sentRequests.filter( SR => SR.to.toString() === obj._id.toString());
             const alreadyFriends = obj.friends.filter( FRND => FRND.toString() === requser._id.toString());
-            console.log(requestSent);
-            console.log(alreadyFriends);
+            //console.log(requestSent);
+            //console.log(alreadyFriends);
             return{
                 ...obj._doc,
                 Sent : requestSent.length>0,
                 Friends : alreadyFriends.length>0
             }
         } );
-        console.log(`search request for ${username}`);
-        console.log(`searching`, searching);
-        // console.log(`all`, all);
+        //console.log(`search request for ${username}`);
+        //console.log(`searching`, searching);
+        // //console.log(`all`, all);
 
         res.json({
             searching,
             all
         });
     }catch(error){
-        console.log(error.message)
+        //console.log(error.message)
         return next({
             mesage : error.message
         });
@@ -122,10 +122,10 @@ router.get('/getuser/:userID' ,async(req, res, next) => {
     try{
         const user = await db.Client.findById(req.params.userID)
         .populate({path : "posts friends receivedRequests", populate : {path : "from"}});
-        console.log(user,'=> form BE');
+        //console.log(user,'=> form BE');
                return res.send(user);
     }catch(error){
-        console.log('get user route error ',error);
+        //console.log('get user route error ',error);
         return next({
             message : error.message
         });
@@ -140,7 +140,7 @@ router.get('/getuser/:userID' ,async(req, res, next) => {
 //         // .populate({ path : "posts friends"});
 //         res.send(user);
 //     }catch(error){
-//         console.log('get user route error ',error);
+//         //console.log('get user route error ',error);
 //         res.send(null);
 //     }
 // });
@@ -158,16 +158,16 @@ router.get('/current' ,async(req, res, next) => {
                 res.send(user);
             }
             else{
-                console.log('no logged in user found !');
+                //console.log('no logged in user found !');
                 res.send(null);
             }
         }
         else{
-            console.log('null');
+            //console.log('null');
             res.send(null);
         }
     }catch(error){
-        console.log(error);
+        //console.log(error);
       res.send(null);
     }
 });
@@ -178,7 +178,7 @@ router.get('/getallposts' , async (req, res, next) => {
     try{
         const posts = await db.Post.find({})
         .populate({path : "uploader likes", select :"-password"}).sort({createdAt : 1});
-        // console.log('get all posts route success', posts);
+        // //console.log('get all posts route success', posts);
         res.send(posts);
     }catch(error){
         return next({
@@ -193,7 +193,7 @@ router.get('/getpost/:id' , async (req, res) => {
     try{
         const post = await db.Post.findById(req.params.id)
         .populate({path : "uploader", select : "-password"});
-        console.log('get post route success');
+        //console.log('get post route success');
         res.send(post);
     }catch(err){
         return next({
@@ -208,7 +208,7 @@ router.get('/getmyposts/:id' , async (req, res, next) => {
         const user = await db.Client.findById(req.params.id)
         .populate("posts");
         const posts = user.posts;
-        console.log(' from backend =====> ',posts);
+        //console.log(' from backend =====> ',posts);
         res.send(posts);
     }catch(err){
         return next({
@@ -224,7 +224,7 @@ router.post('/login', async(req, res, next) => {
         console.log('logginng in with :',req.body)
         const user = await db.Client.findOne({username});
         if(!user){
-            console.log('wrong username');
+            //console.log('wrong username');
             return res.json(false);
         }
         else {
@@ -236,7 +236,7 @@ router.post('/login', async(req, res, next) => {
                 process.env.JWT_SECRET_KEY 
                 );
                 //send the token to browser cookie
-                console.log('logged in as '+user.username);
+                console.log(`logged in as ${username} ${password}`);
                 //io stuff
                 // const sio = req.app.get('socketio');
                 res.cookie( "token", token, {httpOnly : true}).send(true);
@@ -247,7 +247,7 @@ router.post('/login', async(req, res, next) => {
         }
     }
     catch(error){
-        console.log(error);
+        //console.log(error);
         return next({
             message : error.message
         });    
@@ -279,7 +279,7 @@ router.post('/signup', async(req, res) => {
                 });
 
                 newU.save();
-                console.log('registered ' + newU)
+                //console.log('registered ' + newU)
                 res.json({status : true, message : "registered successfully"});
         }
         else{
@@ -290,7 +290,7 @@ router.post('/signup', async(req, res) => {
         }
 
     }catch(error){
-        console.log(error);
+        //console.log(error);
         return next({
             message : "server-side error"
         });
