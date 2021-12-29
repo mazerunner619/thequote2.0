@@ -11,7 +11,6 @@ import axios from 'axios';
 import Avatar from '@material-ui/core/Avatar';
 import { makeStyles } from '@material-ui/core/styles';
 import {useHistory} from 'react-router'
-import {BiRefresh} from 'react-icons/bi'
 import {GoPrimitiveDot} from 'react-icons/go'
 import {BsClockHistory} from 'react-icons/bs'
 import './component.css'
@@ -47,7 +46,6 @@ export default function Chatting() {
     const {loggedUser} = useSelector( state => state.userStore)
     const [friends, setFriends] = useState([]);
     const [chatwith, setWith] = useState(null);
-    const [load, setLoad] = useState(0);
     const [clearChatPage, setClearChatPage] = useState(false);
 
     let chatinfo = [chatwith, loggedUser];   
@@ -101,14 +99,13 @@ export default function Chatting() {
 
     //get all previous chats;
         useEffect(() => {
-          setLoad(1);	
           // socket = socketClient('http://localhost:8000/'); // development mode
+          socket = socketClient('https://thequoteblog.herokuapp.com/', { transports : ['websocket']});
           const getInfo =async() => {
             const userRes  = await dispatch(getLoggedUser());
 if(userRes){
              const {data} = await axios.get(`/getfriends/${userRes._id}`);
              setFriends(data);
-             setLoad(0);
 }
 else{
 hist.push('/login');

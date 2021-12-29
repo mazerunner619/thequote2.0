@@ -1,13 +1,10 @@
-import {useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import axios from 'axios'
-import {Form, Alert,Row, Col, Card, CardGroup} from 'react-bootstrap'
+import {Row, Col, Card} from 'react-bootstrap'
 import { useHistory } from 'react-router';
 import {Button} from '@material-ui/core'
-import {connect, useDispatch, useSelector} from 'react-redux'
-import {getAllPosts} from '../ReduxStore/actions/postActions'
-import {Login as LoginAction, getLoggedUser} from '../ReduxStore/actions/userActions'
+import {useDispatch, useSelector} from 'react-redux'
 import {sendRequest} from '../ReduxStore/actions/authActions'
-import {withRouter, Link} from 'react-router-dom'
 import {TiUserAdd} from 'react-icons/ti'
 import {FcSearch} from 'react-icons/fc'
 
@@ -29,14 +26,13 @@ $(function(){
 
 export default function Search({match}) {
 
-  const [search, setSearch] = useState("");
   const hist = useHistory();
   const [result, setResult] = useState([]);
   const [all, setAll] = useState([]);
   const [loading, setLoading] = useState(false);
   
   const dispatch = useDispatch();
-  const {loggedUser,loggedIn,error} = useSelector( state => state.userStore);
+  const {loggedUser,loggedIn} = useSelector( state => state.userStore);
   const [render, setRender] = useState(0);
   useEffect(() => {
     if(!loggedIn)hist.push('/login');

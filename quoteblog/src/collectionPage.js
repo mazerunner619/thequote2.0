@@ -1,29 +1,24 @@
 import React,{useEffect, useState} from 'react';
-import {Button ,Accordion , Form , Alert,Spinner,Modal,  Row, Col} from 'react-bootstrap';
+import {Form ,Spinner,Modal} from 'react-bootstrap';
 import { useHistory } from 'react-router';
 import {IoIosArrowUp} from 'react-icons/io'
-import {FiSend} from 'react-icons/fi'
 import {FaUserCircle} from 'react-icons/fa'
-import {BsFillPlusCircleFill} from 'react-icons/bs'
 import {SiInstagram} from 'react-icons/si'
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import NewPostModal from './components/newPostModal'
-import  {connect, useDispatch, useSelector} from 'react-redux'
+import  {useDispatch, useSelector} from 'react-redux'
 import Post from './components/Post'
 import {getAllPosts} from './ReduxStore/actions/postActions'
-import {getLoggedUser} from './ReduxStore/actions/userActions'
 import {likePost} from './ReduxStore/actions/authActions';
-import $ from 'jquery'
-import { createSvgIcon } from '@material-ui/core';
 
 
 export default function Quote(){
 const hist = useHistory();
 const dispatch = useDispatch();
 const {loggedIn, loggedUser} = useSelector( state => state.userStore);
-const {allPosts, loading, ERR_loading} = useSelector( state => state.postStore);
-const {deleting, deleted, deleteError} = useSelector( state => state.authStore);
+const {allPosts} = useSelector( state => state.postStore);
+const {deleted, deleteError} = useSelector( state => state.authStore);
 
 
 const [newPostPage, setNewPostPage] = useState(false);
