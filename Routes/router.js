@@ -46,13 +46,12 @@ router.get('/deletethis' , async (req, res) => {
 router.get('/getfriends/:userid' , async (req, res) => {
     try{
         const {userid} = req.params;
-        //console.log('searching friends of ', userid);
         const user = await db.Client.findById(userid)
-        .populate({path : "friends", select : "-password"});
-        const friends = user.friends;
+        .populate({path : "friends", select : "_id username active"});
+        const friends = user.friends;   
         res.send(friends);    
     }catch(err){
-        //console.log(err)
+        console.log(err.message)
     }
 });
 

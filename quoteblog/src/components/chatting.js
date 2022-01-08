@@ -47,6 +47,7 @@ export default function Chatting() {
     const [friends, setFriends] = useState([]);
     const [chatwith, setWith] = useState(null);
     const [clearChatPage, setClearChatPage] = useState(false);
+    const [loadingChat, setLoadingChat] = useState(false);
 
     let chatinfo = [chatwith, loggedUser];   
     const [msg ,setMsg] = useState("");
@@ -55,16 +56,6 @@ export default function Chatting() {
     function sendMessage(e){
         if(!msg.length)return;
         socket.emit("newmsg",{sender : loggedUser, message : msg, timing : Date.now()});
-          const newEle = document.createElement('p');
-          const spanEle = document.createElement('span');
-          spanEle.setAttribute('id', "time-span");
-          spanEle.innerHTML = fomatDate(Date.now());
-          newEle.innerHTML = msg;
-          newEle.setAttribute('class', "msg-right");
-          newEle.appendChild(spanEle);
-            const chatContainer = document.getElementById("chatting-body");
-            chatContainer.appendChild(newEle);
-            chatContainer.scrollTop=chatContainer.scrollHeight;
         setMsg("");
     }
 
@@ -160,12 +151,32 @@ hist.push('/login');
           socket.on("!typing", () => {
             setT(0);
           });
+
+          socket.on("msgSent", ({ other, message}) => {
+
+            if(other === chatwith._id){
+              const newEle = document.createElement('p');
+            const spanEle = document.createElement('span');
+            spanEle.setAttribute('id', "time-span");
+            spanEle.innerHTML = fomatDate(Date.now());
+            newEle.innerHTML = message;
+            newEle.setAttribute('class', "msg-right");
+            newEle.appendChild(spanEle);
+              const chatContainer = document.getElementById("chatting-body");
+              chatContainer.appendChild(newEle);
+              chatContainer.scrollTop=chatContainer.scrollHeight;}
+          });
+
+          socket.on("msgNotSent", () => {
+            alert('msg not sent...');
+          });
+
           return ()=> socket.off();
         },[chatwith]);
 
 
         useEffect( ()=>{
-
+          setLoadingChat(true);
             socket.on("chathistory",(chatdata) => {
                 document.getElementById("chatting-body").innerHTML = '';
                   for(let ind = 0 ; ind < chatdata.length ; ind++){
@@ -182,6 +193,7 @@ hist.push('/login');
                 }  
                 const chatContainer = document.getElementById("chatting-body");
                 chatContainer.scrollTop=chatContainer.scrollHeight;
+                setLoadingChat(false);
             });
         },[chatwith])
 
@@ -274,7 +286,7 @@ src="https://images.unsplash.com/photo-1542550371427-311e1b0427cc?ixlib=rb-1.2.1
 src="https://images.unsplash.com/photo-1542550371427-311e1b0427cc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8MTV8fHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=400&q=60"
 />
 }
-        </div>
+       </div>
       <div style={{width : "100%"}}>
             <div style={{display : "inline", float : "left", cursor : "pointer"}} id = "clearChat" onClick={()=>hist.push(`/show/${chatwith._id}/profile`)} >{chatwith.username}{' '}</div>
             <div style={{display : "inline", float : "left"}} onClick={()=>hist.push(`/show/${chatwith._id}/profile`)} >{chatwith.active?
@@ -286,12 +298,11 @@ src="https://images.unsplash.com/photo-1542550371427-311e1b0427cc?ixlib=rb-1.2.1
       </div>
         </div>
 
-<div id="chatting-body" className="hideScrollbars">
-
+<div id="chatting-body" className="hideScrollbars" style = {{opacity : loadingChat ? "0" : "1"}}>
 </div>
                 
                 <div id="chatting-bottom">
-                    <input id="chatting-input"  onKeyUp={() => notifyTyping(1)} onMouseLeave={() => notifyTyping(0)} autoComplete="off" placeholder = "message..." value = {msg} type="text" onChange={(e)=>setMsg(e.target.value)} onKeyDown = {(e) => (e.keyCode === 13) ? sendMessage(e) : ""}/>
+                    <textarea className="hideScrollbars" id="chatting-input"  onKeyUp={() => notifyTyping(1)} onMouseLeave={() => notifyTyping(0)} autoComplete="off" placeholder = "message..." value = {msg} type="text" onChange={(e)=>setMsg(e.target.value)}/>
                     <button id="chatting-send" onClick = {(e) => sendMessage(e)}><h3><RiSendPlaneLine className="text-white" style={{transform : "rotateZ(45deg)", transitionDuration : "0.3s"}}/></h3></button>
                 </div>
 </>

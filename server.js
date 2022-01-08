@@ -21,7 +21,7 @@ app.use(cookieParser());
 require('dotenv/config');
 
 const server = app.listen(PORT, () => {
-    //console.log(`Server is running on port:${PORT}`);
+    console.log(`Server is running on port:${PORT}`);
 });
 
 const io = require('socket.io')(server, {
@@ -120,16 +120,18 @@ app.set('socketio', io);
                 const thisChat = await db.Chat.findOne({$or:[{recepients : [data[0]._id, data[1]._id]} , {recepients : reverseRecepients}]});
                 if(!thisChat){
                     //console.log('strange error not found this chat on line -- 94');
+                    io.to(socket.id).emit("msgNotSent");
                     throw err;
                 }else{ 
+                    thisChat.lastMessage = message;
                     thisChat.chats.push({
                         content : message,
                         sender : sender._id
                     });
                     await thisChat.save();
-                    //console.log('receivemsg');
                     socket.broadcast.to(room.toString()).emit("receivemsg", {message, sender, timing});
-                // io.to(room.toString()).emit("receivemsg", {message, sender});
+                    const otherRecepient = (sender._id === data[0]._id) ? data[1]._id : data[0]._id;
+                    io.to(socket.id).emit("msgSent", {other : otherRecepient, message : message});
                 }
     
             });
@@ -141,7 +143,6 @@ app.set('socketio', io);
             //console.log('user offline ', currentUser[socket.id]);
             await db.Client.updateOne({ _id : currentUser[socket.id]}, { $set : {active : false}}, (err, done) => {
                 if(err){
-                    //console.log(err);
                     throw err;
                 }
             });

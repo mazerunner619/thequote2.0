@@ -132,6 +132,7 @@
 }
 
 #chatting-input {
+  resize: none;
   font-size: large;
   padding-left: 10px;
   border: 0;
