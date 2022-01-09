@@ -57,13 +57,13 @@ router.get('/getfriends/:userid' , async (req, res) => {
                 if(chat.chats.length > 0)
                 friendMap.set(chat.recepients[1].toString(), chat.chats[chat.chats.length-1].content);
                 else 
-                friendMap.set(chat.recepients[1].toString(), "");
+                friendMap.set(chat.recepients[1].toString(), null);
                 return true;
             }else if(chat.recepients[1].toString() === userid.toString()){
                 if(chat.chats.length > 0)
                 friendMap.set(chat.recepients[0].toString(), chat.chats[chat.chats.length-1].content);
                 else 
-                friendMap.set(chat.recepients[0].toString(), "");
+                friendMap.set(chat.recepients[0].toString(), null);
                 return true;
             }
             return false;
@@ -71,12 +71,14 @@ router.get('/getfriends/:userid' , async (req, res) => {
 
     
         var friends = user.friends.map( F=>{
+            var lastMessage = friendMap.get(F._id.toString());
+            lastMessage = (lastMessage == null) ? "" : lastMessage.substr(0,20);
             const obj = {
             _id :F._id,
             username : F.username,
             profilePicture : F.profilePicture,
             active : F.active,
-            lastMessage : friendMap.get(F._id.toString()).substr(0,25)+'...'
+            lastMessage : lastMessage
             };
             return obj;
         });
