@@ -45,6 +45,15 @@
   padding: 1%;
 }
 
+#last-message {
+  margin-top: 30px;
+  margin-left: -60px;
+  overflow: hidden;
+  color: rgb(221, 190, 190);
+  font-size: small;
+  font-family: cursive;
+}
+
 .msg-left {
   overflow-wrap: break-word;
   color: aliceblue;

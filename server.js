@@ -123,7 +123,6 @@ app.set('socketio', io);
                     io.to(socket.id).emit("msgNotSent");
                     throw err;
                 }else{ 
-                    thisChat.lastMessage = message;
                     thisChat.chats.push({
                         content : message,
                         sender : sender._id

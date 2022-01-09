@@ -13,6 +13,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import {useHistory} from 'react-router'
 import {GoPrimitiveDot} from 'react-icons/go'
 import {BsClockHistory} from 'react-icons/bs'
+import {Row, Col} from 'react-bootstrap'
 import './component.css'
 let socket;
 
@@ -96,6 +97,7 @@ export default function Chatting() {
             const userRes  = await dispatch(getLoggedUser());
 if(userRes){
              const {data} = await axios.get(`/getfriends/${userRes._id}`);
+             console.log('Atif => ', data);
              setFriends(data);
 }
 else{
@@ -201,9 +203,6 @@ hist.push('/login');
       
         <div style={{background : "black"}}>
                 <div id="chatting-page" style={{display : isChatting?"none" : "flex" }} >
-                  {/* <h1><BiRefresh style={{cursor : "pointer", float : "right", width : "maxontent"}} onClick = { () => {
-                    window.location.reload();
-                  }}/></h1> */}
                 <div id="chats-body"  className = "hideScrollbars">
                    <ul  id="online-users" style={{ listStyle: "none" ,padding: "0"}}>
     {
@@ -222,12 +221,12 @@ hist.push('/login');
 <StyledBadge
 anchorOrigin={{
   vertical: 'bottom',
-  horizontal: 'right',
+  horizontal: 'left',
 }}
 overlap = "circular"
 invisible = {!friend.active}
 badgeContent={'online'}>
- <Avatar alt="user-dp" src={friend.profilePicture.imageURL}/>
+ <Avatar style = {{border : friend.active?"2px solid lightgreen":"none"}} alt="user-dp" src={friend.profilePicture.imageURL}/>
  </StyledBadge>
  </>
 :
@@ -235,7 +234,7 @@ badgeContent={'online'}>
 <StyledBadge
 anchorOrigin={{
   vertical: 'bottom',
-  horizontal: 'right',
+  horizontal: 'left',
 }}
 overlap = "circular"
 invisible = {!friend.active}
@@ -247,9 +246,11 @@ src="https://images.unsplash.com/photo-1542550371427-311e1b0427cc?ixlib=rb-1.2.1
 </>
 }
         </div>
-      <div>
-            {friend.username}
-    </div>
+      <p>{friend.username}</p>
+     <p id = "last-message">
+      {friend.lastMessage}
+    </p>
+
 </li>)
 
 :

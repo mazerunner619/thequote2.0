@@ -5,7 +5,6 @@ const chatSchema = new mongoose.Schema({
       type : mongoose.Schema.Types.ObjectId,
       ref : "Client"
   }],
-  lastMessage : String,
   chats : [{
       content : String,
       sender : {

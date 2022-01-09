@@ -47,8 +47,41 @@ router.get('/getfriends/:userid' , async (req, res) => {
     try{
         const {userid} = req.params;
         const user = await db.Client.findById(userid)
-        .populate({path : "friends", select : "_id username active"});
-        const friends = user.friends;   
+        .populate({path : "friends", select : "_id username active profilePicture"});
+
+        let friendMap = new Map();
+        let CHATS = await db.Chat.find({});
+
+        CHATS = CHATS.filter( chat => {
+            if(chat.recepients[0].toString() === userid.toString()){
+                if(chat.chats.length > 0)
+                friendMap.set(chat.recepients[1].toString(), chat.chats[chat.chats.length-1].content);
+                else 
+                friendMap.set(chat.recepients[1].toString(), "");
+                return true;
+            }else if(chat.recepients[1].toString() === userid.toString()){
+                if(chat.chats.length > 0)
+                friendMap.set(chat.recepients[0].toString(), chat.chats[chat.chats.length-1].content);
+                else 
+                friendMap.set(chat.recepients[0].toString(), "");
+                return true;
+            }
+            return false;
+        });
+
+    
+        var friends = user.friends.map( F=>{
+            const obj = {
+            _id :F._id,
+            username : F.username,
+            profilePicture : F.profilePicture,
+            active : F.active,
+            lastMessage : friendMap.get(F._id.toString()).substr(0,25)+'...'
+            };
+            return obj;
+        });
+
+        console.log(friends);
         res.send(friends);    
     }catch(err){
         console.log(err.message)
