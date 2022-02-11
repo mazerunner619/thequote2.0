@@ -321,23 +321,24 @@ src="https://images.unsplash.com/photo-1542550371427-311e1b0427cc?ixlib=rb-1.2.1
                 </div>
 
                 <div style={{display : openEmoji ? "block" : "none"}} id = "emoji-picker">
-                <Emoji 
+                
+                 <Emoji 
                 onEmojiClick={onEmojiClick} 
-                native = {true}
-                pickerStyle={{ width: '100vw', background : "#971243", color : "white", border : '0', borderRadius : "0"}}
+                pickerStyle={{ width: '100vw', background : "#971243", color : "green", border : '0', borderRadius : "20px 20px 0 0"}}
                 disableSkinTonePicker = {true}
                 groupNames={{
-                  smileys_people: 'yellow faces',
-                  animals_nature: 'cute dogs and also trees',
-                  food_drink: 'milkshakes and more',
-                  travel_places: 'I love trains',
-                  activities: 'lets play a game',
-                  objects: 'stuff',
-                  symbols: 'more stuff',
-                  flags: 'fun with flags',
-                  recently_used: 'kitomo\'s favourites',
+                smileys_people: '',
+                animals_nature: '',
+                food_drink: '',
+                travel_places: '',
+                activities: '',
+                objects: '',
+                symbols: '',
+                flags: '',
+                recently_used: 'kitomo\'s toppers',
                 }}
                 />
+                
                 </div>
 <div>
 </div>
