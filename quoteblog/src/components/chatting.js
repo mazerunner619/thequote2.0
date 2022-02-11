@@ -13,8 +13,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import {useHistory} from 'react-router'
 import {GoPrimitiveDot} from 'react-icons/go'
 import {BsClockHistory} from 'react-icons/bs'
-import {Row, Col} from 'react-bootstrap'
+import {SiGhostery} from 'react-icons/si'
+import Emoji from 'emoji-picker-react'
+
 import './component.css'
+
 let socket;
 
 const useStyles = makeStyles((theme) => ({
@@ -77,6 +80,7 @@ export default function Chatting() {
       }
     }
 
+
     function fomatDate(date){
       // let newDate = new Date(date).toLocaleDateString("en-US", {weekday : "short", month : "short", day : "numeric"});
       let newTime = new Date(date).toLocaleTimeString();
@@ -88,6 +92,14 @@ export default function Chatting() {
       // let newTime = new Date(date).toLocaleTimeString();
       return newDate;
     }
+
+    const [openEmoji, setOpenEmoji] = useState(false);
+
+    function onEmojiClick(event, emojiObject){
+      // const newMsg = msg + ' ' + emojiObject.emoji;
+      setMsg(msg => msg+' '+emojiObject.emoji)
+    };
+  
 
     //get all previous chats;
         useEffect(() => {
@@ -303,9 +315,32 @@ src="https://images.unsplash.com/photo-1542550371427-311e1b0427cc?ixlib=rb-1.2.1
 </div>
                 
                 <div id="chatting-bottom">
-                    <textarea className="hideScrollbars" id="chatting-input"  onKeyUp={() => notifyTyping(1)} onMouseLeave={() => notifyTyping(0)} autoComplete="off" placeholder = "message..." value = {msg} type="text" onChange={(e)=>setMsg(e.target.value)}/>
-                    <button id="chatting-send" onClick = {(e) => sendMessage(e)}><h3><RiSendPlaneLine className="text-white" style={{transform : "rotateZ(45deg)", transitionDuration : "0.3s"}}/></h3></button>
+                 <button id="chatting-emoji" onClick = {() => setOpenEmoji(x => !x)}><h3><SiGhostery className="text-white"/></h3></button>
+                    <textarea className="hideScrollbars" id="chatting-input" onMouseDown={()=>setOpenEmoji(false)}  onKeyUp={() => {notifyTyping(1)}} onMouseLeave =   {() => notifyTyping(0)} autoComplete="off" placeholder = "message..." value = {msg} type="text" onChange={(e)=>setMsg(e.target.value)}/>
+                  <button id="chatting-send" onClick = {(e) => sendMessage(e)}><h3><RiSendPlaneLine className="text-white" style={{transform : "rotateZ(45deg)", transitionDuration : "0.3s"}}/></h3></button>
                 </div>
+
+                <div style={{display : openEmoji ? "block" : "none"}} id = "emoji-picker">
+                <Emoji 
+                onEmojiClick={onEmojiClick} 
+                native = {true}
+                pickerStyle={{ width: '100vw', background : "#971243", color : "white", border : '0', borderRadius : "0"}}
+                disableSkinTonePicker = {true}
+                groupNames={{
+                  smileys_people: 'yellow faces',
+                  animals_nature: 'cute dogs and also trees',
+                  food_drink: 'milkshakes and more',
+                  travel_places: 'I love trains',
+                  activities: 'lets play a game',
+                  objects: 'stuff',
+                  symbols: 'more stuff',
+                  flags: 'fun with flags',
+                  recently_used: 'kitomo\'s favourites',
+                }}
+                />
+                </div>
+<div>
+</div>
 </>
 }
     </div>  

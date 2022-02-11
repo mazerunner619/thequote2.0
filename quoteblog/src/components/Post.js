@@ -2,7 +2,7 @@ import React,{useContext, useEffect, useState} from 'react';
 import axios from 'axios';
 import {Form, Card, Dropdown, Image,Alert,Row, Col} from 'react-bootstrap';
 import { useHistory } from 'react-router';
-import { fade, makeStyles } from '@material-ui/core/styles';
+import { alpha, makeStyles } from '@material-ui/core/styles';
 import {InputBase, IconButton, Avatar, Badge} from '@material-ui/core'
 
 import {BsThreeDotsVertical, BsHeartFill, BsHeart} from 'react-icons/bs'
@@ -24,17 +24,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
 function Post({
   post, getAllPosts,deletePost, deleting, deleted, deleteError, loggedUser , likeThisPost , liked , likes
  }){
 
   const classes = useStyles();
   const dispatch = useDispatch();
+  const hist = useHistory();
 
     const [editModal, setEditModal] = useState(false);
-    const [LIKED, setLIKED] = useState(liked);
     const [LIKES, setLIKES] = useState(likes.length);
+    const [LIKED, setLIKED] = useState(liked);
 
     async function handleClick(e, id){
       console.log('deleting');
@@ -50,7 +50,7 @@ function Post({
   
     return(
         <div className = "grid">
-        <Card className="mb-2 mt-3" bg="light" >
+        <Card className="mt-2" style={{background : "rgba(0,0,0,0.4)"}}> 
           <Card.Header>
             <Row>
               <Col>
@@ -67,7 +67,7 @@ function Post({
                 <Dropdown>
 {
                    loggedUser && (loggedUser._id === post.uploader._id) && 
-          <Dropdown.Toggle variant="none" id="dropdown-basic">
+          <Dropdown.Toggle variant = "none" id="dropdown-basic">
             <BsThreeDotsVertical/>
           </Dropdown.Toggle>
 }
@@ -93,43 +93,54 @@ function Post({
                 </div>     
             <Card.Footer>
               {
-                LIKED?
-                <>
+                LIKED ?
+                    <>
                       <BsHeartFill style={{fontSize : "150%", color :"red"}} onClick={()=>{
-                        setLIKED(!LIKED);
+                        setLIKED(x => !x);
                         setLIKES(p=>p-1);
                         likeThisPost();
                       }}/>
                     </>
                       :
                       <BsHeart style={{fontSize : "150%"}} onClick={()=>{
-                        setLIKED(!LIKED);
+                        setLIKED(x => !x);
                         setLIKES(p=>p+1);
                         likeThisPost();
-                      }} 
-                      />  
-              } 
-                      {' '}{
-                        LIKES>0 && <p style={{display : "inline"}}>{LIKES}</p>
-                      }        
-            </Card.Footer>
+                      }}
+                      />
+              }
+                      {
+                        LIKES > 0 ? LIKES : ""
+                      }
 
+                      {/*
+                       {
+                        likes.length && liked && <p style={{display : "inline"}}>{`You and ${likes.length} others`}</p>
+                      }
+                      {
+                        !likes.length && liked && <p style={{display : "inline"}}>{`You`}</p>
+                      }
+                      {
+                        likes.length === 1 && !liked && <p style={{display : "inline"}}>{`${likes[0].username}`}</p>
+                      }
+
+                      {
+                        likes.length > 1 && !liked && <p style={{display : "inline"}}>{`${likes[0].username} ans ${likes.length - 1} others`}</p>
+                      } 
+                      */}
+
+            </Card.Footer>
             <div className="postCaption">
             <blockquote className="blockquote m-0 p-3">
               <p className="caption">
-              <b>{post.uploader.username}</b>
+              <b style={{cursor : "pointer"}} onClick={()=>hist.push(`/show/${post.uploader._id}/profile`)}>{post.uploader.username}</b>
               <br/>
               <cite title="Source Title">{post.content}</cite>
-              </p> 
-           
-            {/* <Form className="m-0 p-0" style={{display : "inline-block", width : "90%"}}>
-                      <Form.Group controlId="comment">
-                    <Form.Control type="text" placeholder = "write a comment" className="comment-bar" style={{border : "0"}} />
-                  </Form.Group>
-                      </Form>                     */}
-                      {/* <RiSendPlaneLine className="m-0 p-0" style={{fontSize : "150%", color : "blue" ,width : "10%"}}/> */}
+              </p>            
             </blockquote> 
             </div>
+            <br/>
+            
             {/* </Card.ImgOverlay> */}
         
             </Card>

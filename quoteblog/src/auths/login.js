@@ -31,21 +31,21 @@ function Login({LoginAction, loginE}) {
     <div id="fullPage">
     <Form className="authPage">    
     <h2 style = {{textAlign : "center", padding : "2%" , color : "#b22c5a",  fontFamily :"fantasy", letterSpacing : "3px"}}>Login</h2>
-    <hr style={{color : "lightcoral", border : "3px solid lightcoral", borderRadius : "5px", margin : "0 auto", width :  "90%", marginBottom : "2%"}} />
+    <hr/>
+    {/* <hr style={{color : "lightcoral", border : "2px solid lightcoral", borderRadius : "5px", margin : "0 auto", width :  "90%", marginBottom : "2%"}} /> */}
   <Form.Group controlId="formBasicEmail">
-    <Form.Label style={{color : "black"}}>enter username</Form.Label>
-    <Form.Control type="text" placeholder="Enter username" required name = "username" value={user.username} onChange = {HandleChange} style={{border : "1px solid green"}}/>
+    <Form.Label style={{color : "black"}}>username</Form.Label>
+    <Form.Control type="text" placeholder="Enter username" required name = "username" value={user.username} onChange = {HandleChange} style={{border : "1px solid whitesmoke"}}/>
     <Form.Text className="text-muted">
     </Form.Text>
   </Form.Group>
 
   <Form.Group controlId="formBasicPassword">
-    <Form.Label  style={{color : "black"}}>enter password</Form.Label>
-    <Form.Control type="password" placeholder="Password" required name="password" value={user.password} onChange = {HandleChange} style={{border : "1px solid green"}}/>
+    <Form.Label  style={{color : "black"}}>password</Form.Label>
+    <Form.Control type="password" placeholder="Password" required name="password" value={user.password} onChange = {HandleChange} style={{border : "1px solid whitesmoke"}}/>
   </Form.Group>
   <b>{loginE}</b>
-<hr/>
-
+<br/>
   <Button variant="contained" color="secondary" type="submit" onClick = {HandleClick} block style ={{width : "100%"}} >
     Login
   </Button>

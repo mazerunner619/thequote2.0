@@ -40,7 +40,7 @@ const [newPostPage, setNewPostPage] = useState(false);
 const quotesArray = allPosts.slice(0).reverse().map(post => 
 <Post 
     likes ={post.likes}
-    liked = { (post.likes.indexOf(loggedUser._id) !== -1 )? true:false}
+    liked = {post.likes.indexOf(loggedUser._id) !== -1}
     post = {post}
     likeThisPost = {()=>postLiker(post._id)}
 />);
@@ -57,13 +57,13 @@ return (
 <div onMouseDown={newPostHandler} >
   {/* <BsFillPlusCircleFill className = "status"/> */}
   <div className="status">
-  <Fab color="secondary" aria-label="add">
+  <Fab color="secondary" aria-label="add" style = {{background : "#971243"}}>
   <AddIcon />
 </Fab>
 </div>
 
 <Form id="newPost" className="p-2 mt-3 mb-3" >
-<FaUserCircle style={{fontSize : "200%", color : "pink"}}/>
+<FaUserCircle style={{fontSize : "200%", color : "#971243"}}/>
 <div  style={{display : "inline-block"}}>
   <Form.Group controlId="">
     <Form.Control type="text"  placeholder = "what's on your mind ???"  style={{border : "0", textAlign : "end", width : "100%"}}/>

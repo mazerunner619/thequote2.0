@@ -46,13 +46,13 @@ return (
       <Button variant="secondary" aria-hidden="true" onClick={onHide}>&times;</Button>
 
     </Modal.Header>
-    <Modal.Body>
+    <Modal.Body  style = {{background : "#d9d9d9"}} >
      <Form style={{width : "100%"}}>   
     <Form.Group controlId="exampleForm.ControlTextarea1">
     <Form.Label style ={{color :"green"}}>
       your new content ???
     </Form.Label>
-    <Form.Control as="textarea" rows="5"  required   autocomplete="off" name = "quote" value = {quote} onChange = {(e)=>setQuote(e.target.value)} />
+    <Form.Control style={{ background : "#d9d9d9"}} as="textarea" rows="5"  required   autocomplete="off" name = "quote" value = {quote} onChange = {(e)=>setQuote(e.target.value)} />
   </Form.Group>   
   {
     !quote.length && <b>content is empty !</b>

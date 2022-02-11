@@ -83,7 +83,7 @@ router.get('/getfriends/:userid' , async (req, res) => {
             return obj;
         });
 
-        console.log(friends);
+        // console.log(friends);
         res.send(friends);    
     }catch(err){
         console.log(err.message)
@@ -211,7 +211,8 @@ router.get('/current' ,async(req, res, next) => {
 router.get('/getallposts' , async (req, res, next) => {
     try{
         const posts = await db.Post.find({})
-        .populate({path : "uploader likes", select :"-password"}).sort({createdAt : 1});
+        .populate({path : "uploader", select :"-password"}).sort({createdAt : 1});
+        // .populate({path : "uploader likes", select :"-password"}).sort({createdAt : 1});
         // //console.log('get all posts route success', posts);
         res.send(posts);
     }catch(error){
@@ -255,7 +256,7 @@ router.get('/getmyposts/:id' , async (req, res, next) => {
 router.post('/login', async(req, res, next) => {
     try{
         const {username, password } = req.body;
-        console.log('logginng in with :',req.body)
+        // console.log('logginng in with :',req.body)
         const user = await db.Client.findOne({username});
         if(!user){
             //console.log('wrong username');
@@ -270,7 +271,7 @@ router.post('/login', async(req, res, next) => {
                 process.env.JWT_SECRET_KEY 
                 );
                 //send the token to browser cookie
-                console.log(`logged in as ${username} ${password}`);
+                // console.log(`logged in as ${username} ${password}`);
                 //io stuff
                 // const sio = req.app.get('socketio');
                 res.cookie( "token", token, {httpOnly : true}).send(true);

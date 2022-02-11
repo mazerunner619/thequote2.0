@@ -363,7 +363,6 @@ router.delete('/:userid/delete/:postid', isLoggedIn,async (req, res, next) => {
 //===========================LIKE | DISLIKE POST 
 router.post('/:userid/like/:postid', isLoggedIn,async (req, res, next) => {
     try{
-
         const {userid, postid} = req.params;
         const post =  await db.Post.findById(postid);
         const alreadyLiked = post.likes.filter( liker => liker.toString() === userid.toString());

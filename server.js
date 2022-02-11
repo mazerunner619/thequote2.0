@@ -31,36 +31,23 @@ const io = require('socket.io')(server, {
 });
 
 app.set('socketio', io);
-
-
     io.on("connection", (socket) => {
-
-        //console.log('socket.io connected !');
         let currentUser = {};
-
         //console.log('new user connected with id ',socket.id);
-
         socket.on("useronline", async(data) => {
-
             //console.log('socket request to backend');
-
             if(!data){
                 //console.log('user not logged in');
                 throw new Error('user not logged in !');
             }
-       
             //console.log('data => ', data.username);
             const theloggeduser = await db.Client.findById(data._id);
              theloggeduser.active = true;
              await theloggeduser.save();
-
             currentUser[socket.id]= data._id;
-            console.log(`${theloggeduser._id} ${theloggeduser.username}is now online`);
+            // console.log(`${theloggeduser._id} ${theloggeduser.username}is now online`);
 
         });
-
-
-        
         socket.on("startchat", async(data) => {
 
             if(!data[0].username || !data[1].username){
@@ -103,17 +90,14 @@ app.set('socketio', io);
                     }
                 });
             })
-
             socket.on("typing",  (typer) => {
                 //console.log(`${typer.username}  is typing...`);                
                 socket.broadcast.to(room.toString()).emit("typing");
             })
-
             socket.on("!typing",  (typer) => {
                 //console.log(`${typer.username} is not typing...`);
                 socket.broadcast.to(room.toString()).emit("!typing");
             })
-
             socket.on("newmsg", async({sender, message, timing}) => {
                 //console.log(`${message} : ${sender.username} in room ${room} at ${timing}`);
                 //save to DB this message
@@ -132,9 +116,7 @@ app.set('socketio', io);
                     const otherRecepient = (sender._id === data[0]._id) ? data[1]._id : data[0]._id;
                     io.to(socket.id).emit("msgSent", {other : otherRecepient, message : message});
                 }
-    
             });
-
         });
 
 
@@ -166,12 +148,10 @@ app.use(function(err, req, res, next){
     res.status(err.status || 400).json({
         message : err.message
     });
-}); 
+});
 
 app.use('/', Route);
 app.use('/user', userRoute);
-
-
 if(process.env.NODE_ENV == "production"){
     app.use(express.static("quoteblog/build"));
 
@@ -179,8 +159,6 @@ if(process.env.NODE_ENV == "production"){
       res.sendFile(path.resolve(__dirname, 'quoteblog', 'build', 'index.html'));
     });
 }
-
-
 mongoose.connect(process.env.CONN_STRING, 
     {
         useNewUrlParser : true,
@@ -188,10 +166,10 @@ mongoose.connect(process.env.CONN_STRING,
     }, 
     function(error){
         if(error){ 
-            //console.log(error);
+            // console.log(error);
         }
         else{
-            //console.log("connected to DB quoteBlogs");
+            console.log("connected to DB");
         }
     }
  );

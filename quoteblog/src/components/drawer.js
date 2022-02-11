@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaUserCircle , FaQuoteRight, FaQuoteLeft } from 'react-icons/fa';
+import {FaQuoteRight, FaQuoteLeft } from 'react-icons/fa';
 import SearchIcon from '@material-ui/icons/Search';
 import {BsChatQuoteFill} from 'react-icons/bs';
 import {LinkContainer} from 'react-router-bootstrap';
@@ -8,17 +8,14 @@ import AppBar from '@material-ui/core/AppBar';
 import Badge from '@material-ui/core/Badge';
 import InputBase from '@material-ui/core/InputBase';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Avatar from '@material-ui/core/Avatar';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import MailIcon from '@material-ui/icons/Mail';
 import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
@@ -37,22 +34,17 @@ import socketClient from "socket.io-client";
 
 import $ from 'jquery'
 
-let counter=0;
 let socket;
 
 $(function(){
-  setTimeout(()=>$("#quote-logo").animate({marginLeft : '50%'}),800 );
+  // setTimeout(()=>$("#quote-logo").animate({marginLeft : '50%'}),800 );
   setTimeout(()=>$("#quote-logo").animate({marginLeft : '5px'}),1200 );
-  setInterval( ()=>{
-    if(counter === 0){
-      counter = 1;
-        $("#quote-logo").css("transform", "rotateZ(1deg) scale(1.08)");
-    }else{
-      counter=0;
-        $("#quote-logo").css("transform", "rotateZ(-1deg) scale(0.95)");
-    }
-
-  }, 1000)
+  setTimeout( ()=> {
+  $("#quote-logo").css("transform", "rotateZ(5deg)");
+  }, 2400);
+  setTimeout( ()=> {
+    $("#quote-logo").css("transform", "rotateZ(0deg)");
+    }, 2700);
 })
 
 
@@ -76,6 +68,7 @@ const useStyles = makeStyles((theme) => ({
       width: 'auto',
     },
   },
+
   searchIcon: {
     padding: theme.spacing(0, 2),
     height: '100%',
@@ -90,7 +83,6 @@ const useStyles = makeStyles((theme) => ({
   },
   inputInput: {
     padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
     transition: theme.transitions.create('width'),
     width: '100%',
@@ -116,7 +108,7 @@ function ResponsiveDrawer(props) {
 
     const classes = useStyles();
     const dispatch = useDispatch();
-    const {loggedUser,loggedIn, loading,error} = useSelector( state => state.userStore);
+    const {loggedUser,loggedIn} = useSelector( state => state.userStore);
     const [search, setSearch] = React.useState("");
     
     const hist = useHistory();
@@ -162,16 +154,6 @@ alt="alternate-dp" width = "100%" height="25%" style={{ filter:"grayscale(100%)"
 
 }
 
-{/* {
-  loggedIn &&
-<center style={{ 
-      fontSize : "150%",
-fontFamily: "fantasy"
-    }}>{loggedUser.username}
-<Avatar>{loggedUser.username.split(' ')[0][0]}</Avatar>
-</center>
-} */}
-
       <List className = "mt-0 pt-0">
 {
     loggedIn &&
@@ -199,7 +181,7 @@ fontFamily: "fantasy"
             </ListItemIcon>
             <ListItemText primary={"Notifications"} />
         </ListItem>
-</LinkContainer>
+</LinkContainer>  
 <Divider />
 <LinkContainer to="/chatting">
       <ListItem button key={"Messages"} onClick = { () => setOpenbar(false)}>
@@ -208,12 +190,7 @@ fontFamily: "fantasy"
         </ListItem>
 </LinkContainer>
 <Divider />
-{/* <LinkContainer to="/search">
-      <ListItem button key={"search"} onClick = { () => setOpenbar(false)}>
-            <ListItemIcon><SearchIcon style={{color : "#971243"}}/></ListItemIcon>
-            <ListItemText primary={"Find Friends"} />
-        </ListItem>
-</LinkContainer> */}
+
 <LinkContainer to="/login">
       <ListItem button key={"Logout"} onClick = { () => {
           setOpenbar(false);
@@ -223,7 +200,7 @@ fontFamily: "fantasy"
             <ListItemText primary={"Logout"} />
         </ListItem>
 </LinkContainer>
-<Divider />
+<Divider /> 
 </>
 }
 
@@ -274,16 +251,21 @@ fontFamily: "fantasy"
         
       <Col>
           <Typography variant="h6" noWrap id="quote-logo" > 
-
-        <div style={{cursor :"pointer" ,color : "white", float : "left", width : "100%"}} onClick = {() => hist.push("/")}>
-          < FaQuoteLeft />{' '}The Quote{' '}<BsChatQuoteFill /> {' '}<FaQuoteRight/>
-        </div>
+  
+          <div style={{cursor :"pointer" ,color : "white"}} onClick = {() => hist.push("/")}>
+            <div id = "logo-text">
+            < FaQuoteLeft />
+              {' '}The Quote{' '}<BsChatQuoteFill /> {' '}
+              <FaQuoteRight/>
+              </div>
+          </div> 
           </Typography>
       </Col>
-          {
+        {
             loggedIn &&
 <Col>
-          <div className={classes.search} style={{marginLeft : "auto"}}>
+
+          <div className={classes.search}>
             <div className={classes.searchIcon}>
               <SearchIcon />
             </div>
@@ -298,14 +280,14 @@ fontFamily: "fantasy"
               inputProps={{ 'aria-label': 'search' }}
             />
           </div>
-          </Col>
-        }
+  </Col>
+}
           </Row>
 
         </Toolbar>
       </AppBar>
       <nav className={classes.drawer} aria-label="mailbox folders">
-        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
+        {/* The implementation can be swapped with js to avoid SEO duplication of links. */}  
         <Hidden smUp implementation="css">
           <Drawer
             container={container}

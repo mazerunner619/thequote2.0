@@ -145,7 +145,7 @@
   font-size: large;
   padding-left: 10px;
   border: 0;
-  border-radius: 20px 0 0 20px;
+  /* border-radius: 20px 0 0 20px; */
   width: 80%;
   transition-duration: 0.4s;
   box-sizing: border-box;
@@ -165,8 +165,24 @@
   justify-content: center;
   transition-duration: 0.4s;
 }
+#chatting-emoji {
+  border: 0;
+  background-color: #971243;
+  color: white;
+  border-radius: 20px 0 0 20px;
+  width: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition-duration: 0.4s;
+  margin-right: 5px;
+}
 
 #chatting-send:hover {
+  background-color: #62092a;
+}
+
+#chatting-emoji : {
   background-color: #62092a;
 }
 
@@ -212,10 +228,10 @@
     border-top: 2px solid black;
   }
 
-  #chatting-bottom {
+  /* #chatting-bottom {
     padding: 0;
     margin-bottom: 2px;
-  }
+  } */
   .msg-right {
     font-size: small;
   }
@@ -232,10 +248,23 @@
     transition-duration: 0.4s;
   }
 
+  #chatting-emoji {
+    border: 0;
+    background-color: #971243;
+    color: white;
+    border-radius: 5px 0 0 5px;
+    width: 10%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition-duration: 0.4s;
+    margin-right: 3px;
+  }
+
   #chatting-input {
     -size: small;
     padding-left: 5px;
-    border-radius: 5px 0 0 5px;
+    /* border-radius: 5px 0 0 5px; */
     background-color: black;
     border: 0.5px solid #971243;
   }
