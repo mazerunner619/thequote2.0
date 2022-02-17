@@ -10,17 +10,34 @@
 }
 
 body {
-  background-image: url("https://images.unsplash.com/photo-1517210122415-b0c70b2a09bf?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1268&q=80");
+  background-image: url("https://images.unsplash.com/photo-1509114397022-ed747cca3f65?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=735&q=80");
   background-repeat: no-repeat;
   background-size: cover;
   background-attachment: fixed;
-  background-position: 5% 50%;
-  /* background-color: #d9d9d9; */
+  /* background-position: 50% 5%; */
+  background-color: black;
   width: 100%;
   margin: 0 auto;
   padding: 0;
   box-sizing: border-box;
   overflow-x: hidden;
+  animation-name: movingBackground;
+  animation-iteration-count: infinite;
+  animation-duration: 33s;
+  animation-timing-function: ease-in-out;
+  animation-direction: alternate-reverse;
+}
+
+@keyframes movingBackground {
+  0% {
+    background-position: 5% 50%;
+  }
+  50% {
+    background-position: 30% 30%;
+  }
+  100% {
+    background-position: 50% 5%;
+  }
 }
 
 .emoji-picker-react input.emoji-search {
@@ -179,7 +196,7 @@ Form {
 }
 
 .blockquote {
-  color: black;
+  color: wheat;
 }
 
 .caption {

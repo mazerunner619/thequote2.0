@@ -133,7 +133,7 @@ function Post({
             <div className="postCaption">
             <blockquote className="blockquote m-0 p-3">
               <p className="caption">
-              <b style={{cursor : "pointer"}} onClick={()=>hist.push(`/show/${post.uploader._id}/profile`)}>{post.uploader.username}</b>
+              <b style={{cursor : "pointer", color : "black", textDecoration : "underline"}} onClick={()=>hist.push(`/show/${post.uploader._id}/profile`)}>{post.uploader.username}</b>
               <br/>
               <cite title="Source Title">{post.content}</cite>
               </p>            
