@@ -12,8 +12,8 @@ import Avatar from '@material-ui/core/Avatar';
 import { makeStyles } from '@material-ui/core/styles';
 import {useHistory} from 'react-router'
 import {GoPrimitiveDot} from 'react-icons/go'
-import {BsClockHistory} from 'react-icons/bs'
-import {SiGhostery} from 'react-icons/si'
+import {GiMoon} from 'react-icons/gi'
+import {BsClockHistory, BsMoonStars} from 'react-icons/bs'
 import Emoji from 'emoji-picker-react'
 
 import './component.css'
@@ -52,6 +52,7 @@ export default function Chatting() {
     const [chatwith, setWith] = useState(null);
     const [clearChatPage, setClearChatPage] = useState(false);
     const [loadingChat, setLoadingChat] = useState(false);
+    const [darkMode, setDarkMode] = useState(false);
 
     let chatinfo = [chatwith, loggedUser];   
     const [msg ,setMsg] = useState("");
@@ -214,7 +215,7 @@ hist.push('/login');
     return (
       
         <div style={{background : "black"}}>
-                <div id="chatting-page" style={{display : isChatting?"none" : "flex" }} >
+                <div id = "chat-list" style={{display : isChatting?"none" : "flex" }} >
                 <div id="chats-body"  className = "hideScrollbars">
                    <ul  id="online-users" style={{ listStyle: "none" ,padding: "0"}}>
     {
@@ -280,7 +281,7 @@ src="https://images.unsplash.com/photo-1542550371427-311e1b0427cc?ixlib=rb-1.2.1
 
 
 
-<div id = "chatting-page" style={{display : isChatting?"flex" : "none"}}>
+<div id = { darkMode ? "chatting-page-dark" : "chatting-page"}  style={{display : isChatting?"flex" : "none"}}>
   {
     chatwith && 
     <>
@@ -305,8 +306,13 @@ src="https://images.unsplash.com/photo-1542550371427-311e1b0427cc?ixlib=rb-1.2.1
             <div style={{display : "inline", float : "left"}} onClick={()=>hist.push(`/show/${chatwith._id}/profile`)} >{chatwith.active?
             <GoPrimitiveDot style={{color :"lightgreen"}}/>:""}</div>
             <div style={{marginTop :"5px" ,display : "inline", float :"left"}}>{T ? " typing..." : ""}</div>
+            
+            <div id="clearChat" onClick={()=>setDarkMode(!darkMode)}>
+              <GiMoon style={{fontSize : "150%"}}/>
+            </div>
+            
             <div id="clearChat" onClick={()=>setClearChatPage(true)}>
-              clear chat <BsClockHistory style={{fontSize : "150%"}}/>
+               <BsClockHistory style={{fontSize : "150%"}}/>
             </div>
       </div>
         </div>
