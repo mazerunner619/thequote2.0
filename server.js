@@ -131,20 +131,22 @@ io.on("connection", (socket) => {
         io.to(socket.id).emit("msgNotSent");
         throw err;
       } else {
-        thisChat.chats.push({
-          content: message,
-          sender: sender._id,
-        });
-        await thisChat.save();
         socket.broadcast
           .to(room.toString())
           .emit("receivemsg", { message, sender, timing });
+
         const otherRecepient =
           sender._id === data[0]._id ? data[1]._id : data[0]._id;
+
         io.to(socket.id).emit("msgSent", {
           other: otherRecepient,
           message: message,
         });
+        thisChat.chats.push({
+          content: message,
+          sender: sender._id,
+        });
+        thisChat.save();
       }
     });
   });
