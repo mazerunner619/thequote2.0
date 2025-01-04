@@ -108,7 +108,7 @@ export default function Chatting() {
 
   //get all previous chats;
   useEffect(() => {
-    // socket = socketClient('http://localhost:8000/'); // development mode
+    // socket = socketClient("http://localhost:8000/"); // development mode
     socket = socketClient("https://thequoteblog.onrender.com/", {
       transports: ["websocket"],
     });
@@ -116,7 +116,6 @@ export default function Chatting() {
       const userRes = await dispatch(getLoggedUser());
       if (userRes) {
         const { data } = await axios.get(`/getfriends/${userRes._id}`);
-        console.log("Atif => ", data);
         setFriends(data);
       } else {
         hist.push("/login");
@@ -125,15 +124,8 @@ export default function Chatting() {
     getInfo();
 
     if (chatwith) {
-      socket.on("connect", () =>
-        console.log(
-          `im ( ${loggedUser.username} ) connected with ${chatwith.username}`
-        )
-      );
       socket.emit("startchat", chatinfo);
     }
-
-    // socket.on("connect", () => console.log(`chat connected !`));
 
     socket.on("chathistory", (chatdata) => {
       document.getElementById("chatting-body").innerHTML = "";
@@ -273,8 +265,11 @@ export default function Chatting() {
                       </>
                     )}
                   </div>
-                  <p>{friend.username}</p>
-                  <p id="last-message">{friend.lastMessage}</p>
+
+                  <div id="chat-item-container">
+                    <p>{friend.username}</p>
+                    <p id="last-message">{friend.lastMessage}</p>
+                  </div>
                 </li>
               ))
             ) : (

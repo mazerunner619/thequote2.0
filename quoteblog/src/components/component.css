@@ -116,9 +116,17 @@
   }
 }
 
+#chat-item-container{
+  display: flex;
+  flex-direction: column;
+}
+
+#chat-item-container > p{
+  padding: 0;
+  margin: 0;
+}
+
 #last-message {
-  margin-top: 30px;
-  margin-left: -60px;
   overflow: hidden;
   color: rgb(221, 190, 190);
   font-size: small;
@@ -253,7 +261,7 @@
   background-color: #62092a;
 }
 
-#chatting-emoji : {
+#chatting-emoji {
   background-color: #62092a;
 }
 
