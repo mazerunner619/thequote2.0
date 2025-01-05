@@ -14,7 +14,6 @@ import { useHistory } from "react-router";
 import { GoPrimitiveDot } from "react-icons/go";
 import { GiMoon } from "react-icons/gi";
 import { BsClockHistory, BsMoonStars } from "react-icons/bs";
-import Emoji from "emoji-picker-react";
 
 import "./component.css";
 
@@ -57,12 +56,14 @@ export default function Chatting() {
   const [T, setT] = useState(0);
 
   function sendMessage(e) {
+    e.preventDefault();
     if (!msg.length) return;
     socket.emit("newmsg", {
       sender: loggedUser,
       message: msg,
       timing: Date.now(),
     });
+    document.getElementById("chatting-input").blur();
     setMsg("");
   }
 
@@ -99,13 +100,6 @@ export default function Chatting() {
     return newDate;
   }
 
-  const [openEmoji, setOpenEmoji] = useState(false);
-
-  function onEmojiClick(event, emojiObject) {
-    // const newMsg = msg + ' ' + emojiObject.emoji;
-    setMsg((msg) => msg + " " + emojiObject.emoji);
-  }
-
   //get all previous chats;
   useEffect(() => {
     // socket = socketClient("http://localhost:8000/"); // development mode
@@ -121,29 +115,9 @@ export default function Chatting() {
         hist.push("/login");
       }
     };
-    getInfo();
 
-    if (chatwith) {
-      socket.emit("startchat", chatinfo);
-    }
+    if (chatwith === null) getInfo();
 
-    socket.on("chathistory", (chatdata) => {
-      document.getElementById("chatting-body").innerHTML = "";
-      for (let ind = 0; ind < chatdata.length; ind++) {
-        const objclass =
-          chatdata[ind].sender === loggedUser._id ? "msg-right" : "msg-left";
-        const newEle = document.createElement("p");
-        const spanEle = document.createElement("span");
-        spanEle.setAttribute("id", "time-span");
-        spanEle.innerHTML = fomatDateOldMessages(chatdata[ind].date);
-        newEle.innerHTML = chatdata[ind].content;
-        newEle.setAttribute("class", objclass);
-        newEle.appendChild(spanEle);
-        document.getElementById("chatting-body").appendChild(newEle);
-      }
-      const chatContainer = document.getElementById("chatting-body");
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    });
     socket.on("receivemsg", ({ message, sender, timing }) => {
       const objclass = sender._id === loggedUser._id ? "msg-right" : "msg-left";
       const newEle = document.createElement("p");
@@ -188,26 +162,29 @@ export default function Chatting() {
   }, [chatwith]);
 
   useEffect(() => {
-    setLoadingChat(true);
-    socket.on("chathistory", (chatdata) => {
-      document.getElementById("chatting-body").innerHTML = "";
-      for (let ind = 0; ind < chatdata.length; ind++) {
-        const objclass =
-          chatdata[ind].sender === loggedUser._id ? "msg-right" : "msg-left";
-        const newEle = document.createElement("p");
+    if (chatwith !== null) {
+      socket.emit("startchat", chatinfo);
+      setLoadingChat(true);
+      socket.on("chathistory", (chatdata) => {
+        document.getElementById("chatting-body").innerHTML = "";
+        for (let ind = 0; ind < chatdata.length; ind++) {
+          const objclass =
+            chatdata[ind].sender === loggedUser._id ? "msg-right" : "msg-left";
+          const newEle = document.createElement("p");
 
-        const spanEle = document.createElement("span");
-        spanEle.setAttribute("id", "time-span");
-        spanEle.innerHTML = fomatDate(chatdata[ind].date);
-        newEle.innerHTML = chatdata[ind].content;
-        newEle.setAttribute("class", objclass);
-        newEle.appendChild(spanEle);
-        document.getElementById("chatting-body").appendChild(newEle);
-      }
-      const chatContainer = document.getElementById("chatting-body");
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-      setLoadingChat(false);
-    });
+          const spanEle = document.createElement("span");
+          spanEle.setAttribute("id", "time-span");
+          spanEle.innerHTML = fomatDateOldMessages(chatdata[ind].date);
+          newEle.innerHTML = chatdata[ind].content;
+          newEle.setAttribute("class", objclass);
+          newEle.appendChild(spanEle);
+          document.getElementById("chatting-body").appendChild(newEle);
+        }
+        const chatContainer = document.getElementById("chatting-body");
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+        setLoadingChat(false);
+      });
+    }
   }, [chatwith]);
 
   return (
@@ -312,7 +289,10 @@ export default function Chatting() {
               <div>
                 <ArrowBackIosIcon
                   id="chat-back-button"
-                  onClick={() => setIsChatting(false)}
+                  onClick={() => {
+                    setIsChatting(false);
+                    setWith(null);
+                  }}
                 />
               </div>
               <div>
@@ -373,13 +353,14 @@ export default function Chatting() {
             ></div>
 
             <div id="chatting-bottom">
-              {/* <button id="chatting-emoji" onClick = {() => setOpenEmoji(x => !x)}><h3><SiGhostery className="text-white"/></h3></button> */}
               <textarea
                 className="hideScrollbars"
                 id="chatting-input"
-                onMouseDown={() => setOpenEmoji(false)}
                 onKeyUp={() => {
                   notifyTyping(1);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") sendMessage(e);
                 }}
                 onMouseLeave={() => notifyTyping(0)}
                 autoComplete="off"
@@ -388,39 +369,7 @@ export default function Chatting() {
                 type="text"
                 onChange={(e) => setMsg(e.target.value)}
               />
-              <button id="chatting-send" onClick={(e) => sendMessage(e)}>
-                <h3>
-                  <RiSendPlaneLine
-                    className="text-white"
-                    style={{
-                      transform: "rotateZ(45deg)",
-                      transitionDuration: "0.3s",
-                    }}
-                  />
-                </h3>
-              </button>
             </div>
-            {/* 
-                <div style={{display : openEmoji ? "block" : "none"}} id = "emoji-picker">
-                
-                 <Emoji 
-                onEmojiClick={onEmojiClick} 
-                pickerStyle={{ width: '100vw', background : "#971243", color : "green", border : '0', borderRadius : "20px 20px 0 0"}}
-                disableSkinTonePicker = {true}
-                groupNames={{
-                smileys_people: '',
-                animals_nature: '',
-                food_drink: '',
-                travel_places: '',
-                activities: '',
-                objects: '',
-                symbols: '',
-                flags: '',
-                recently_used: 'kitomo\'s toppers',
-                }}
-                />
-                
-                </div> */}
             <div></div>
           </>
         )}
