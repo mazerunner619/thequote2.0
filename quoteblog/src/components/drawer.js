@@ -113,7 +113,7 @@ function ResponsiveDrawer(props) {
   React.useEffect(() => {
     const getInfo = async () => {
       const result = await dispatch(getLoggedUser());
-      console.log("logged in ", result);
+      // console.log("logged in ", result);
       if (result) {
         // socket = socketClient("http://localhost:8000/"); // development mode
         socket = socketClient("https://thequoteblog.onrender.com/", {

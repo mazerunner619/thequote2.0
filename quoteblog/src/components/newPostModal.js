@@ -1,119 +1,138 @@
-import { useState} from 'react';
-import {Modal,Alert , Form} from 'react-bootstrap'
-import {uploadNewPost} from '../ReduxStore/actions/authActions'
-import {getLoggedUser} from '../ReduxStore/actions/userActions'
-import {getAllPosts} from '../ReduxStore/actions/postActions'
-import {connect, useDispatch,useSelector} from 'react-redux'
-import {Button} from '@material-ui/core'
+import { useState } from "react";
+import { Modal, Alert, Form } from "react-bootstrap";
+import { uploadNewPost } from "../ReduxStore/actions/authActions";
+import { getLoggedUser } from "../ReduxStore/actions/userActions";
+import { getAllPosts } from "../ReduxStore/actions/postActions";
+import { connect, useDispatch, useSelector } from "react-redux";
+import { Button } from "@material-ui/core";
 
-
-export default function NewPostModal({
-  show,
-  onHide,
-  userid
-}) {
-
+export default function NewPostModal({ show, onHide, userid }) {
   const dispatch = useDispatch();
-const {uploading, uploaded, uploadError} = useSelector( state => state.authStore);
+  const { uploading, uploaded, uploadError } = useSelector(
+    (state) => state.authStore
+  );
 
-
-  const [ data, setData ] = useState({
-    content : "",
-    image : null
+  const [data, setData] = useState({
+    content: "",
+    image: null,
   });
 
-
-  function changeForm(e){
-const {name, value} = e.target;
-    if(name === "image"){
+  function changeForm(e) {
+    const { name, value } = e.target;
+    if (name === "image") {
       setData({
         ...data,
-        image : e.target.files[0]
+        image: e.target.files[0],
       });
-    }
-    else{
-    setData({...data, [name] : value});
+    } else {
+      setData({ ...data, [name]: value });
     }
   }
 
-  async function handleClick(e){
-    console.log(data);
+  async function handleClick(e) {
+    // console.log(data);
     e.preventDefault(); //prevent refresh / reload of page
-    if(data.content){
-    const dummyForm = new FormData();
-    dummyForm.append('image',data.image);
-    dummyForm.append('content',data.content);
-    console.log('from frontend => ',data);
-    await dispatch(uploadNewPost(dummyForm, userid));
-     await dispatch(getAllPosts());
-  onHide();
-  }
-}
-
-return (
-  <div >
-  <Modal
-    show = {show}
-    onHide = {onHide}
-    size="lg"
-    aria-labelledby="contained-modal-title-vcenter"
-    centered
-    >
-          {
-      uploadError && <Alert variant="danger">
-        {uploadError}
-    </Alert>
+    if (data.content) {
+      const dummyForm = new FormData();
+      dummyForm.append("image", data.image);
+      dummyForm.append("content", data.content);
+      // console.log('from frontend => ',data);
+      await dispatch(uploadNewPost(dummyForm, userid));
+      await dispatch(getAllPosts());
+      onHide();
     }
-    {
-      uploaded &&
-      <Alert variant="success">
-        your post was uploaded successfully
-    </Alert>
-}
-<Modal.Header>
-      <Modal.Title id="contained-modal-title-vcenter" style={{color : "#971243"}}>
-      <h3 style = {{color : "#b22c5a",  fontFamily :"fantasy", letterSpacing : "2px"}}>
-        What's on your mind 
-      </h3>
-      </Modal.Title>
-      <Button className="uploadForm" aria-hidden="true" onClick={onHide}>&times;</Button>
-    </Modal.Header>
-    <Modal.Body>
+  }
 
-  <Form className="" enctype="multipart/form-data" style={{width : "100%"}}>     
-  <Form.Group controlId="formBasicEmail">
-    <Form.Label style={{color : "#971243"}}>share something...</Form.Label>
-    <Form.Label >
-</Form.Label>
-    <Form.Control as="textarea" rows="5" placeholder="What's on your mind ???" required autocomplete="off" name = "content" value = {data.content} onChange = {changeForm} />
-    <Form.Text className="text-muted">
-      {!data.content && "you didn't write anything"}
-    </Form.Text>
-    <hr/>
-    <label for="file-upload" class="custom-file-upload-newpost">
-     Upload Image
-</label>
-<input id="file-upload" type="file" name="image" onChange={changeForm}/>
-    <Form.Text className="text-muted">
-      {!data.image && "you didn't choose an image"}
-    </Form.Text>
-  </Form.Group>
-</Form>
-
-    </Modal.Body>
-    <Modal.Footer>
-      {!uploading?
-<Button variant="contained" color="secondary" onClick = {handleClick}  block style ={{width : "100%"}} >
-{
-  data.image ? "Upload":"Upload without image"
-}
-
-</Button>
-     :
-<Button variant="contained" color="secondary" disabled>Uploading</Button>  
-}
-    </Modal.Footer> 
-  </Modal>
-  </div>
-);
+  return (
+    <div>
+      <Modal
+        show={show}
+        onHide={onHide}
+        size="lg"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+      >
+        {uploadError && <Alert variant="danger">{uploadError}</Alert>}
+        {uploaded && (
+          <Alert variant="success">your post was uploaded successfully</Alert>
+        )}
+        <Modal.Header>
+          <Modal.Title
+            id="contained-modal-title-vcenter"
+            style={{ color: "#971243" }}
+          >
+            <h3
+              style={{
+                color: "#b22c5a",
+                fontFamily: "fantasy",
+                letterSpacing: "2px",
+              }}
+            >
+              What's on your mind
+            </h3>
+          </Modal.Title>
+          <Button className="uploadForm" aria-hidden="true" onClick={onHide}>
+            &times;
+          </Button>
+        </Modal.Header>
+        <Modal.Body>
+          <Form
+            className=""
+            enctype="multipart/form-data"
+            style={{ width: "100%" }}
+          >
+            <Form.Group controlId="formBasicEmail">
+              <Form.Label style={{ color: "#971243" }}>
+                share something...
+              </Form.Label>
+              <Form.Label></Form.Label>
+              <Form.Control
+                as="textarea"
+                rows="5"
+                placeholder="What's on your mind ???"
+                required
+                autocomplete="off"
+                name="content"
+                value={data.content}
+                onChange={changeForm}
+              />
+              <Form.Text className="text-muted">
+                {!data.content && "you didn't write anything"}
+              </Form.Text>
+              <hr />
+              <label for="file-upload" class="custom-file-upload-newpost">
+                Upload Image
+              </label>
+              <input
+                id="file-upload"
+                type="file"
+                name="image"
+                onChange={changeForm}
+              />
+              <Form.Text className="text-muted">
+                {!data.image && "you didn't choose an image"}
+              </Form.Text>
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          {!uploading ? (
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleClick}
+              block
+              style={{ width: "100%" }}
+            >
+              {data.image ? "Upload" : "Upload without image"}
+            </Button>
+          ) : (
+            <Button variant="contained" color="secondary" disabled>
+              Uploading
+            </Button>
+          )}
+        </Modal.Footer>
+      </Modal>
+    </div>
+  );
 }

@@ -366,7 +366,7 @@ export default function Chatting() {
             <div id="chatting-bottom">
               <img
                 style={{ display: T ? "block" : "none" }}
-                src="https://assets-v2.lottiefiles.com/a/90bdd36c-1152-11ee-bdb8-cb8fe6b15cf6/5wy0Af60Yi.gif"
+                src="https://assets-v2.lottiefiles.com/a/79602c98-1174-11ee-9f53-7b153f45c520/PtEKmqMfoQ.gif"
                 alt="typing-gif"
               />
               <textarea

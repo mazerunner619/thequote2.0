@@ -221,9 +221,13 @@
 
 #chatting-bottom img{
   object-fit: contain;
-  width: 100px;
-  mix-blend-mode:darken;
-  background-color:black;
+  width: 70px;
+  mix-blend-mode:color-burn;
+  margin-left: 15px;
+  aspect-ratio: 2/1;
+  object-fit: cover;
+  margin-bottom: 2px;
+  filter: contrast(1000%);
 }
 #typing{
   background: transparent;
@@ -347,7 +351,7 @@
     -size: small;
   }
   #chatting-bottom img{
-    width: 70px;
+    width: 50px;
   }
 }
 
