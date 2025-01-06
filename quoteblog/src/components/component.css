@@ -219,7 +219,7 @@
   background-color: transparent;
 }
 
-#chatting-bottom img{
+.light-bg-typing{
   object-fit: contain;
   width: 70px;
   mix-blend-mode:color-burn;
@@ -229,13 +229,17 @@
   margin-bottom: 2px;
   filter: contrast(1000%);
 }
-#typing{
-  background: transparent;
-  width: 100%;
-  color: white;
-  text-align: center;
-  border: 0;
-  outline: 0;
+
+.dark-bg-typing{
+  object-fit: contain;
+  width: 70px;
+  mix-blend-mode:difference;
+  margin-left: 15px;
+  aspect-ratio: 2/1;
+  object-fit: cover;
+  margin-bottom: 2px;
+  filter: invert();
+  opacity: 0.6;
 }
 
 #chatting-input {
@@ -350,8 +354,13 @@
   #chatting-input {
     -size: small;
   }
-  #chatting-bottom img{
+  .light-bg-typing{
     width: 50px;
+  }
+
+  .dark-bg-typing{
+    width: 50px;
+    filter:invert();
   }
 }
 

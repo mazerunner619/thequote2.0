@@ -49,7 +49,11 @@ export default function Chatting() {
   const [chatwith, setWith] = useState(null);
   const [clearChatPage, setClearChatPage] = useState(false);
   const [loadingChat, setLoadingChat] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(() =>
+    !localStorage.getItem("DarkModeChatQuoteBlog")
+      ? false
+      : localStorage.getItem("DarkModeChatQuoteBlog") === "true"
+  );
   const [lastMsgMap, setLastMsgMap] = useState(new Map());
 
   let chatinfo = [chatwith, loggedUser];
@@ -92,13 +96,15 @@ export default function Chatting() {
   }
 
   function fomatDateOldMessages(date) {
-    let newDate = new Date(date).toLocaleDateString("en-US", {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-    });
-    // let newTime = new Date(date).toLocaleTimeString();
-    return newDate;
+    if (date + 86400 <= Date.now()) {
+      return new Date(date).toLocaleDateString("en-US", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+      });
+    } else {
+      return fomatDate(date);
+    }
   }
 
   useEffect(() => {
@@ -116,7 +122,6 @@ export default function Chatting() {
         hist.push("/login");
       }
     };
-
     getInfo();
   }, []);
 
@@ -347,7 +352,16 @@ export default function Chatting() {
                   style={{ marginTop: "5px", display: "inline", float: "left" }}
                 ></div>
 
-                <div id="clearChat" onClick={() => setDarkMode(!darkMode)}>
+                <div
+                  id="clearChat"
+                  onClick={() => {
+                    localStorage.setItem(
+                      "DarkModeChatQuoteBlog",
+                      darkMode ? "false" : "true"
+                    );
+                    setDarkMode(!darkMode);
+                  }}
+                >
                   <GiMoon style={{ fontSize: "150%" }} />
                 </div>
 
@@ -365,6 +379,7 @@ export default function Chatting() {
 
             <div id="chatting-bottom">
               <img
+                className={darkMode ? "dark-bg-typing" : "light-bg-typing"}
                 style={{ display: T ? "block" : "none" }}
                 src="https://assets-v2.lottiefiles.com/a/79602c98-1174-11ee-9f53-7b153f45c520/PtEKmqMfoQ.gif"
                 alt="typing-gif"
@@ -376,7 +391,10 @@ export default function Chatting() {
                   notifyTyping(1);
                 }}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") sendMessage(e);
+                  if (e.key === "Enter") {
+                    sendMessage(e);
+                    notifyTyping(0);
+                  }
                 }}
                 onMouseLeave={() => notifyTyping(0)}
                 autoComplete="off"
