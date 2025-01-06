@@ -214,11 +214,28 @@
 
 #chatting-bottom {
   display: flex;
+  flex-direction: column;
   width: 100%;
   background-color: transparent;
 }
 
+#chatting-bottom img{
+  object-fit: contain;
+  width: 100px;
+  mix-blend-mode:darken;
+  background-color:black;
+}
+#typing{
+  background: transparent;
+  width: 100%;
+  color: white;
+  text-align: center;
+  border: 0;
+  outline: 0;
+}
+
 #chatting-input {
+  margin: 2px 5px;
   background-color: #000000;
   padding:5px 15px;
   width:100%;
@@ -274,7 +291,7 @@
   color: black;
 }
 
-@media screen and (max-width: 480px) {
+@media screen and (max-width: 720px) {
   #chats-body > ul > li {
     margin: 5px;
     border-radius: 5px;
@@ -329,4 +346,8 @@
   #chatting-input {
     -size: small;
   }
+  #chatting-bottom img{
+    width: 70px;
+  }
 }
+

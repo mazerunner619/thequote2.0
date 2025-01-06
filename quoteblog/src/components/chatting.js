@@ -50,6 +50,7 @@ export default function Chatting() {
   const [clearChatPage, setClearChatPage] = useState(false);
   const [loadingChat, setLoadingChat] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const [lastMsgMap, setLastMsgMap] = useState(new Map());
 
   let chatinfo = [chatwith, loggedUser];
   const [msg, setMsg] = useState("");
@@ -57,7 +58,7 @@ export default function Chatting() {
 
   function sendMessage(e) {
     e.preventDefault();
-    if (!msg.length) return;
+    if (!msg.length || loadingChat) return;
     socket.emit("newmsg", {
       sender: loggedUser,
       message: msg,
@@ -100,23 +101,31 @@ export default function Chatting() {
     return newDate;
   }
 
+  useEffect(() => {
+    const getInfo = async () => {
+      const userRes = await dispatch(getLoggedUser());
+      if (userRes) {
+        const { data } = await axios.get(`/getfriends/${userRes._id}`);
+        setFriends(data);
+        if (Array.isArray(data)) {
+          setLastMsgMap(
+            new Map(data.map((frnd) => [frnd._id, frnd.lastMessage]))
+          );
+        }
+      } else {
+        hist.push("/login");
+      }
+    };
+
+    getInfo();
+  }, []);
+
   //get all previous chats;
   useEffect(() => {
     // socket = socketClient("http://localhost:8000/"); // development mode
     socket = socketClient("https://thequoteblog.onrender.com/", {
       transports: ["websocket"],
     });
-    const getInfo = async () => {
-      const userRes = await dispatch(getLoggedUser());
-      if (userRes) {
-        const { data } = await axios.get(`/getfriends/${userRes._id}`);
-        setFriends(data);
-      } else {
-        hist.push("/login");
-      }
-    };
-
-    if (chatwith === null) getInfo();
 
     socket.on("receivemsg", ({ message, sender, timing }) => {
       const objclass = sender._id === loggedUser._id ? "msg-right" : "msg-left";
@@ -151,6 +160,7 @@ export default function Chatting() {
         const chatContainer = document.getElementById("chatting-body");
         chatContainer.appendChild(newEle);
         chatContainer.scrollTop = chatContainer.scrollHeight;
+        lastMsgMap.set(chatwith._id, message);
       }
     });
 
@@ -188,13 +198,14 @@ export default function Chatting() {
   }, [chatwith]);
 
   return (
-    <div style={{ background: "black" }}>
+    <div id="main-container" style={{ background: "black" }}>
       <div id="chat-list" style={{ display: isChatting ? "none" : "flex" }}>
         <div id="chats-body" className="hideScrollbars">
           <ul id="online-users" style={{ listStyle: "none", padding: "0" }}>
             {friends.length > 0 ? (
               friends.map((friend, index) => (
                 <li
+                  key={friend._id}
                   onClick={() => {
                     setWith(friend);
                     setIsChatting(true);
@@ -245,7 +256,9 @@ export default function Chatting() {
 
                   <div id="chat-item-container">
                     <p>{friend.username}</p>
-                    <p id="last-message">{friend.lastMessage}</p>
+                    <p id="last-message">
+                      {lastMsgMap && lastMsgMap.get(friend._id)}
+                    </p>
                   </div>
                 </li>
               ))
@@ -332,9 +345,7 @@ export default function Chatting() {
                 </div>
                 <div
                   style={{ marginTop: "5px", display: "inline", float: "left" }}
-                >
-                  {T ? " typing..." : ""}
-                </div>
+                ></div>
 
                 <div id="clearChat" onClick={() => setDarkMode(!darkMode)}>
                   <GiMoon style={{ fontSize: "150%" }} />
@@ -353,6 +364,11 @@ export default function Chatting() {
             ></div>
 
             <div id="chatting-bottom">
+              <img
+                style={{ display: T ? "block" : "none" }}
+                src="https://assets-v2.lottiefiles.com/a/90bdd36c-1152-11ee-bdb8-cb8fe6b15cf6/5wy0Af60Yi.gif"
+                alt="typing-gif"
+              />
               <textarea
                 className="hideScrollbars"
                 id="chatting-input"
@@ -370,7 +386,6 @@ export default function Chatting() {
                 onChange={(e) => setMsg(e.target.value)}
               />
             </div>
-            <div></div>
           </>
         )}
       </div>
