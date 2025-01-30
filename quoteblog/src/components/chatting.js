@@ -50,9 +50,9 @@ export default function Chatting() {
   const [clearChatPage, setClearChatPage] = useState(false);
   const [loadingChat, setLoadingChat] = useState(false);
   const [darkMode, setDarkMode] = useState(() =>
-    !localStorage.getItem("DarkModeChatQuoteBlog")
+    !localStorage.getItem("darkmodechatquoteblog")
       ? false
-      : localStorage.getItem("DarkModeChatQuoteBlog") === "true"
+      : localStorage.getItem("darkmodechatquoteblog") === "true"
   );
   const [lastMsgMap, setLastMsgMap] = useState(new Map());
 
@@ -356,7 +356,7 @@ export default function Chatting() {
                   id="clearChat"
                   onClick={() => {
                     localStorage.setItem(
-                      "DarkModeChatQuoteBlog",
+                      "darkmodechatquoteblog",
                       darkMode ? "false" : "true"
                     );
                     setDarkMode(!darkMode);

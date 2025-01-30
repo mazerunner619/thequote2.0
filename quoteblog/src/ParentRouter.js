@@ -17,7 +17,6 @@ function Router() {
 
   return (
   <BrowserRouter>
-      {/* <Navi /> */}
       <ResponsiveDrawer />
       <Route path="/login" exact component = {Login}/>
       <Route path = "/" exact component={Quote} />

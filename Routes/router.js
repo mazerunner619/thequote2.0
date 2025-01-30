@@ -215,12 +215,33 @@ router.get("/current", async (req, res, next) => {
 //============== All Posts ===========
 router.get("/getallposts", async (req, res, next) => {
   try {
-    const posts = await db.Post.find({})
-      .populate({ path: "uploader", select: "-password" })
-      .sort({ createdAt: 1 });
-    // .populate({path : "uploader likes", select :"-password"}).sort({createdAt : 1});
-    // //console.log('get all posts route success', posts);
-    res.send(posts);
+    let { limit = 6, page = 1, totalCount = -1 } = req.query;
+
+    let totalPages = 0;
+    if (totalCount.toString() === "-1")
+      totalCount = await db.Post.countDocuments();
+    totalPages = Math.ceil(Number(totalCount) / limit);
+
+    const posts = await db.Post.find(
+      {},
+      "image likes comments content createdAt updatedAt"
+    )
+      .sort({ createdAt: -1 })
+      .skip(limit * (page - 1))
+      .limit(limit)
+      .populate({
+        path: "uploader",
+        select: "profilePicture username",
+      });
+
+    res.json({
+      totalCount: totalCount,
+      currentPage: page,
+      totalPages: totalPages,
+      limit: limit,
+      pageCount: posts.length,
+      items: posts,
+    });
   } catch (error) {
     return next({
       mesage: error.message,

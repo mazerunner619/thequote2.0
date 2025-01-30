@@ -52,16 +52,16 @@ function Post({
 
   function fomatDate(date) {
     let newDate = new Date(date).toLocaleDateString("en-US", {
-      weekday: "short",
       month: "short",
       day: "numeric",
+      year: "2-digit",
     });
     return newDate;
   }
 
   return (
     <div className="grid">
-      <Card className="mt-2" style={{ background: "rgba(0,0,0,0.4)" }}>
+      <Card className="mt-2" style={{ background: "black", color: "white" }}>
         <Card.Header>
           <Row>
             <Col>
@@ -70,14 +70,15 @@ function Post({
                 <Avatar
                   alt="user-pic"
                   src={post.uploader.profilePicture.imageURL}
+                  style={{ border: "1px solid white" }}
                 />
               ) : (
                 <Avatar
                   alt="user-pic"
                   src="https://workhound.com/wp-content/uploads/2017/05/placeholder-profile-pic.png"
+                  style={{ border: "1px solid white" }}
                 />
               )}
-              {/* {post.createdAt.toLocaleDateString("en-US",{weekday : "long", year : "long", month : "short", day : "2-digit"})} */}{" "}
               {fomatDate(post.createdAt)}
             </Col>
             <Col style={{ textAlign: "end" }}>
@@ -145,22 +146,6 @@ function Post({
             />
           )}
           {LIKES > 0 ? LIKES : ""}
-
-          {/*
-                       {
-                        likes.length && liked && <p style={{display : "inline"}}>{`You and ${likes.length} others`}</p>
-                      }
-                      {
-                        !likes.length && liked && <p style={{display : "inline"}}>{`You`}</p>
-                      }
-                      {
-                        likes.length === 1 && !liked && <p style={{display : "inline"}}>{`${likes[0].username}`}</p>
-                      }
-
-                      {
-                        likes.length > 1 && !liked && <p style={{display : "inline"}}>{`${likes[0].username} ans ${likes.length - 1} others`}</p>
-                      } 
-                      */}
         </Card.Footer>
         <div className="postCaption">
           <blockquote className="blockquote m-0 p-3">
@@ -168,7 +153,7 @@ function Post({
               <b
                 style={{
                   cursor: "pointer",
-                  color: "black",
+                  color: "white",
                   textDecoration: "underline",
                 }}
                 onClick={() => hist.push(`/show/${post.uploader._id}/profile`)}
