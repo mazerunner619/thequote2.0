@@ -11,6 +11,8 @@ import EditPostModal from "./editPostModal";
 import { connect, useDispatch } from "react-redux";
 import { getAllPosts } from "../ReduxStore/actions/postActions";
 import { deletePost } from "../ReduxStore/actions/authActions";
+import { DEFAULT_POST_IMG } from "../ReduxStore/reducers/postsReducer";
+import { DEFAULT_PROFILE_PICTURE } from "../ReduxStore/reducers/userReducer";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,7 +34,6 @@ function Post({ post, loggedUser, likeThisPost, liked, likes }) {
 
   async function handleClick(e, id) {
     e.preventDefault();
-    console.log(id, "deleting post");
     await dispatch(deletePost(id, loggedUser._id));
     await dispatch(getAllPosts());
   }
@@ -62,7 +63,7 @@ function Post({ post, loggedUser, likeThisPost, liked, likes }) {
               ) : (
                 <Avatar
                   alt="user-pic"
-                  src="https://workhound.com/wp-content/uploads/2017/05/placeholder-profile-pic.png"
+                  src={DEFAULT_PROFILE_PICTURE}
                   style={{ border: "1px solid white" }}
                 />
               )}
@@ -105,7 +106,7 @@ function Post({ post, loggedUser, likeThisPost, liked, likes }) {
           ) : (
             <Card.Img
               className="card-img"
-              src="https://images.unsplash.com/photo-1521840891849-69baa8035cc7?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YmVhdXRpZnVsbHxlbnwwfHwwfHx8MA%3D%3D"
+              src={DEFAULT_POST_IMG}
               alt="poste-image"
               width="100%"
               height="100%"
@@ -134,7 +135,7 @@ function Post({ post, loggedUser, likeThisPost, liked, likes }) {
               }}
             />
           )}
-          {LIKES > 0 ? LIKES : ""}
+          {LIKES > 0 ? ` ${LIKES}` : ""}
         </Card.Footer>
         <div className="postCaption">
           <blockquote className="blockquote m-0 p-3">

@@ -33,6 +33,7 @@ export default function MyVerticallyCenteredModal({
 
   return (
     <Modal
+      style={{ zIndex: "9999" }}
       show={show}
       onHide={onHide}
       size="lg"

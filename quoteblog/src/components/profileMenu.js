@@ -32,6 +32,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { BiDotsHorizontalRounded } from "react-icons/bi";
 import axios from "axios";
 import ShowDP from "./profilePicOpen";
+import { DEFAULT_PROFILE_PICTURE } from "../ReduxStore/reducers/userReducer";
+import { DEFAULT_POST_IMG } from "../ReduxStore/reducers/postsReducer";
 
 function TabPanel(props) {
   const { children, value, posts, index, ...other } = props;
@@ -67,18 +69,28 @@ export default function ScrollableTabsButtonPrevent({ userid, profile }) {
 
   const { findUser, findUserE, findUserS, findUserLoading, loggedUser } =
     useSelector((state) => state.userStore);
+
   const [POSTS, setPOSTS] = useState([]);
   const [REQS, setREQS] = useState([]);
   const [FRI, setFRI] = useState([]);
+  const [uploader, setUploader] = useState(null);
   const [currimg, setcurrimg] = useState("");
+  const [currPost, setCurrPost] = useState(null);
 
   const [render, setRender] = useState(0);
+
   useEffect(() => {
     async function getInfo() {
       const data = await dispatch(getUser(userid));
+      console.log("loading profile details", data);
       setPOSTS(data.posts);
       setFRI(data.friends);
-      setREQS(data.receivedRequests);
+      setUploader({
+        _id: data._id,
+        username: data.username,
+        profilePicture: data.profilePicture,
+      });
+      if (profile) setREQS(data.receivedRequests);
     }
     getInfo();
   }, [dispatch, render]);
@@ -87,13 +99,17 @@ export default function ScrollableTabsButtonPrevent({ userid, profile }) {
   const [value, setValue] = React.useState(0);
 
   async function handleAcceptRequest(id) {
-    await dispatch(acceptRequest(userid, id));
-    setRender(render === 0 ? 1 : 0);
+    if (profile) {
+      await dispatch(acceptRequest(userid, id));
+      setRender(render === 0 ? 1 : 0);
+    }
   }
 
   async function handleDeleteRequest(id) {
-    await dispatch(deleteRequest(userid, id));
-    setRender(render === 0 ? 1 : 0);
+    if (profile) {
+      await dispatch(deleteRequest(userid, id));
+      setRender(render === 0 ? 1 : 0);
+    }
   }
 
   const requestsArr = REQS.map((res) => (
@@ -110,7 +126,7 @@ export default function ScrollableTabsButtonPrevent({ userid, profile }) {
               />
             ) : (
               <Card.Img
-                src="https://workhound.com/wp-content/uploads/2017/05/placeholder-profile-pic.png"
+                src={DEFAULT_PROFILE_PICTURE}
                 roundedCircle
                 id="post-uploader"
                 alt="profile-picture"
@@ -196,7 +212,7 @@ export default function ScrollableTabsButtonPrevent({ userid, profile }) {
               />
             ) : (
               <Card.Img
-                src="https://workhound.com/wp-content/uploads/2017/05/placeholder-profile-pic.png"
+                src={DEFAULT_PROFILE_PICTURE}
                 roundedCircle
                 id="post-uploader"
                 alt="profile-picture"
@@ -221,10 +237,11 @@ export default function ScrollableTabsButtonPrevent({ userid, profile }) {
         <img
           className="content"
           onClick={() => {
-            setcurrimg(x.image.imageURL);
+            setcurrimg(x.image.imageURL || DEFAULT_POST_IMG);
+            setCurrPost(x);
             setEditModal(true);
           }}
-          src={x.image.imageURL}
+          src={x.image.imageURL || DEFAULT_POST_IMG}
           alt="post-image"
         />
       </div>
@@ -243,6 +260,9 @@ export default function ScrollableTabsButtonPrevent({ userid, profile }) {
         show={editModal}
         onHide={() => setEditModal(false)}
         image={currimg}
+        post={currPost}
+        uploader={uploader}
+        likeThisPost={() => {}}
       />
       {findUserLoading ? (
         "loading..."

@@ -279,9 +279,9 @@ function ResponsiveDrawer(props) {
     <div className={classes.root}>
       <CssBaseline />
       <AppBar
-        position="sticky"
+        position="relative"
+        style={{ zIndex: "1" }}
         className={classes.appBar}
-        style={{ height: "8vh", borderBottom: "1px solid yellow" }}
       >
         <Toolbar style={{ backgroundColor: "#971243" }}>
           <IconButton

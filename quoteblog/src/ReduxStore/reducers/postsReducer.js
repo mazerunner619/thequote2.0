@@ -27,6 +27,8 @@ const INITIAL_STATE = {
 };
 
 export const LIMIT = 5;
+export const DEFAULT_POST_IMG =
+  "https://images.unsplash.com/photo-1521840891849-69baa8035cc7?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YmVhdXRpZnVsbHxlbnwwfHwwfHx8MA%3D%3D";
 
 export default function postsReducer(state = INITIAL_STATE, action) {
   switch (action.type) {

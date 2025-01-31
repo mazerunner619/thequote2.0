@@ -3,10 +3,10 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const db = require("../Models");
 const bcrypt = require("bcrypt");
+const authMW = require("../authMW");
 
 router.get("/removerooms", async (req, res) => {
   try {
-    //   const data = await db.Chat.find({});
     const user = await db.Client.find({});
     user.forEach(async (U) => {
       U.active = false;

@@ -360,20 +360,14 @@ router.post(
 //===============================================DELETE POST
 router.delete("/:userid/delete/:postid", isLoggedIn, async (req, res, next) => {
   try {
-    //console.log('n delete route');
-    //console.log(req.params.userid);
-    //console.log(req.params.postid);
     const { userid, postid } = req.params;
     const post = await db.Post.findById(postid);
-    //console.log(post);
     if (post.uploader.toString() !== userid.toString()) {
       return next({
         message: "wait a minute .... Who are you !!!",
       });
     }
-
     if (post.image && post.image.imageID) await destroyFile(post.image.imageID);
-
     await db.Post.deleteOne({ _id: postid });
     const user = await db.Client.findById(userid);
     const usersupdateposts = user.posts.filter(

@@ -47,6 +47,9 @@ const INITIAL_STATE = {
   userConnections: [],
 };
 
+export const DEFAULT_PROFILE_PICTURE =
+  "https://workhound.com/wp-content/uploads/2017/05/placeholder-profile-pic.png";
+
 export default function userReducer(state = INITIAL_STATE, action) {
   switch (action.type) {
     case GET_LOGGED_USER:
