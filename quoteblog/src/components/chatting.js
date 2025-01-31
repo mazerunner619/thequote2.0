@@ -16,6 +16,7 @@ import { GiMoon } from "react-icons/gi";
 import { BsClockHistory, BsMoonStars } from "react-icons/bs";
 
 import "./component.css";
+import Inbox from "./Inbox";
 
 let socket;
 
@@ -297,7 +298,26 @@ export default function Chatting() {
         </div>
       </div>
 
-      <div
+      {chatwith && (
+        <Inbox
+          darkMode={darkMode}
+          setDarkMode={setDarkMode}
+          chatwith={chatwith}
+          clearChatInitiate={clearChatInitiate}
+          notifyTyping={notifyTyping}
+          clearChatPage={clearChatPage}
+          sendMessage={sendMessage}
+          setMsg={setMsg}
+          setClearChatPage={setClearChatPage}
+          setIsChatting={setIsChatting}
+          setWith={setWith}
+          msg={msg}
+          loadingChat={loadingChat}
+          T={T}
+        />
+      )}
+
+      {/* <div
         id={darkMode ? "chatting-page-dark" : "chatting-page"}
         style={{ display: isChatting ? "flex" : "none" }}
       >
@@ -412,7 +432,7 @@ export default function Chatting() {
         onHide={() => setClearChatPage(false)}
         onConfirm={() => clearChatInitiate(true)}
         onCancel={() => clearChatInitiate(false)}
-      />
+      /> */}
     </div>
   );
 }

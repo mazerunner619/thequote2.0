@@ -36,9 +36,7 @@ export default function ClearChatModal({ show, onHide, onConfirm, onCancel }) {
           </Button>
         </Modal.Header>
         <Modal.Body>
-          <p>
-            Are you sure ? this will clear clear the chat history at both ends
-          </p>
+          <p>Are you sure ? this will clear the chat history at both ends</p>
         </Modal.Body>
         <Modal.Footer>
           <Button style={{ background: "red" }} onClick={onConfirm}>
@@ -46,7 +44,7 @@ export default function ClearChatModal({ show, onHide, onConfirm, onCancel }) {
           </Button>
           <Button
             className="ml-1"
-            style={{ background: "green" }}
+            style={{ background: "green", marginLeft: "5px" }}
             onClick={onCancel}
           >
             Cancel

@@ -1,3 +1,12 @@
+#inbox {
+  position: fixed;  /* Fix it to the viewport */
+  top: 0;
+  left: 0;
+  width: 100vw;  /* Full width */
+  height: 100vh; /* Full height */
+  z-index: 10;
+}
+
 #chatting-page {
   background-image: url("https://images.unsplash.com/photo-1509114397022-ed747cca3f65?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=735&q=80");
   background-repeat: no-repeat;
@@ -14,12 +23,11 @@
   margin: 0;
   padding: 0;
   width: 100%;
-  height: 92vh;
+  height: 100%;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   box-sizing: border-box;
 }
 
@@ -29,12 +37,11 @@
   margin: 0;
   padding: 0;
   width: 100%;
-  height: 92vh;
+  height: 100%;
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   box-sizing: border-box;
 }
 #chatting-page-dark #chatting-body p {
@@ -198,7 +205,6 @@
   background-color: #971243;
   text-align: left;
   height: 10%;
-  /* padding-left: 5px; */
   width: 100%;
   display: flex;
   align-items: center;
@@ -305,11 +311,6 @@
     border-radius: 5px;
     font-size: small;
   }
-  /* #chatting-page {
-    margin-top: 5px;
-    padding: 0;
-  } */
-
   .msg-left {
     font-size: small;
   }
@@ -317,11 +318,6 @@
   #chats-body {
     padding: 0;
   }
-
-  #chatting-header {
-    border-top: 2px solid black;
-  }
-
   .msg-right {
     font-size: small;
   }

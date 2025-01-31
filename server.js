@@ -49,12 +49,9 @@ io.on("connection", (socket) => {
   });
   socket.on("startchat", async (data) => {
     if (!data[0].username || !data[1].username) {
-      //console.log('something is wrong......receipients are missing !');
       throw new Error("receipients missing");
     }
-    //console.log('chat started b/w =>',data[0].username , data[1].username)
     let room;
-    //find if any previous chats
     const reverseRecepients = [data[1]._id, data[0]._id];
     const thisChat = await db.Chat.findOne(
       {
@@ -64,7 +61,7 @@ io.on("connection", (socket) => {
         ],
       },
       {
-        chats: { $slice: -5 },
+        chats: { $slice: -10 },
       }
     );
 
