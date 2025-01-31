@@ -216,11 +216,10 @@ router.get("/current", async (req, res, next) => {
 router.get("/getallposts", async (req, res, next) => {
   try {
     let { limit = 6, page = 1, totalCount = -1 } = req.query;
-
     let totalPages = 0;
     if (totalCount.toString() === "-1")
       totalCount = await db.Post.countDocuments();
-    totalPages = Math.ceil(Number(totalCount) / limit);
+    totalPages = Math.ceil(Number(totalCount) / Number(limit));
 
     const posts = await db.Post.find(
       {},
@@ -228,7 +227,7 @@ router.get("/getallposts", async (req, res, next) => {
     )
       .sort({ createdAt: -1 })
       .skip(limit * (page - 1))
-      .limit(limit)
+      .limit(Number(limit))
       .populate({
         path: "uploader",
         select: "profilePicture username",

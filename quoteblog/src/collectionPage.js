@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Form, Spinner, Modal } from "react-bootstrap";
+import { Spinner, Modal } from "react-bootstrap";
 import { useHistory } from "react-router";
 import { IoIosArrowUp } from "react-icons/io";
-import { FaUserCircle, FaAngleDoubleDown } from "react-icons/fa";
-import { SiInstagram } from "react-icons/si";
-import Fab from "@material-ui/core/Fab";
-import AddIcon from "@material-ui/icons/Add";
 import NewPostModal from "./components/newPostModal";
 import { useDispatch, useSelector } from "react-redux";
 import Post from "./components/Post";
 import { getAllPosts } from "./ReduxStore/actions/postActions";
 import { likePost } from "./ReduxStore/actions/authActions";
-
+import { Button } from "@material-ui/core";
+import { LIMIT } from "./ReduxStore/reducers/postsReducer";
+import Footer from "./components/Footer";
+import NewPostClick from "./components/NewPostClick";
 export default function Quote() {
   const hist = useHistory();
   const dispatch = useDispatch();
   const { loggedIn, loggedUser } = useSelector((state) => state.userStore);
-  const { allPosts, page, totalCount, loading } = useSelector(
+  const { allPosts, page, totalCount, loading, error } = useSelector(
     (state) => state.postStore
   );
   const { deleted, deleteError } = useSelector((state) => state.authStore);
@@ -28,7 +27,7 @@ export default function Quote() {
   }, [dispatch]);
 
   function loadMore() {
-    if (Number(page) === Math.ceil(totalCount / 6)) return;
+    if (Number(page) === Math.ceil(totalCount / LIMIT)) return;
     dispatch(getAllPosts(Number(page) + 1, totalCount));
   }
   const newPostHandler = () => {
@@ -44,10 +43,26 @@ export default function Quote() {
       key={post._id}
       likes={post.likes}
       liked={post.likes.indexOf(loggedUser._id) !== -1}
+      loggedUser={loggedUser}
       post={post}
       likeThisPost={() => postLiker(post._id)}
     />
   ));
+
+  if (error)
+    return (
+      <p
+        style={{
+          textAlign: "center",
+          position: "absolute",
+          left: "50%",
+          top: "50%",
+          transform: "translate(-50%, -50%)",
+        }}
+      >
+        {error}
+      </p>
+    );
 
   return (
     <div id="fullPage" style={{ minHeight: "100vh" }}>
@@ -57,36 +72,16 @@ export default function Quote() {
         userid={loggedUser._id}
       />
 
-      <div onMouseDown={newPostHandler}>
-        <div className="status">
-          <Fab
-            color="secondary"
-            aria-label="add"
-            style={{ background: "#971243" }}
-          >
-            <AddIcon />
-          </Fab>
-        </div>
-
-        <Form id="newPost" className="p-2 mt-5 mb-3">
-          <FaUserCircle style={{ fontSize: "200%", color: "#971243" }} />
-          <div style={{ display: "inline-block" }}>
-            <Form.Group controlId="">
-              <Form.Control
-                type="text"
-                placeholder="what's on your mind ???"
-                style={{ border: "0", textAlign: "end", width: "100%" }}
-              />
-            </Form.Group>
-          </div>
-        </Form>
-      </div>
+      <NewPostClick newPostHandler={newPostHandler} />
 
       {deleteError && (
         <Modal variant="danger" show={deleted}>
           <Modal.Body> {deleteError}</Modal.Body>
         </Modal>
       )}
+
+      {error && <p> {error}</p>}
+
       {deleted && (
         <Modal show={deleted} centered>
           <Modal.Body
@@ -104,33 +99,27 @@ export default function Quote() {
         </Modal>
       )}
 
-      {loading ? (
-        <Spinner
-          variant="dark"
-          size="lg"
-          animation="grow"
-          style={{ position: "absolute", left: "50%", top: "80%" }}
-        />
-      ) : (
-        <>
-          {quotesArray}
-          <p
-            onClick={loadMore}
-            style={{
-              color: "black",
-              textAlign: "center",
-              marginTop: "10px",
-            }}
-          >
-            {Number(page) === Math.ceil(totalCount / 6)
-              ? "that's all for now!"
-              : "load more"}
-            <br />
-            <FaAngleDoubleDown />
-          </p>
-        </>
-      )}
+      {quotesArray}
 
+      {loading && (
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <Spinner variant="light" size="lg" animation="grow" />
+        </div>
+      )}
+      {!loading && (
+        <p style={{ display: "flex", justifyContent: "center" }}>
+          {Number(page) === Math.ceil(totalCount / Number(LIMIT)) ? (
+            <Button variant="text" color="default">
+              that's all for now!
+            </Button>
+          ) : (
+            <Button variant="text" color="inherit" onClick={loadMore}>
+              more ...
+            </Button>
+          )}
+          <br />
+        </p>
+      )}
       <a
         href="#top"
         style={{
@@ -143,18 +132,7 @@ export default function Quote() {
         <IoIosArrowUp />
       </a>
 
-      <footer className="text-center text-white">
-        <div className="footer">
-          ©mazerunner619{"  "}
-          <a
-            href="https://www.instagram.com/happiest_depressed_1/"
-            style={{ color: "white", fontSize: "20px" }}
-          >
-            {" "}
-            <SiInstagram />{" "}
-          </a>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

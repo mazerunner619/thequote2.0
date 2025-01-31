@@ -1,7 +1,3 @@
-//upload posts
-//edit posts
-//delete posts
-//comment and like posts
 import axios from "axios";
 
 import {
@@ -17,9 +13,6 @@ import {
   LIKE_POST,
   LIKE_POST_SUCCESS,
   LIKE_POST_ERROR,
-  COMMENT,
-  COMMENT_SUCCESS,
-  COMMENT_ERROR,
   REVERT_AUTH,
   DELETE_NOTIFICATION,
   DELETE_ALL_NOTIFICATION,
@@ -30,14 +23,13 @@ import {
 
 export const uploadNewPost = (post, userid) => async (dispatch) => {
   try {
-    //console.log('dispatched upload_post');
+    console.log("dispatched upload_post", userid, post);
     dispatch({
       type: UPLOAD_POST,
     });
 
     const { data } = await axios.post(`/user/newpost/${userid}`, post);
     if (data) {
-      //console.log('dispatched upload_post_success');
       dispatch({
         type: UPLOAD_POST_SUCCESS,
       });
@@ -45,14 +37,12 @@ export const uploadNewPost = (post, userid) => async (dispatch) => {
         dispatch({ type: REVERT_AUTH });
       }, 2000);
     } else {
-      //console.log('dispatched upload_post_errro');
       dispatch({
         type: UPLOAD_POST_ERROR,
         payload: "something went wrong",
       });
     }
   } catch (err) {
-    //console.log('dispatched upload_post_errro');
     dispatch({
       type: UPLOAD_POST_ERROR,
       payload: err.message,
@@ -65,13 +55,11 @@ export const uploadNewPost = (post, userid) => async (dispatch) => {
 
 export const editPost = (postid, userid, post) => async (dispatch) => {
   try {
-    //console.log('dispatched edit_post');
     dispatch({
       type: EDIT_POST,
     });
     const { data } = await axios.post(`/user/${userid}/edit/${postid}`, post);
     if (data) {
-      //console.log('dispatched edit_post_success');
       dispatch({
         type: EDIT_POST_SUCCCESS,
       });
@@ -79,14 +67,12 @@ export const editPost = (postid, userid, post) => async (dispatch) => {
         dispatch({ type: REVERT_AUTH });
       }, 2000);
     } else {
-      //console.log('dispatched edit_post_errro');
       dispatch({
         type: EDIT_POST_ERROR,
         payload: "something went wrong",
       });
     }
   } catch (err) {
-    //console.log('dispatched edit_post_errro');
     dispatch({
       type: EDIT_POST_ERROR,
       payload: err.message,
@@ -99,13 +85,11 @@ export const editPost = (postid, userid, post) => async (dispatch) => {
 
 export const deletePost = (postid, userid) => async (dispatch) => {
   try {
-    //console.log('dispatched delete_post');
     dispatch({
       type: DELETE_POST,
     });
     const { data } = await axios.delete(`/user/${userid}/delete/${postid}`);
     if (data) {
-      //console.log('dispatched delete_post_success');
       dispatch({
         type: DELETE_POST_SUCCESS,
       });
@@ -113,14 +97,12 @@ export const deletePost = (postid, userid) => async (dispatch) => {
         dispatch({ type: REVERT_AUTH });
       }, 2000);
     } else {
-      //console.log('dispatched delete_post_errro');
       dispatch({
         type: DELETE_POST_ERROR,
         payload: "something went wrong",
       });
     }
   } catch (err) {
-    //console.log('dispatched delete_post_errro');
     dispatch({
       type: DELETE_POST_ERROR,
       payload: err.message,

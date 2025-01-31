@@ -325,36 +325,26 @@ router.post(
   "/newpost/:userid",
   upload.single("image"),
   async (req, res, next) => {
+    console.log("req for new post", req.body, req.params, req.FILE);
     try {
       const FILE = req.file;
-      //console.log('from backend initial file => ',FILE);
       const { userid } = req.params;
       const { content } = req.body;
-      let image = {};
+      let image = {
+        imageID: null,
+        imageURL: null,
+      };
 
       if (FILE) {
         const fileRes = await fileUpload(FILE);
-        //console.log(fileRes, 'from backend fileupload');
-        //console.log('final file => ',fileRes);
-        (image.imageID = fileRes.dataid), (image.imageURL = fileRes.dataurl);
-      } else {
-        const fileRes = await uploadFromURL(
-          "https://source.unsplash.com/random/900%C3%97700/?pink,cloud,moon"
-        );
-        //console.log(fileRes, 'from backend fileupload');
-        (image.imageID = fileRes.public_id),
-          (image.imageURL = fileRes.secure_url);
+        image.imageID = fileRes.dataid;
+        image.imageURL = fileRes.dataurl;
       }
-
       const newPost = await db.Post.create({
         uploader: userid,
         content: content,
         image: image,
       });
-
-      //console.log('new post',newPost);
-
-      //add to users posts
       const user = await db.Client.findById(userid);
       user.posts.push(newPost._id);
       await user.save();

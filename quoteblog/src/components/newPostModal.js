@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { Modal, Alert, Form } from "react-bootstrap";
 import { uploadNewPost } from "../ReduxStore/actions/authActions";
-import { getLoggedUser } from "../ReduxStore/actions/userActions";
 import { getAllPosts } from "../ReduxStore/actions/postActions";
-import { connect, useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@material-ui/core";
 
 export default function NewPostModal({ show, onHide, userid }) {
@@ -30,13 +29,12 @@ export default function NewPostModal({ show, onHide, userid }) {
   }
 
   async function handleClick(e) {
-    // console.log(data);
     e.preventDefault(); //prevent refresh / reload of page
     if (data.content) {
       const dummyForm = new FormData();
       dummyForm.append("image", data.image);
       dummyForm.append("content", data.content);
-      // console.log('from frontend => ',data);
+      console.log(data, dummyForm, "upload data");
       await dispatch(uploadNewPost(dummyForm, userid));
       await dispatch(getAllPosts());
       onHide();
@@ -48,7 +46,7 @@ export default function NewPostModal({ show, onHide, userid }) {
       <Modal
         show={show}
         onHide={onHide}
-        size="lg"
+        size="sm"
         aria-labelledby="contained-modal-title-vcenter"
         centered
       >
@@ -95,6 +93,7 @@ export default function NewPostModal({ show, onHide, userid }) {
                 name="content"
                 value={data.content}
                 onChange={changeForm}
+                autoFocus
               />
               <Form.Text className="text-muted">
                 {!data.content && "you didn't write anything"}

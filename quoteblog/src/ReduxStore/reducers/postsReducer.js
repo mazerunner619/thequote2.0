@@ -26,6 +26,8 @@ const INITIAL_STATE = {
   error: null,
 };
 
+export const LIMIT = 5;
+
 export default function postsReducer(state = INITIAL_STATE, action) {
   switch (action.type) {
     case GET_ALL_POSTS:
@@ -38,7 +40,9 @@ export default function postsReducer(state = INITIAL_STATE, action) {
       return {
         ...state,
         loading: false,
-        allPosts: [...state.allPosts, ...action.payload.posts],
+        allPosts: action.payload.newPost
+          ? action.payload.posts
+          : [...state.allPosts, ...action.payload.posts],
         page: action.payload.page,
         totalCount: action.payload.totalCount,
       };

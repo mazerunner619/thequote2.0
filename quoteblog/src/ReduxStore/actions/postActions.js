@@ -12,8 +12,7 @@ import {
   GET_USER_POSTS_SUCCESS,
   GET_USER_POSTS_ERROR,
 } from "../actionTypes";
-
-import { getLoggedUser } from "./userActions";
+import { LIMIT } from "../reducers/postsReducer";
 import axios from "axios";
 
 //fetch all the DB posts
@@ -21,12 +20,11 @@ export const getAllPosts =
   (page = 1, totalCount = -1) =>
   async (dispatch) => {
     try {
-      if (Number(page) === 1)
-        dispatch({
-          type: GET_ALL_POSTS,
-        });
-
-      const query = `/getallposts?page=${page.toString()}&totalCount=${totalCount.toString()}`;
+      dispatch({
+        type: GET_ALL_POSTS,
+      });
+      const query = `/getallposts?page=${page.toString()}&totalCount=${totalCount.toString()}&limit=${LIMIT}`;
+      console.log(query);
       const { data } = await axios.get(query);
       dispatch({
         type: GET_ALL_POSTS_SUCCESS,
@@ -34,6 +32,7 @@ export const getAllPosts =
           posts: data.items,
           page: data.currentPage,
           totalCount: data.totalCount,
+          newPost: Number(page) === 1,
         },
       });
       return data.items;
@@ -84,10 +83,8 @@ export const getUserPosts = (id) => async (dispatch) => {
     });
     const { data } = await axios.get(`/getmyposts/${id}`);
     dispatch({ type: GET_USER_POSTS_SUCCESS, payload: data });
-    //console.log('from redux store',data)
     return data;
   } catch (error) {
-    //console.log(error.message);
     dispatch({ type: GET_USER_POSTS_ERROR, payload: error.message });
   }
 };

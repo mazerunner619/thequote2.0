@@ -1,13 +1,11 @@
-import React, { useContext, useEffect, useState } from "react";
-import axios from "axios";
-import { Form, Card, Dropdown, Image, Alert, Row, Col } from "react-bootstrap";
+import React, { useState } from "react";
+import { Card, Dropdown, Row, Col } from "react-bootstrap";
 import { useHistory } from "react-router";
-import { alpha, makeStyles } from "@material-ui/core/styles";
-import { InputBase, IconButton, Avatar, Badge } from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import { Avatar } from "@material-ui/core";
 
-import { BsThreeDotsVertical, BsHeartFill, BsHeart } from "react-icons/bs";
-import { FaUserCircle } from "react-icons/fa";
-import { RiSendPlaneLine, RiDeleteBinLine, RiEdit2Fill } from "react-icons/ri";
+import { BsHeartFill, BsHeart } from "react-icons/bs";
+import { RiDeleteBinLine, RiEdit2Fill } from "react-icons/ri";
 
 import EditPostModal from "./editPostModal";
 import { connect, useDispatch } from "react-redux";
@@ -23,18 +21,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Post({
-  post,
-  getAllPosts,
-  deletePost,
-  deleting,
-  deleted,
-  deleteError,
-  loggedUser,
-  likeThisPost,
-  liked,
-  likes,
-}) {
+function Post({ post, loggedUser, likeThisPost, liked, likes }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const hist = useHistory();
@@ -44,10 +31,10 @@ function Post({
   const [LIKED, setLIKED] = useState(liked);
 
   async function handleClick(e, id) {
-    // console.log('deleting');
     e.preventDefault();
-    await deletePost(id, loggedUser._id);
-    dispatch(getAllPosts);
+    console.log(id, "deleting post");
+    await dispatch(deletePost(id, loggedUser._id));
+    await dispatch(getAllPosts());
   }
 
   function fomatDate(date) {
@@ -84,9 +71,11 @@ function Post({
             <Col style={{ textAlign: "end" }}>
               <Dropdown>
                 {loggedUser && loggedUser._id === post.uploader._id && (
-                  <Dropdown.Toggle variant="none" id="dropdown-basic">
-                    <BsThreeDotsVertical />
-                  </Dropdown.Toggle>
+                  <Dropdown.Toggle
+                    variant="none"
+                    style={{ color: "white" }}
+                    id="dropdown-basic"
+                  ></Dropdown.Toggle>
                 )}
                 <Dropdown.Menu>
                   <Dropdown.Item as="button" onClick={() => setEditModal(true)}>
@@ -116,7 +105,7 @@ function Post({
           ) : (
             <Card.Img
               className="card-img"
-              src="https://source.unsplash.com/random/700x700/?pink,moon,cloud"
+              src="https://images.unsplash.com/photo-1521840891849-69baa8035cc7?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YmVhdXRpZnVsbHxlbnwwfHwwfHx8MA%3D%3D"
               alt="poste-image"
               width="100%"
               height="100%"
@@ -166,8 +155,6 @@ function Post({
           </blockquote>
         </div>
         <br />
-
-        {/* </Card.ImgOverlay> */}
       </Card>
 
       <EditPostModal
