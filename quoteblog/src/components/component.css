@@ -1,3 +1,11 @@
+#clear-chat-dilog {
+  display: flex;
+  padding: 10px;
+  width: 100%;
+  color: white;
+  text-align: center;
+}
+
 #inbox {
   position: fixed;  /* Fix it to the viewport */
   top: 0;
@@ -15,13 +23,14 @@
 
   animation-name: movingBackground;
   animation-iteration-count: infinite;
-  animation-duration: 33s;
+  animation-duration: 40s;
   animation-timing-function: ease-in-out;
   animation-direction: alternate-reverse;
 
   border: 0;
   margin: 0;
   padding: 0;
+  padding-bottom: 15px;
   width: 100%;
   height: 100%;
   overflow-x: hidden;
@@ -36,6 +45,7 @@
   border: 0;
   margin: 0;
   padding: 0;
+  padding-bottom: 15px;
   width: 100%;
   height: 100%;
   overflow-x: hidden;
@@ -104,9 +114,9 @@
   overflow-x: hidden;
   overflow-y: scroll;
 
-  height: 80%;
+  height: 100%;
   width: 100%;
-  padding: 1%;
+  padding: 10px;
 
   background-color: transparent;
 }
@@ -223,6 +233,7 @@
   flex-direction: column;
   width: 100%;
   background-color: transparent;
+  margin: 0 auto;
 }
 
 .light-bg-typing{
@@ -306,6 +317,10 @@
 }
 
 @media screen and (max-width: 720px) {
+
+  #chatting-bottom {
+    width: 95%;
+  }
   #chats-body > ul > li {
     margin: 5px;
     border-radius: 5px;

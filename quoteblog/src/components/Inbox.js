@@ -6,6 +6,7 @@ import { BsClockHistory, BsMoonStars } from "react-icons/bs";
 import ClearChatModal from "./clearChat";
 import Avatar from "@material-ui/core/Avatar";
 import { useHistory } from "react-router";
+import { useEffect } from "react";
 
 export default function Inbox({
   darkMode,
@@ -24,6 +25,24 @@ export default function Inbox({
   T,
 }) {
   const hist = useHistory();
+
+  useEffect(() => {
+    const elem = document.getElementById("inbox");
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.webkitRequestFullscreen) {
+      /* Safari */
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) {
+      /* IE11 */
+      elem.msRequestFullscreen();
+    }
+
+    return () => {
+      setClearChatPage(false);
+    };
+  }, [chatwith]);
+
   return (
     <div id="inbox">
       {chatwith && (
@@ -129,14 +148,19 @@ export default function Inbox({
               onChange={(e) => setMsg(e.target.value)}
             />
           </div>
+          <div
+            id="clear-chat-dilog"
+            style={{
+              display: clearChatPage ? "block" : "none",
+            }}
+          >
+            <ClearChatModal
+              onHide={() => setClearChatPage(false)}
+              onConfirm={() => clearChatInitiate(true)}
+            />
+          </div>
         </div>
       )}
-      <ClearChatModal
-        show={clearChatPage}
-        onHide={() => setClearChatPage(false)}
-        onConfirm={() => clearChatInitiate(true)}
-        onCancel={() => clearChatInitiate(false)}
-      />
     </div>
   );
 }

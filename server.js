@@ -115,8 +115,6 @@ io.on("connection", (socket) => {
       socket.broadcast.to(room.toString()).emit("!typing");
     });
     socket.on("newmsg", async ({ sender, message, timing }) => {
-      //console.log(`${message} : ${sender.username} in room ${room} at ${timing}`);
-      //save to DB this message
       const thisChat = await db.Chat.findOne({
         $or: [
           { recepients: [data[0]._id, data[1]._id] },
@@ -124,7 +122,6 @@ io.on("connection", (socket) => {
         ],
       });
       if (!thisChat) {
-        //console.log('strange error not found this chat on line -- 94');
         io.to(socket.id).emit("msgNotSent");
         throw err;
       } else {
