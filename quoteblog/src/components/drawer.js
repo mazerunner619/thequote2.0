@@ -37,13 +37,11 @@ import $ from "jquery";
 let socket;
 
 $(function () {
-  setTimeout(() => $("#quote-logo").animate({ marginLeft: "5px" }), 1200);
-  setTimeout(() => {
-    $("#quote-logo").css("transform", "rotateZ(5deg)");
-  }, 500);
+  $("#quote-logo").css("transform", "rotateZ(20deg)");
+  setTimeout(() => $("#quote-logo").animate({ marginLeft: "5px" }), 500);
   setTimeout(() => {
     $("#quote-logo").css("transform", "rotateZ(0deg)");
-  }, 2500);
+  }, 1200);
 });
 
 const drawerWidth = 240;

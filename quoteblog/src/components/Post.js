@@ -3,7 +3,7 @@ import { Card, Dropdown, Row, Col } from "react-bootstrap";
 import { useHistory } from "react-router";
 import { makeStyles } from "@material-ui/core/styles";
 import { Avatar } from "@material-ui/core";
-
+import { Skeleton } from "@material-ui/lab";
 import { BsHeartFill, BsHeart } from "react-icons/bs";
 import { RiDeleteBinLine, RiEdit2Fill } from "react-icons/ri";
 
@@ -176,3 +176,58 @@ export default connect(mapStateToProps, {
   getAllPosts,
   deletePost,
 })(Post);
+
+export const PostSkeleton = () => {
+  return (
+    <div className="grid" style={{ marginTop: "10px", marginBottom: "50px" }}>
+      <Skeleton
+        animation="pulse"
+        variant="circle"
+        width={40}
+        height={40}
+        style={{
+          float: "left",
+          background: "rgba(0,0,0,0.5)",
+        }}
+      />
+      <Skeleton
+        animation="pulse"
+        height={40}
+        width="80%"
+        style={{
+          marginLeft: "auto",
+          background: "rgba(0,0,0,0.5)",
+        }}
+      />
+      <Skeleton
+        animation="pulse"
+        variant="rect"
+        style={{
+          background: "rgba(0,0,0,0.5)",
+          width: "100%",
+          minHeight: "50vh",
+        }}
+      />
+      <React.Fragment>
+        <Skeleton
+          style={{
+            float: "left",
+            background: "rgba(0,0,0,0.5)",
+          }}
+          animation="pulse"
+          height={20}
+          width="80%"
+        />
+        <Skeleton
+          style={{
+            float: "left",
+            background: "rgba(0,0,0,0.5)",
+          }}
+          animation="pulse"
+          height={20}
+          width="80%"
+        />
+      </React.Fragment>
+    </div>
+  );
+};

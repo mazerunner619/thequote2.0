@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Skeleton } from "@material-ui/lab";
 import { Spinner, Modal } from "react-bootstrap";
 import { useHistory } from "react-router";
 import { IoIosArrowUp } from "react-icons/io";
@@ -11,9 +12,65 @@ import { Button } from "@material-ui/core";
 import { LIMIT } from "./ReduxStore/reducers/postsReducer";
 import Footer from "./components/Footer";
 import NewPostClick from "./components/NewPostClick";
+import { makeStyles } from "@material-ui/core/styles";
+import { PostSkeleton } from "./components/Post";
+// const PostSkeleton = (
+//   <div className="grid">
+//     <Skeleton
+//       animation="pulse"
+//       variant="circle"
+//       width={40}
+//       height={40}
+//       style={{
+//         float: "left",
+//         background: "rgba(0,0,0,0.5)",
+//       }}
+//     />
+//     <Skeleton
+//       animation="pulse"
+//       height={40}
+//       width="80%"
+//       style={{
+//         marginLeft: "auto",
+//         background: "rgba(0,0,0,0.5)",
+//       }}
+//     />
+//     <Skeleton
+//       animation="pulse"
+//       variant="rect"
+//       style={{
+//         background: "rgba(0,0,0,0.5)",
+//         width: "100%",
+//         minHeight: "50vh",
+//       }}
+//     />
+//     <React.Fragment>
+//       <Skeleton
+//         style={{
+//           float: "left",
+//           background: "rgba(0,0,0,0.5)",
+//         }}
+//         animation="pulse"
+//         height={20}
+//         width="80%"
+//       />
+//       <Skeleton
+//         style={{
+//           float: "left",
+//           background: "rgba(0,0,0,0.5)",
+//         }}
+//         animation="pulse"
+//         height={20}
+//         width="80%"
+//       />
+//     </React.Fragment>
+//   </div>
+// );
+
 export default function Quote() {
   const hist = useHistory();
   const dispatch = useDispatch();
+  // const classes = useStyles();
   const { loggedIn, loggedUser } = useSelector((state) => state.userStore);
   const { allPosts, page, totalCount, loading, error } = useSelector(
     (state) => state.postStore
@@ -101,11 +158,7 @@ export default function Quote() {
 
       {quotesArray}
 
-      {loading && (
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <Spinner variant="light" size="lg" animation="grow" />
-        </div>
-      )}
+      {loading && <PostSkeleton />}
       {!loading && (
         <p style={{ display: "flex", justifyContent: "center" }}>
           {Number(page) === Math.ceil(totalCount / Number(LIMIT)) ? (
@@ -131,7 +184,6 @@ export default function Quote() {
       >
         <IoIosArrowUp />
       </a>
-
       <Footer />
     </div>
   );

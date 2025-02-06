@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
-import { Spinner, Container, Row, Col, Image } from "react-bootstrap";
-import ShowDP from "./profilePicOpen";
-import { getUserPosts } from "../ReduxStore/actions/postActions";
+import { Spinner, Image } from "react-bootstrap";
 import { getUser } from "../ReduxStore/actions/userActions";
 import { useSelector, useDispatch } from "react-redux";
 import Menu from "../components/profileMenu";
@@ -52,9 +50,7 @@ export default function ProfileViewer({ match }) {
             </span>
             {"  "}
             <p className="m-1">
-              <i className="text-muted">
-                {findUser.bio ? findUser.bio : "add a short bio...."}
-              </i>
+              {findUser?.bio && <i className="text-muted">{findUser.bio}</i>}
             </p>
           </div>
         </>

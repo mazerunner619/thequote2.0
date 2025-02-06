@@ -1,7 +1,5 @@
 import { useState } from "react";
 import "./App.css";
-import ResponsiveDrawer from "./components/drawer";
-import ShowDP from "./components/profilePicOpen";
 import Router from "./ParentRouter";
 import axios from "axios";
 
@@ -23,16 +21,6 @@ function App() {
   const [editModal, setEditModal] = useState(true);
   return (
     <>
-      {/* <div>
-        <h1>Posts</h1>
-        <ShowDP
-          show={editModal}
-          onHide={() => setEditModal(false)}
-          image={"currimg"}
-          post={""}
-          uploader={""}
-        />
-      </div> */}
       <Router />
     </>
   );
